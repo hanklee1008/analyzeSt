@@ -1826,8 +1826,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	try{
 		if(condition==0)//多,季,週中
 		{
-			if(Double.parseDouble(data[6])>6000)
-				return false;
+			/*if(Double.parseDouble(data[6])>6000)
+				return false;*/
 			if(Double.parseDouble(data[8])>3.3)
 				return false;	
 			//if(data[13].equals("")||Double.parseDouble(data[13])>14)
@@ -3164,7 +3164,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 			
 		}		
 		
-		/*if (gg10==1)//高點漲超過10%		
+		if (gg10==1)//高點漲超過10%		
 		{
 			if (gg20==1)
 			{
@@ -3291,7 +3291,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 					}
 				}
 			}			
-		}*/
+		}
 							
 		if(contemp[6]<Double.parseDouble(s.getCell(7,row+day-1).getContents())&&Double.parseDouble(s.getCell(7,row+day-1).getContents())<Double.parseDouble(s.getCell(7,row+day-2).getContents()))//月趨向下
 		{
