@@ -1,4 +1,5 @@
 import java.io.*;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -3373,6 +3374,7 @@ public void updateExcel(String name)
 		sss.addCell(new Label(5,0,"SMA5"));
 		
 		double temp=0;
+		BigDecimal b1,b2;
 		for (int i=5;i<basicrow;i++)
 		{
 			if (i>=5)
@@ -3380,37 +3382,53 @@ public void updateExcel(String name)
 				temp=0;
 				for (int j=i-4;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
 				}
-				sss.addCell(new Label(5,i,new DecimalFormat("#.##").format(temp/5)+""));
-				
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("5");
+				sss.addCell(new Number(5,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
 			}
 			if (i>=10)
 			{
 				temp=0;
 				for (int j=i-9;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
 				}
-				sss.addCell(new Label(6,i,new DecimalFormat("#.##").format(temp/10)+""));
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("10");
+				sss.addCell(new Number(6,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
+				//System.out.println(temp+" "+b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue());
 			}
 			if (i>=20)
 			{
 				temp=0;
 				for (int j=i-19;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
 				}
-				sss.addCell(new Label(7,i,new DecimalFormat("#.##").format(temp/20)+""));
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("20");
+				sss.addCell(new Number(7,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
 			}
 			if (i>=60)
 			{
 				temp=0;
 				for (int j=i-59;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
 				}
-				sss.addCell(new Label(8,i,new DecimalFormat("#.##").format(temp/60)+""));
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("60");
+				sss.addCell(new Number(8,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
 			}
 
 		}

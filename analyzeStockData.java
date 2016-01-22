@@ -7,9 +7,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 
+import jxl.Sheet;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -93,11 +96,11 @@ public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate
                 	//for(Iterator it = tagtd.iterator(); it.hasNext();)
                 	
                 	String[] temp=new String[6];
-                	temp[0]=tagtd.get(0).html();
-                	temp[1]=tagtd.get(1).html();
-                	temp[2]=tagtd.get(2).html();
-                	temp[3]=tagtd.get(3).html();
-                	temp[4]=tagtd.get(4).html();
+                	temp[0]=tagtd.get(0).html().replaceAll(",", "");
+                	temp[1]=tagtd.get(1).html().replaceAll(",", "");
+                	temp[2]=tagtd.get(2).html().replaceAll(",", "");
+                	temp[3]=tagtd.get(3).html().replaceAll(",", "");
+                	temp[4]=tagtd.get(4).html().replaceAll(",", "");
                 	temp[5]=tagtd.get(7).html().replaceAll(",", "");
                 	//System.out.println(temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3]+" "+temp[4]+" "+temp[5]);  
                 	value.add(temp);
@@ -114,18 +117,17 @@ public static void main(String[] s)
 {
 	analyzeStockData asd=new analyzeStockData();
 	//asd.getStockCapital("1333");
-	ArrayList<String[]> as=asd.getStockHistoryValue("1333","2015/11/01");
+	ArrayList<String[]> as=asd.getStockHistoryValue("3008","2015/09/01");
 	
-	asd.updateExcel(as);
+	asd.updateStockDailyKToExcel(as,"3008");
 	
 }
-private void updateExcel(ArrayList<String[]> as)
+private void updateStockDailyKToExcel(ArrayList<String[]> as,String stocknum)
 {
 	try{
 		String drive="d:/";
-		//Workbook workBook=Workbook.getWorkbook(new File(drive+"software/sdata/new/old/1333.xls"));
-		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/new/new/1333.xls"));  
-		WritableSheet sss=writeBook.createSheet("1333", 0);
+		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/new/new/"+stocknum+".xls"));  
+		WritableSheet sss=writeBook.createSheet(stocknum, 0);
 		
 		sss.addCell(new Label(0,0,"date"));
 		sss.addCell(new Label(1,0,"open"));
@@ -153,6 +155,7 @@ private void updateExcel(ArrayList<String[]> as)
 		}	
 		
 		double temp=0;
+		BigDecimal b1,b2;
 		for (int i=5;i<=initposition-1;i++)
 		{
 			if (i>=5)
@@ -160,44 +163,160 @@ private void updateExcel(ArrayList<String[]> as)
 				temp=0;
 				for (int j=i-4;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
-					temp=new BigDecimal(temp).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
 				}
-				sss.addCell(new Number(5,i,new BigDecimal(temp/5).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
-				
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("5");
+				sss.addCell(new Number(5,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
 			}
 			if (i>=10)
 			{
 				temp=0;
 				for (int j=i-9;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
-					temp=new BigDecimal(temp).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-				}System.out.println(" "+temp/10);
-				sss.addCell(new Number(6,i,new BigDecimal(temp/10).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
-				
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
+				}
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("10");
+				sss.addCell(new Number(6,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
 			}
 			if (i>=20)
 			{
 				temp=0;
 				for (int j=i-19;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
-					temp=new BigDecimal(temp).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
 				}
-				sss.addCell(new Number(7,i,new BigDecimal(temp/20).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("20");
+				sss.addCell(new Number(7,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
 			}
 			if (i>=60)
 			{
 				temp=0;
 				for (int j=i-59;j<=i;j++)
 				{
-					temp+=Double.parseDouble(sss.getCell(4,j).getContents());
-					temp=new BigDecimal(temp).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(sss.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
 				}
-				sss.addCell(new Number(8,i,new BigDecimal(temp/60).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("60");
+				sss.addCell(new Number(8,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
 			}
 
+		}
+		
+		writeBook.write();
+		writeBook.close();
+
+		updateStockWeeklyKToExcel(new File(drive+"software/sdata/new/new/"+stocknum+".xls"),stocknum);
+	}
+	catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+private void updateStockWeeklyKToExcel(File f,String stocknum)
+{
+	try{
+		String drive="d:/";
+		ArrayList<double[]> as=new ArrayList<double[]>();
+		
+		//Sheet dailysh=Workbook.getWorkbook(new File(drive+"software/sdata/new/new/"+stocknum+".xls")).getSheet(0);
+		Workbook wb=Workbook.getWorkbook(f);
+		WritableWorkbook writeBook=Workbook.createWorkbook(f,wb); 
+		Sheet dailysh=wb.getSheet(0);
+		WritableSheet weeklysh=writeBook.createSheet("999", 1);
+		
+		weeklysh.addCell(new Label(0,0,"date"));
+		weeklysh.addCell(new Label(1,0,"open"));
+		weeklysh.addCell(new Label(2,0,"high"));
+		weeklysh.addCell(new Label(3,0,"low"));
+		weeklysh.addCell(new Label(4,0,"close"));
+		weeklysh.addCell(new Label(5,0,"SMA4"));
+		weeklysh.addCell(new Label(6,0,"SMA13"));
+		weeklysh.addCell(new Label(7,0,"quantity"));
+		
+		int initposition=1,initWeeklyPos=1;		
+		long sundaytime;
+		double open,high,low,close,quantity;
+				
+		while(initposition<dailysh.getRows())
+		{
+			open=Double.parseDouble(dailysh.getCell(1,initposition).getContents());
+			high=Double.parseDouble(dailysh.getCell(2,initposition).getContents());
+			low=Double.parseDouble(dailysh.getCell(3,initposition).getContents());
+			close=Double.parseDouble(dailysh.getCell(4,initposition).getContents());
+			quantity=Double.parseDouble(dailysh.getCell(9,initposition).getContents());
+			
+			sundaytime=sundayTime(dailysh.getCell(0, initposition).getContents());
+			
+			weeklysh.addCell(new Label(0,initWeeklyPos,dailysh.getCell(0,initposition).getContents()));
+			weeklysh.addCell(new Label(1,initWeeklyPos,open+""));
+			
+			initposition++;
+			
+			while(initposition<dailysh.getRows()&&new SimpleDateFormat("yyyy/MM/dd").parse(dailysh.getCell(0,initposition).getContents()).getTime()<sundaytime)
+			{
+				double d;
+				if (high<(d=Double.parseDouble(dailysh.getCell(2,initposition).getContents())))
+				{
+					high=d;
+				}
+				if (low>(d=Double.parseDouble(dailysh.getCell(3,initposition).getContents())))
+				{
+					low=d;
+				}
+				quantity+=Double.parseDouble(dailysh.getCell(9,initposition).getContents());
+				
+				initposition++;
+			}
+			close=Double.parseDouble(dailysh.getCell(4,initposition-1).getContents());
+						
+			weeklysh.addCell(new Label(2,initWeeklyPos,high+""));
+			weeklysh.addCell(new Label(3,initWeeklyPos,low+""));
+			weeklysh.addCell(new Label(4,initWeeklyPos,close+""));
+			weeklysh.addCell(new Label(7,initWeeklyPos,quantity+""));
+			
+			initWeeklyPos++;
+		}
+				
+		double temp=0;
+		BigDecimal b1,b2;
+		for (int i=4;i<=initWeeklyPos-1;i++)
+		{
+			if (i>=4)
+			{
+				temp=0;
+				for (int j=i-3;j<=i;j++)
+				{
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(weeklysh.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
+				}
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("4");
+		        weeklysh.addCell(new Number(5,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
+			}
+			if (i>=13)
+			{
+				temp=0;
+				for (int j=i-12;j<=i;j++)
+				{
+					b1 = new BigDecimal(Double.toString(temp));
+			        b2 = new BigDecimal(weeklysh.getCell(4,j).getContents());
+			        temp=b1.add(b2).doubleValue();
+				}
+				b1 = new BigDecimal(Double.toString(temp));
+		        b2 = new BigDecimal("13");
+		        weeklysh.addCell(new Number(6,i,b1.divide(b2,2,BigDecimal.ROUND_HALF_UP).doubleValue()));
+			}
 		}
 		
 		writeBook.write();
@@ -207,5 +326,20 @@ private void updateExcel(ArrayList<String[]> as)
 	catch (Exception e) {
         e.printStackTrace();
     }
+}
+private long sundayTime(String date)
+{	
+	Calendar cal = Calendar.getInstance(); 
+	try{
+		cal.setTime(new SimpleDateFormat("yyyy/MM/dd").parse(date));  
+		
+		return cal.getTimeInMillis()+(8-cal.get(Calendar.DAY_OF_WEEK))*(24*60*60*1000);
+
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+	return 0;
 }
 }
