@@ -30,42 +30,29 @@ public class analyzeStock {
 	
  int weeklyRateType,highType=0,quantityType=0,kType=0,quarterLineRedK=0,monthLineRedK=1;
  double turnQuarterLineDegree=0,turnMonthLineDegree=0,test=0;
- final int quarterKCount=13;
+ final int quarterKCount=14;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
  static String drive="d:/";
  
 public static void main(String[] s)
-{	
-	
-	
-	try{		
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
-				
-		/*File[] temp=new File(drive+"software/sdata/1/").listFiles();
-				
-		ArrayList<String[]> as=new ArrayList<String[]>();//merge all stock file
-		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/1/15newall040301.xls"));
-		for (int i=0;i<temp.length;i++)
-		{
-			as=ss.mergeData(temp[i]);
-			ss.fillDate(writeBook,as,new File(drive+"software/sdata/1/5487.xls"),temp[i],i);
-		}
-		writeBook.write();
-		writeBook.close();*/
+{		
+	try{
+		analyzeStock s1=new analyzeStock();	
+		/*SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 		
-		//System.out.println("analyzeStock start:"+sdFormat.format(new Date()));
-		
-		analyzeStock s1=new analyzeStock();		
+			
 		ArrayList<String[]> allTimePoint=new ArrayList<String[]>();
 						
-		/*System.out.println("analyzeStock start:"+sdFormat.format(new Date()));
+		System.out.println("analyzeStock start:"+sdFormat.format(new Date()));
 		
 		int analyzeCondition=0;//0:
 		int isPredict=1;
 		
-		s1.analyzeBull(Workbook.getWorkbook(new File(drive+"software/sdata/test/15baseall.xls")),0,allTimePoint,isPredict,analyzeCondition);
-		s1.analyzeBull(Workbook.getWorkbook(new File(drive+"software/sdata/test/15newall.xls")),1,allTimePoint,isPredict,analyzeCondition);
+		//s1.analyzeBull(Workbook.getWorkbook(new File(drive+"software/sdata/history_predict/update/weeklyKStock.xls")),0,allTimePoint,isPredict,analyzeCondition); 
+		 
+		//s1.analyzeBull(Workbook.getWorkbook(new File(drive+"software/sdata/test/15baseall.xls")),0,allTimePoint,isPredict,analyzeCondition);
+		//s1.analyzeBull(Workbook.getWorkbook(new File(drive+"software/sdata/test/15newall.xls")),1,allTimePoint,isPredict,analyzeCondition);
 		
 		//s1.analyzeBear(Workbook.getWorkbook(new File(drive+"software/sdata/test/15baseall.xls")),0,allTimePoint,isPredict,analyzeCondition);
 		//s1.analyzeBear(Workbook.getWorkbook(new File(drive+"software/sdata/test/15newall.xls")),1,allTimePoint,isPredict,analyzeCondition);
@@ -77,33 +64,52 @@ public static void main(String[] s)
 		s1.computeResult(allTimePoint,20040301,analyzeCondition);
 		
 		System.out.println("\ncompute end:"+sdFormat.format(new Date()));*/
-		
-		System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-		
-		File[] temp=new File(drive+"software/sdata/predict/temp/temp/").listFiles();
-		for (int i=0;i<temp.length;++i)
-		{
-			s1.computeReturnQDay(temp[i],allTimePoint);
-		}
-		s1.fillInData(allTimePoint,new File(drive+"software/sdata/15All.xls"),20040301,0);
-		s1.computeResult(allTimePoint,20040301,0);
-		
-		System.out.println("\ncompute end:"+sdFormat.format(new Date()));
-		
-		/*File[] temp=new File(drive+"software/sdata/ttt/temp/").listFiles();//update excel data format
-		for (int k=0;k<temp.length;k++)
-		{
-			s1.updateExcel(temp[k].getName());
-		}*/
-		
+		s1.computeReturnByDailyExcel();
 	}
 	catch (Exception e)
 	{
 		System.out.println("main\n");
 		e.printStackTrace();
 	}
+}private void computeReturnByDailyExcel()
+{
+	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+	
+	System.out.println("\ncompute start:"+sdFormat.format(new Date()));
+	
+	ArrayList<String[]> allTimePoint=new ArrayList<String[]>();
+	
+	File[] temp=new File(drive+"software/sdata/history_predict/update/1/").listFiles();
+	for (int i=0;i<temp.length;++i)
+	{
+		computeReturnQDay(temp[i],allTimePoint);
+	}
+	fillInData(allTimePoint,new File(drive+"software/sdata/15All.xls"),20040301,0);
+	computeResult(allTimePoint,20040301,0);
+	
+	System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 }
-public ArrayList<String[]> mergeData(File f)
+private void mergeDirData(File sourcedir,File destination)
+{
+	File[] temp=sourcedir.listFiles();
+	
+	ArrayList<String[]> as=new ArrayList<String[]>();//merge all stock file
+	try{
+	WritableWorkbook writeBook=Workbook.createWorkbook(destination);
+	for (int i=0;i<temp.length;i++)
+	{
+		as=mergeData(temp[i]);
+		fillDate(writeBook,as,temp[i],i);
+	}
+	writeBook.write();
+	writeBook.close();
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+}
+private ArrayList<String[]> mergeData(File f)
 {
 	ArrayList<String[]> content=new ArrayList<String[]>();
 	String[] contemp;
@@ -146,7 +152,7 @@ public ArrayList<String[]> mergeData(File f)
 	}
 	return content;
 }
-public void fillDate(WritableWorkbook writeBook,ArrayList<String[]> content,File f,File ff,int sheetLocation)
+public void fillDate(WritableWorkbook writeBook,ArrayList<String[]> content,File ff,int sheetLocation)
 {
 	try{					
 		WritableSheet sss=writeBook.createSheet(ff.getName(),sheetLocation);
@@ -186,7 +192,7 @@ public ArrayList<String[]> analyzeBull(Workbook workbook,int filetype,ArrayList<
 	
 	if(analyzeCondition==0)
 	{
-		File[] temp=new File(drive+"software/sdata/predict/").listFiles();
+		File[] temp=new File(drive+"software/sdata/new/").listFiles();
 		for (int i=0;i<workbook.getNumberOfSheets();i++)
 		{
 			Sheet sh=workbook.getSheet(i);
@@ -195,7 +201,7 @@ public ArrayList<String[]> analyzeBull(Workbook workbook,int filetype,ArrayList<
 				if(sh.getName().equals(temp[l].getName()))
 				{
 					try{				
-						analyzeStockResultByQuarterLinePredict(sh,Workbook.getWorkbook(new File(drive+"software/sdata/predict/"+temp[l].getName())).getSheet(0),allTimePoint);
+						analyzeStockResultByQuarterLinePredict(sh,Workbook.getWorkbook(new File(drive+"software/sdata/new/"+temp[l].getName())).getSheet(0),allTimePoint);
 						break;
 					}
 					catch (Exception e)
@@ -559,14 +565,22 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 				{
 					for (int j=0;j<7;++j)
 					{
-						contemp[j]=Double.parseDouble(s.getCell(j+1,temp).getContents());
+						String st=s.getCell(j+1,temp).getContents();
+						if (!st.equals(""))
+							contemp[j]=Double.parseDouble(st);
+						else
+							contemp[j]=0;
 					}
 				}
 				else
 				{
 					for (int j=0;j<6;++j)
 					{
-						contemp[j]=Double.parseDouble(s.getCell(j+1,temp).getContents());
+						String st=s.getCell(j+1,temp).getContents();
+						if (!st.equals(""))
+							contemp[j]=Double.parseDouble(st);
+						else
+							contemp[j]=0;
 					}
 					contemp[6]=Double.parseDouble(s.getCell(11,temp).getContents());
 				}
@@ -619,7 +633,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 											Calendar ca =Calendar.getInstance();
 											ca.setTime(new SimpleDateFormat("yyyy/MM/dd").parse(s.getCell(0,temp).getContents()));
 											ca.add(Calendar.DATE, day);
-											as.add(new SimpleDateFormat("yyyy/M/d").format(ca.getTime()));
+											as.add(new SimpleDateFormat("yyyy/MM/dd").format(ca.getTime()));
 											double[] dd=new double[7];
 											dd[0]=tt.get(day)[0];
 											dd[1]=tt.get(day)[1];
@@ -706,7 +720,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 											Calendar ca =Calendar.getInstance();
 											ca.setTime(new SimpleDateFormat("yyyy/MM/dd").parse(s.getCell(0,temp).getContents()));
 											ca.add(Calendar.DATE, day);
-											as.add(new SimpleDateFormat("yyyy/M/d").format(ca.getTime()));
+											as.add(new SimpleDateFormat("yyyy/MM/dd").format(ca.getTime()));
 											double[] dd=new double[7];
 											dd[0]=tt.get(day)[0];
 											dd[1]=tt.get(day)[1];
@@ -1818,8 +1832,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate||data[2].equals(""))
 			return false;
 	
-	if(Double.parseDouble(data[6])<100)
-		return false;
+	//if(Double.parseDouble(data[6])<100)
+		//return false;
 	
 	if(Double.parseDouble(data[7])>40)
 		return false;
@@ -1827,10 +1841,15 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	try{
 		if(condition==0)//¦h,©u,¶g¤¤
 		{
-			/*if(Double.parseDouble(data[6])>6000)
-				return false;*/
-			if(Double.parseDouble(data[8])>3.3)
-				return false;	
+			//if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
+				//return true;
+			//else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
+				//return true;
+			//else if (Double.parseDouble(data[6])<=6000)
+				//return true;
+			//else
+				//return false;
+
 			//if(data[13].equals("")||Double.parseDouble(data[13])>14)
 				//return false;
 		}
@@ -2763,6 +2782,7 @@ try{
 	}
 	catch(Exception e)
 	{
+		System.out.println(""+buytime);
 		System.out.print("\nendComputeReturnQDay");
 		e.printStackTrace();
 	}
@@ -2941,8 +2961,8 @@ public void locateStockDate(String name,ArrayList<String> as,ArrayList<double[]>
 	int count=0;
 	
 	try{
-		Workbook workBook=Workbook.getWorkbook(new File(drive+"software/sdata/predict/"+name));
-		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/predict/temp/"+name),workBook);
+		Workbook workBook=Workbook.getWorkbook(new File(drive+"software/sdata/new/"+name));
+		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/newupdate/"+name),workBook);
 		WritableSheet sss=writeBook.getSheet(0);
 		
 		for (int i=0;i<as.size();i++)
@@ -3335,6 +3355,14 @@ public double stockPriceUnit(double price)
 		return 5;
 	
 	return 99;
+}
+private void updateExcel(File dir)//update excel data format
+{
+	File[] temp=dir.listFiles();
+	for (int k=0;k<temp.length;k++)
+	{
+		updateExcel(temp[k].getName());
+	}
 }
 public void updateExcel(String name)
 {

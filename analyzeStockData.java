@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import jxl.Sheet;
 import jxl.Workbook;
@@ -25,6 +28,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 //test git push hanklee1008
 public class analyzeStockData {
+	final static String drive="d:/";
 public String getStockCapital(String stocknum)
 {
 	String url="http://www.cnyes.com/twstock/intro/"+stocknum+".htm";
@@ -64,15 +68,16 @@ public String getStockCapital(String stocknum)
 	}
 	return s;
 }
-public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate)
+public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate) throws IOException
 {
 	String url="http://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stocknum+"&ctl00$ContentPlaceHolder1$startText="+startdate;
 	//String url="http://www.cnyes.com/twstock/ps_historyprice.aspx?code=1333&ctl00$ContentPlaceHolder1$startText=2015/11/01";
 	ArrayList<String[]> value=new ArrayList<String[]>();
 	
-	try {System.out.println("here1 "); 
-        Document doc = Jsoup.connect(url).timeout(60000).get();
-        System.out.println("here2 ");  
+	try {
+		//System.out.println("here1 "); 
+        Document doc = Jsoup.connect(url).timeout(10000).get();
+        //System.out.println("here2 ");  
         Elements classtab = doc.getElementsByClass("tab");
         Element thisOne = null;
         if (classtab.size()>0)
@@ -92,9 +97,7 @@ public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate
                 thisOne = tagtr.get(i);
                 Elements tagtd = thisOne.getElementsByTag("td");
                 if (tagtd.size()>0)
-                {
-                	//for(Iterator it = tagtd.iterator(); it.hasNext();)
-                	
+                {               	
                 	String[] temp=new String[6];
                 	temp[0]=tagtd.get(0).html().replaceAll(",", "");
                 	temp[1]=tagtd.get(1).html().replaceAll(",", "");
@@ -102,7 +105,7 @@ public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate
                 	temp[3]=tagtd.get(3).html().replaceAll(",", "");
                 	temp[4]=tagtd.get(4).html().replaceAll(",", "");
                 	temp[5]=tagtd.get(7).html().replaceAll(",", "");
-                	//System.out.println(temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3]+" "+temp[4]+" "+temp[5]);  
+                	
                 	value.add(temp);
                 }  
             }
@@ -110,6 +113,7 @@ public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate
         
     } catch (IOException e) {
         e.printStackTrace();
+        throw e;
     }
 	return value;
 }
@@ -117,16 +121,71 @@ public static void main(String[] s)
 {
 	analyzeStockData asd=new analyzeStockData();
 	//asd.getStockCapital("1333");
-	ArrayList<String[]> as=asd.getStockHistoryValue("3008","2015/09/01");
+	//ArrayList<String[]> as=asd.getStockHistoryValue("3008","2015/09/01");
+	//asd.updateStockDailyKToExcel(new File("c:/ttt.txt"),"2004/03/01");
 	
-	asd.updateStockDailyKToExcel(as,"3008");
+	asd.copySheet(drive+"software/sdata/new/",drive+"software/sdata/weeklyKStock.xls");
+}
+private void writeFileListToFile(String sourceDir,String destinationFile)
+{
+	File[] temp=new File(sourceDir).listFiles();
 	
+	String str="";
+	for (File f:temp)
+	{	
+		str+=f.getName().replaceAll(".xls", "")+",";
+	}
+	try{
+		FileWriter fw=new FileWriter(new File(destinationFile));
+		fw.write(str);
+		fw.close();
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+}
+private void updateStockDailyKToExcel(File stocksourcef,String date)
+{
+	try {
+		FileReader fr=new FileReader(stocksourcef);
+		BufferedReader buf = new BufferedReader(fr);
+		String st,st1="";
+		while((st=buf.readLine())!=null)
+		{
+			st1+=st;
+		}
+		StringTokenizer sto=new StringTokenizer(st1,","); 
+		while (sto.hasMoreTokens())
+		{	
+			String stocknum=sto.nextToken();
+			
+			int end=0;
+			while (end==0)
+			{
+				try{
+					System.out.println(stocknum);
+					ArrayList<String[]> as=getStockHistoryValue(stocknum,date);
+					updateStockDailyKToExcel(as,stocknum);
+					end=1;
+				}
+				catch(Exception e)
+				{
+
+				}
+			}		
+		}
+	}
+	catch(Exception e)
+	{
+		
+	}
 }
 private void updateStockDailyKToExcel(ArrayList<String[]> as,String stocknum)
 {
 	try{
-		String drive="d:/";
-		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/new/new/"+stocknum+".xls"));  
+		
+		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/new/"+stocknum+".xls"));  
 		WritableSheet sss=writeBook.createSheet(stocknum, 0);
 		
 		sss.addCell(new Label(0,0,"date"));
@@ -216,7 +275,7 @@ private void updateStockDailyKToExcel(ArrayList<String[]> as,String stocknum)
 		writeBook.write();
 		writeBook.close();
 
-		updateStockWeeklyKToExcel(new File(drive+"software/sdata/new/new/"+stocknum+".xls"),stocknum);
+		updateStockWeeklyKToExcel(new File(drive+"software/sdata/new/"+stocknum+".xls"),stocknum);
 	}
 	catch (Exception e) {
         e.printStackTrace();
@@ -341,5 +400,62 @@ private long sundayTime(String date)
 		e.printStackTrace();
 	}
 	return 0;
+}
+private void copySheet(String sourceDir,String destinationFile)
+{
+	File[] temp=new File(sourceDir).listFiles();
+	for (int i=0;i<temp.length;i++)
+	{
+		copySheet(new File(destinationFile),i,temp[i],1);
+		System.out.println(temp[i].getName());
+	}
+}
+private void copySheet(File destination,int dLocation,File source,int sLocation)
+{
+	try{			
+		Workbook wb=Workbook.getWorkbook(source);
+		Sheet sh=wb.getSheet(sLocation);
+		
+		WritableWorkbook writebook;
+		if (destination.exists())
+		{
+			writebook=Workbook.createWorkbook(destination,Workbook.getWorkbook(destination)); 
+		}
+		else
+		{
+			writebook=Workbook.createWorkbook(destination);
+		}
+		
+		WritableSheet ws=writebook.createSheet(source.getName(),dLocation);
+		
+		/*for (int j=0;j<12;j++)
+		{
+			ws.addCell(new Label(j,0,source.getCell(j, 0).getContents()));
+		}*/
+
+		for (int i=0;i<sh.getRows();i++)	
+		{
+			for (int j=0;j<sh.getColumns();j++)
+			{
+				ws.addCell(new Label(j,i,sh.getCell(j, i).getContents()));
+				/*if (j==0)
+					ws.addCell(new Label(j,i,source.getCell(j, i).getContents()));
+				else
+				{	
+					if (!source.getCell(j, i).getContents().equals(""))
+						ws.addCell(new Number(j,i,Double.parseDouble(source.getCell(j, i).getContents())));
+					else
+						ws.addCell(new Label(j,i,source.getCell(j, i).getContents()));
+				}*/
+			}
+		}	
+		writebook.write();
+		writebook.close();
+	}
+	catch(Exception e)
+	{
+		System.out.print("\nfillInData");
+		e.printStackTrace();
+	}
 }
 }
