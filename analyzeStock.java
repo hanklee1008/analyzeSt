@@ -1832,8 +1832,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate||data[2].equals(""))
 			return false;
 	
-	//if(Double.parseDouble(data[6])<100)
-		//return false;
+	if(Double.parseDouble(data[6])<50)
+		return false;
 	
 	if(Double.parseDouble(data[7])>40)
 		return false;
@@ -1841,14 +1841,14 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	try{
 		if(condition==0)//¦h,©u,¶g¤¤
 		{
-			//if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
-				//return true;
-			//else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
-				//return true;
+			if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
+				return true;
+			else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
+				return true;
 			//else if (Double.parseDouble(data[6])<=6000)
 				//return true;
-			//else
-				//return false;
+			else
+				return false;
 
 			//if(data[13].equals("")||Double.parseDouble(data[13])>14)
 				//return false;
@@ -3099,7 +3099,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		previoustemp[6]=Double.parseDouble(s.getCell(7,row).getContents());
 		previoustemp[7]=Double.parseDouble(s.getCell(8,row).getContents());
 		previoustemp[8]=Double.parseDouble(s.getCell(9,row).getContents());
-		
+
 		}
 		catch (Exception e)
 		{			
