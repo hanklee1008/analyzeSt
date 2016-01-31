@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 public static void main(String[] s)
 {		
@@ -80,6 +80,7 @@ public static void main(String[] s)
 	ArrayList<String[]> allTimePoint=new ArrayList<String[]>();
 	
 	File[] temp=new File(drive+"software/sdata/history_predict/update/1/").listFiles();
+	//File[] temp=new File(drive+"software/sdata/old_predict/").listFiles();
 	for (int i=0;i<temp.length;++i)
 	{
 		computeReturnQDay(temp[i],allTimePoint);
@@ -1832,8 +1833,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate||data[2].equals(""))
 			return false;
 	
-	//if(Double.parseDouble(data[6])<100)
-		//return false;
+	if(Double.parseDouble(data[6])<50)
+		return false;
 	
 	if(Double.parseDouble(data[7])>40)
 		return false;
@@ -3037,6 +3038,7 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 			double computepoint=predictpoint*1.03;
 			//if (computepoint>basedata[3])
 				computepoint=basedata[3];
+			//computepoint=predictpoint;
 			
 			returnv[0]=returnv[2]=basedata[1];
 				
