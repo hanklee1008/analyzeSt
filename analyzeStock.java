@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="c:/";
+ static String drive="d:/";
  
 public static void main(String[] s)
 {		
@@ -85,6 +85,7 @@ public static void main(String[] s)
 	{
 		computeReturnQDay(temp[i],allTimePoint);
 	}
+	fillInAllconditionBydaily(allTimePoint);
 	fillInData(allTimePoint,new File(drive+"software/sdata/15All.xls"),20040301,0);
 	computeResult(allTimePoint,20040301,0);
 	
@@ -1610,6 +1611,99 @@ public void fillInAllcondition(ArrayList<String[]> allTimePoint)
 		e.printStackTrace();
 	}
 }
+public void fillInAllconditionBydaily(ArrayList<String[]> allTimePoint)
+{
+	try{
+	Workbook workbook=Workbook.getWorkbook(new File(drive+"software/sdata/alldaily.xls"));
+	Sheet s=workbook.getSheet(0);
+	
+	for (int i=0;i<allTimePoint.size();i++)	
+	{
+		String[] tt=allTimePoint.get(i);
+		String[] temp=allStockConditionBydaily(tt[0],tt[1],s);
+		tt[9]=temp[1];
+		tt[10]=temp[2];
+		tt[11]=temp[3];
+		tt[12]=temp[4];
+	}
+	}
+	catch(Exception e)
+	{
+		System.out.print("\nfillInAllconditionBydaily");
+		e.printStackTrace();
+	}
+}
+public String[] allStockConditionBydaily(String Num,String buyTime,Sheet ss)
+{
+	String[] temp={"0","0","0","0","0","0"};
+	
+	try{
+		
+		Sheet s=ss;
+		Cell c;
+		int rowlocation;
+		double currentDiff,previousDiff,previousTwoDiff;
+		double[] currentdata=new double[8],previousdata=new double[8],previoustwodata=new double[8],previousthreedata=new double[8]; 
+				
+		c=s.findCell(buyTime);
+		rowlocation=c.getRow();
+		
+		for (int i=1;i<8;i++)
+		{
+			previousthreedata[i]=Double.parseDouble(s.getCell(i,rowlocation-3).getContents());
+			previoustwodata[i]=Double.parseDouble(s.getCell(i,rowlocation-2).getContents());
+			previousdata[i]=Double.parseDouble(s.getCell(i,rowlocation-1).getContents());
+			currentdata[i]=Double.parseDouble(s.getCell(i,rowlocation).getContents());
+		}
+				
+		currentDiff=currentdata[5]-currentdata[6];
+		previousDiff=previousdata[5]-previousdata[6];
+		previousTwoDiff=previoustwodata[5]-previoustwodata[6];
+		
+		temp[3]=currentdata[4]+"";
+		
+		if (currentdata[6]<previousdata[6])
+		{
+			if (previousdata[6]<previoustwodata[6]&&previoustwodata[6]<previousthreedata[6])
+			{					
+				if(currentdata[5]<previousdata[5])//月向下
+				{	
+						temp[1]="1";
+				}
+				else
+				{
+						temp[1]="2";
+				}			
+			}
+			else
+			{	
+				if(currentdata[5]<previousdata[5])//月向下
+					temp[2]="1";
+				else
+					temp[2]="2";
+					
+			}	
+		}
+		else
+		{
+			if(currentdata[5]<previousdata[5])	
+			{
+				temp[4]="1";
+			}
+			else
+			{
+				temp[4]="2";
+			}
+		}		
+	}
+	catch (Exception e)
+	{
+		System.out.print("\nallStockCondition,"+Num+","+buyTime);
+		e.printStackTrace();
+	}
+	
+	return temp;
+}
 public String[] allStockCondition(String Num,String buyTime,Sheet ss,String cur)
 {
 	String[] temp={"0","0","0","0","0","0"};
@@ -1832,6 +1926,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate||data[2].equals(""))
 			return false;
+	//if (Integer.parseInt(data[1].replaceAll("/", ""))>20150101)
+		//return false;
 	
 	if(Double.parseDouble(data[6])<50)
 		return false;
@@ -1842,14 +1938,14 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	try{
 		if(condition==0)//多,季,週中
 		{
-			if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
-				return true;
-			else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
-				return true;
+			//if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
+				//return true;
+			//else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
+				//return true;
 			//else if (Double.parseDouble(data[6])<=6000)
 				//return true;
-			else
-				return false;
+			//else
+				//return false;
 
 			//if(data[13].equals("")||Double.parseDouble(data[13])>14)
 				//return false;
