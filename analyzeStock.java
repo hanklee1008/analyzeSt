@@ -3049,7 +3049,8 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 				tempdata[6]=""+basedata[4];
 				tempdata[7]=""+df.format(basedata[6]);
 				tempdata[8]=""+df.format(100*(basedata[1]-basedata[3])/basedata[3]);
-				tempdata[10]=""+predictpoint;
+				
+				//tempdata[10]=""+predictpoint;
 				tempdata[11]=""+basedata[3];
 				tempdata[12]=""+df.format(basedata[6]-100*(predictpoint-100*basedata[3]/(basedata[6]+100))/(100*basedata[3]/(basedata[6]+100)));
 				
@@ -3184,6 +3185,25 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 			}
 			
 		}		
+		if ((returnv[0]-compoint)/compoint<0.07)
+		{
+			if (contemp[0]>contemp[3])
+			{				
+				tempdata[10]=""+(basedata[1]-returnv[1])/returnv[0];
+				
+				if (contemp[2]<returnv[1])
+					returnv[1]=contemp[2];
+			}
+			else
+			{
+				if (contemp[2]<returnv[1])
+					returnv[1]=contemp[2];
+				
+				tempdata[10]=""+(basedata[1]-returnv[1])/returnv[0];		
+			}
+			
+		}
+		
 		
 		if (gg10==1)//°ªÂIº¦¶W¹L10%		
 		{
