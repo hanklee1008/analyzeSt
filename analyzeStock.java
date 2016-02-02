@@ -1665,30 +1665,54 @@ public String[] allStockConditionBydaily(String Num,String buyTime,Sheet ss)
 		if (currentdata[6]<previousdata[6])
 		{
 			if (previousdata[6]<previoustwodata[6]&&previoustwodata[6]<previousthreedata[6])
-			{					
+			{	
 				if(currentdata[5]<previousdata[5])//月向下
 				{	
-						temp[1]="1";
+					//if ((currentdata[4]>currentdata[1])&&(currentdata[4]-currentdata[3])/currentdata[3]>0.01)
+					if ((currentdata[4]>currentdata[1]))
+						temp[2]="11";
+					else
+					{
+						if ((currentdata[4]-currentdata[3])/currentdata[3]>0.005)
+						temp[2]="121";
+						else
+							temp[2]="122";
+					}
 				}
 				else
 				{
-						temp[1]="2";
-				}			
+					temp[2]="2";
+				}	
 			}
 			else
-			{	
+			{
 				if(currentdata[5]<previousdata[5])//月向下
-					temp[2]="1";
+				{	
+					if (currentdata[4]>currentdata[1])
+					temp[1]="11";
+					else
+						temp[1]="12";
+				}
 				else
-					temp[2]="2";
-					
-			}	
+				{
+					temp[1]="2";
+				}
+			}
 		}
 		else
 		{
-			if(currentdata[5]<previousdata[5])	
+			if(currentdata[5]<previousdata[5])//月向下
 			{
-				temp[4]="1";
+				//if ((currentdata[4]>currentdata[1])&&(currentdata[4]-currentdata[3])/currentdata[3]>0.01)
+				if ((currentdata[4]>currentdata[1]))
+					temp[4]="11";
+				else
+				{	
+					if ((currentdata[4]-currentdata[3])/currentdata[3]>0.005)
+					temp[4]="121";
+					else 
+						temp[4]="122";
+				}
 			}
 			else
 			{
@@ -1938,14 +1962,14 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	try{
 		if(condition==0)//多,季,週中
 		{
-			//if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
-				//return true;
-			//else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
-				//return true;
-			//else if (Double.parseDouble(data[6])<=6000)
-				//return true;
-			//else
-				//return false;
+			/*if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
+				return true;
+			else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
+				return true;
+			else if (Double.parseDouble(data[8])>3.3&&Double.parseDouble(data[6])<=5000)
+				return true;
+			else
+				return false;*/
 
 			//if(data[13].equals("")||Double.parseDouble(data[13])>14)
 				//return false;
@@ -3133,8 +3157,8 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 			
 			double computepoint=predictpoint*1.03;
 			//if (computepoint>basedata[3])
-				computepoint=basedata[3];
-			//computepoint=predictpoint;
+				//computepoint=basedata[3];
+			computepoint=predictpoint;
 			
 			returnv[0]=returnv[2]=basedata[1];
 				
@@ -3231,8 +3255,8 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 			break;
 		}
 				
-		if ((basedata[3]-contemp[2])/basedata[3]>0.13)//拉回超過13% 停損出場
-		//if ((predictpoint-contemp[2])/predictpoint>0.1)
+		//if ((basedata[3]-contemp[2])/basedata[3]>0.13)//拉回超過13% 停損出場
+		if ((predictpoint-contemp[2])/predictpoint>0.1)
 		{
 			//if (gg10==1)
 			{
