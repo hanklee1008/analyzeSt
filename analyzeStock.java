@@ -20,7 +20,7 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-
+//
 public class analyzeStock {
 	int monthLineRedTypeM;//0:black 1,2,3:red
 	int isComputeReturnM; //0:exit 1:enter
