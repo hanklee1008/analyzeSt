@@ -30,7 +30,7 @@ public class analyzeStock {
 	
  int weeklyRateType,highType=0,quantityType=0,kType=0,quarterLineRedK=0,monthLineRedK=1;
  double turnQuarterLineDegree=0,turnMonthLineDegree=0,test=0;
- final int quarterKCount=14;
+ final int quarterKCount=14,findstock=1;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
  static String drive="d:/";
@@ -62,21 +62,26 @@ public static void main(String[] s)
 		
 		System.out.println("\ncompute end:"+sdFormat.format(new Date()));*/
 		
-		/*File[] temp=new File(drive+"software/sdata/15/").listFiles();
+		
+		String filepath=drive+"software/sdata/15base/";
+		/*analyzeStockData asd=new analyzeStockData();
+		
+		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);*/
+		
+		/*File[] temp=new File(filepath).listFiles();
 		for (File f:temp)
 		{
-			//System.out.println(f.getName());
-			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition);
+			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
 		}*/
 		
-		s1.computeReturnByDailyExcel();
+		s1.computeReturnByDailyExcel(filepath);
 	}
 	catch (Exception e)
 	{
 		System.out.println("main\n");
 		e.printStackTrace();
 	}
-}private void computeReturnByDailyExcel()
+}private void computeReturnByDailyExcel(String filepath)
 {
 	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 	
@@ -84,15 +89,14 @@ public static void main(String[] s)
 	
 	ArrayList<String[]> allTimePoint=new ArrayList<String[]>();
 	
-	File[] temp=new File(drive+"software/sdata/15/").listFiles();
-	//File[] temp=new File(drive+"software/sdata/history_predict/update/1/").listFiles();
+	File[] temp=new File(filepath).listFiles();
 	for (int i=0;i<temp.length;++i)
 	{
 		computeReturnQDay(temp[i],allTimePoint);
 	}
 	//fillInAllconditionBydaily(allTimePoint);
 	fillInData(allTimePoint,new File(drive+"software/sdata/15All.xls"),20040301,0);
-	computeResult(allTimePoint,20040301,0);
+	//computeResult(allTimePoint,20040301,0);
 	
 	System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 }
@@ -192,7 +196,7 @@ public void fillDate(WritableWorkbook writeBook,ArrayList<String[]> content,File
 		e.printStackTrace();
 	}
 }
-public void analyzeBullByFile(File f,int filetype,ArrayList<String[]> allTimePoint,int isPredict,int analyzeCondition)
+public void analyzeBullByFile(File f,int filetype,ArrayList<String[]> allTimePoint,int isPredict,int analyzeCondition,String filepath)
 {	
 	predict=isPredict;
 	oldOrNew=filetype;
@@ -214,7 +218,7 @@ public void analyzeBullByFile(File f,int filetype,ArrayList<String[]> allTimePoi
 	
 	if(analyzeCondition==0)
 	{
-		analyzeStockResultByQuarterLinePredict(shw,shd,allTimePoint);
+		analyzeStockResultByQuarterLinePredict(shw,shd,allTimePoint,filepath);
 	}
 	else
 	{
@@ -234,7 +238,7 @@ public void analyzeBullByFile(File f,int filetype,ArrayList<String[]> allTimePoi
 		}
 	}
 }
-public ArrayList<String[]> analyzeBull(Workbook workbook,int filetype,ArrayList<String[]> allTimePoint,int isPredict,int analyzeCondition)
+public ArrayList<String[]> analyzeBull(Workbook workbook,int filetype,ArrayList<String[]> allTimePoint,int isPredict,int analyzeCondition,String filepath)
 {	
 	predict=isPredict;
 	oldOrNew=filetype;
@@ -250,7 +254,7 @@ public ArrayList<String[]> analyzeBull(Workbook workbook,int filetype,ArrayList<
 				if(sh.getName().equals(temp[l].getName()))
 				{
 					try{				
-						analyzeStockResultByQuarterLinePredict(sh,Workbook.getWorkbook(new File(drive+"software/sdata/new/"+temp[l].getName())).getSheet(0),allTimePoint);
+						analyzeStockResultByQuarterLinePredict(sh,Workbook.getWorkbook(new File(drive+"software/sdata/new/"+temp[l].getName())).getSheet(0),allTimePoint,filepath);
 						break;
 					}
 					catch (Exception e)
@@ -585,7 +589,7 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 		e.printStackTrace();
 	}
 }
-public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayList<String[]> allTimePoint)
+public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayList<String[]> allTimePoint,String filepath)
 {
 	
 	int isComputeReturn=0; //0:exit 1:enter
@@ -861,7 +865,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 				temp++;
 				content.add(contemp);			
 			}
-			locateStockDate(shfile.getName(),as,mdata);
+			locateStockDate(filepath,shfile.getName(),as,mdata);
 		
 	}
 	catch (Exception e)
@@ -1995,16 +1999,18 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if(data[1].length()-data[1].lastIndexOf("/")==2)
 		data[1]=data[1].substring(0, data[1].lastIndexOf("/")+1)+"0"+data[1].substring(data[1].lastIndexOf("/")+1, data[1].length());
 	
-	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate||data[2].equals(""))
+	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate)
 			return false;
-
-	//if (Integer.parseInt(data[1].replaceAll("/", ""))<20150101)
-		//return false;
+	
+	if (findstock==1&&!data[2].equals(""))
+		return false;
+	if (findstock==0&&data[2].equals(""))
+		return false;
 	
 	if(Double.parseDouble(data[6])<50)
 		return false;
 	
-	if(Double.parseDouble(data[7])>40)
+	if(Double.parseDouble(data[7])>61)
 		return false;
 	
 	try{
@@ -2844,13 +2850,13 @@ public boolean endComputeReturnQ(double currentHigh,double[] previousData,double
 	return false;
 }
 public boolean endComputeReturnQDay(Sheet s,String name,String buytime,double[] baseData,double predictpoint,double[] returnV,int day)
-{	
+{	int row=0;
 try{		
 		
 		Cell c=s.findCell(buytime);
 		if (c==null)
 			return false;
-		int row=c.getRow();		
+		row=c.getRow();		
 		double[] contemp=new double[5];
 		
 		double enterPoint=baseData[3];									
@@ -2867,6 +2873,9 @@ try{
 		//System.out.println(name+":"+buytime);			
 		do
 		{
+			if (row+day>=s.getRows())
+				break;
+				
 			contemp[0]=Double.parseDouble(s.getCell(1,row+day).getContents());
 			contemp[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
 			contemp[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
@@ -2947,12 +2956,13 @@ try{
 			}								
 			day++;
 		}
-		while(format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);
+		while((row+day)<s.getRows()&&format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);
 	}
 	catch(Exception e)
 	{
-		System.out.println(""+buytime);
-		System.out.print("\nendComputeReturnQDay");
+		System.out.println(row+" "+day+" "+s.getRows());
+		System.out.println(s.getName()+" "+buytime);
+		System.out.println("endComputeReturnQDay ");
 		e.printStackTrace();
 	}
 	
@@ -3090,11 +3100,11 @@ public void computeDailyK(Sheet s,String name,String buytime,ArrayList<double[]>
 			day++;
 			tt.add(ktype);
 		}
-		while(format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);
+		while((row+day)<s.getRows()&&format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);
 	}
 	catch(Exception e)
 	{
-		System.out.print("\ncomputeDailyK");
+		System.out.println("computeDailyK "+name+" "+buytime);
 		e.printStackTrace();
 	}
 }
@@ -3124,14 +3134,14 @@ public double computeEnterPoint(ArrayList<double[]> base,double[] compare)
 	
 	return keypoint;
 }
-public void locateStockDate(String name,ArrayList<String> as,ArrayList<double[]> mdata)
+public void locateStockDate(String filepath,String name,ArrayList<String> as,ArrayList<double[]> mdata)
 {
 	int basePosition=15;
 	int count=0;
 	
 	try{
-		Workbook workBook=Workbook.getWorkbook(new File(drive+"software/sdata/15/"+name+".xls"));
-		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/15/"+name+".xls"),workBook);
+		Workbook workBook=Workbook.getWorkbook(new File(filepath+name+".xls"));
+		WritableWorkbook writeBook=Workbook.createWorkbook(new File(filepath+name+".xls"),workBook);
 		WritableSheet sss=writeBook.getSheet(0);
 		
 		for (int i=0;i<as.size();i++)
@@ -3249,7 +3259,7 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedata,double predictpoint,double[] returnv,String[] tempdata,double compoint)
 {						
 	String date="";
-	int day=1,now10=0,gg10=0,gg20=0,gg30=0,endcomp=0;
+	int day=1,now10=0,gg10=0,gg20=0;
 	double[] contemp=new double[9],previoustemp=new double[9];
 	double[] previousreturnv=new double[3];
 	
@@ -3271,9 +3281,6 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		previoustemp[6]=Double.parseDouble(s.getCell(7,row).getContents());
 		previoustemp[7]=Double.parseDouble(s.getCell(8,row).getContents());
 		previoustemp[8]=Double.parseDouble(s.getCell(9,row).getContents());
-		
-		//tempdata[10]=previoustemp[1]-previoustemp[3]+"";
-		//tempdata[11]=previoustemp[8]/Double.parseDouble(s.getCell(9,row-1).getContents())+"";
 		}
 		catch (Exception e)
 		{			
@@ -3298,32 +3305,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		contemp[6]=Double.parseDouble(s.getCell(7,row+day).getContents());
 		contemp[7]=Double.parseDouble(s.getCell(8,row+day).getContents());
 		contemp[8]=Double.parseDouble(s.getCell(9,row+day).getContents());
-		
-		if (day==1)
-		{
-			if (contemp[0]>contemp[3])
-			{
-				if (contemp[3]>previoustemp[3])
-				tempdata[12]="01";
-				else
-					tempdata[12]="00";
 				
-				tempdata[13]=(contemp[3]-previoustemp[3])/previoustemp[3]+"";
-			}
-			else
-			{
-				if (contemp[3]>previoustemp[3])
-				tempdata[12]="11";
-				else
-					tempdata[12]="10";
-				tempdata[13]=(contemp[3]-previoustemp[3])/previoustemp[3]+"";
-			}
-				
-			
-			
-		}
-		
-		
 		}
 		catch (Exception e)
 		{			
@@ -3331,295 +3313,270 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 			//e.printStackTrace();
 			break;
 		}
-				
-		if ((basedata[3]-contemp[2])/basedata[3]>0.13)//拉回超過13% 停損出場
-		//if ((predictpoint-contemp[2])/predictpoint>0.1)
-		{
-			//if (gg10==1)
-			{
-				tempdata[9]="-1";
-				tempdata[5]=date;
-			}
-				
-				return true;
-		}
 		
+		if (stopLoss(basedata[3],contemp[2]))
+		{
+			tempdata[9]="-1";
+			tempdata[5]=date;
+			
+			return true;
+		}
+			
 		if(contemp[0]>contemp[3])
 		{
 			if (contemp[1]>returnv[0])
 			{
-				tempdata[5]=date;
-				
-				returnv[0]=contemp[1];
-				
-				returnv[2]=contemp[1]>returnv[2]?contemp[1]:returnv[2];
-						
-				if (gg10==0)
-				{			
-					if ((returnv[0]-compoint)/compoint>=0.1)
-					{
-						//tempdata[15]=new DecimalFormat("#.##").format(180/Math.PI*Math.atan2(contemp[3]-previoustemp[3],contemp[4]-previoustemp[4]))+"";
-						tempdata[4]=date;
-						gg10=1;
-						now10=1;
-						
-						if (tempdata[9].equals(""))
-							tempdata[9]="1";
-					}
-				}
-				else
-				{
-					if (gg20==0)				
-					{
-						if ((returnv[0]-compoint)/compoint>=0.2)
-						{
-							gg20=1;
-						}
-					}
-					if (gg30==0)				
-					{
-						if ((returnv[0]-compoint)/compoint>=0.3)
-						{
-							gg30=1;
-						}
-					}
-				}
-				
+				updateHigh(contemp,returnv,tempdata,date);			
 			}
-			if ((returnv[0]-compoint)/compoint<0.07)
+			if (contemp[2]<returnv[1])			
 			{								
-				if (contemp[2]<returnv[1])
-					returnv[1]=contemp[2];
-			}
-			if (day!=1)
+				updateLow(contemp,returnv,compoint);
+			}	
+		}
+		else
+		{
+			if (contemp[2]<returnv[1])			
+			{								
+				updateLow(contemp,returnv,compoint);
+			}			
+			if (contemp[1]>returnv[0])
 			{
-				if (contemp[2]<=compoint*1.03&&(returnv[0]-compoint)/compoint<0.1)
-				{
-					tempdata[10]="1";
-					tempdata[11]=""+(100*(compoint-returnv[1])/compoint);
-				}
+				updateHigh(contemp,returnv,tempdata,date);								
+			}			
+		}
+		
+		if (gg10==0)
+		{			
+			if ((returnv[0]-compoint)/compoint>=0.1)
+			{
+				tempdata[4]=date;
+				gg10=1;
+				now10=1;
 				
+				if (tempdata[9].equals(""))
+					tempdata[9]="1";
 			}
 		}
 		else
 		{
-			if ((returnv[0]-compoint)/compoint<0.07)
-			{								
-				if (contemp[2]<returnv[1])
-					returnv[1]=contemp[2];
-			}
-			if (day!=1)
+			if (gg20==0)				
 			{
-				if (contemp[2]<=compoint*1.03&&(returnv[0]-compoint)/compoint<0.1)
+				if ((returnv[0]-compoint)/compoint>=0.2)
 				{
-					tempdata[10]="1";
-					tempdata[11]=""+(100*(compoint-returnv[1])/compoint);
+					gg20=1;
 				}
-				
 			}
-			
-			if (contemp[1]>returnv[0])
-			{
-				tempdata[5]=date;
-				
-				returnv[0]=contemp[1];
-				
-				returnv[2]=contemp[1]>returnv[2]?contemp[1]:returnv[2];
-						
-				if (gg10==0)
-				{			
-					if ((returnv[0]-compoint)/compoint>=0.1)
-					{
-						//tempdata[15]=new DecimalFormat("#.##").format(180/Math.PI*Math.atan2(contemp[3]-previoustemp[3],contemp[4]-previoustemp[4]))+"";
-						tempdata[4]=date;
-						gg10=1;
-						now10=1;
-						
-						if (tempdata[9].equals(""))
-							tempdata[9]="1";
-					}
-				}
-				else
-				{
-					if (gg20==0)				
-					{
-						if ((returnv[0]-compoint)/compoint>=0.2)
-						{
-							gg20=1;
-						}
-					}
-					if (gg30==0)				
-					{
-						if ((returnv[0]-compoint)/compoint>=0.3)
-						{
-							gg30=1;
-						}
-					}
-				}				
-			}			
 		}
-				
-		if (gg10==1&&endcomp==0)//高點漲超過10%		
+			
+		if (stopBenefit(gg10,gg20,now10,contemp,previoustemp,returnv,previousreturnv,tempdata,date))
 		{
-			if (gg20==1)
-			{
-				if (contemp[0]>=previoustemp[3]*1.03)
-				{
-					if(contemp[2]<contemp[0]*0.97)
-					//if(contemp[2]<previoustemp[3])
-					{
-						//returnv[0]=previoustemp[3];
-						returnv[0]=contemp[0]*0.97;
-						tempdata[9]="82";
-						tempdata[5]=date;
-						endcomp=1;
-						//return true;
-					} 
-				}
-			}
-			else
-			{
-				if (contemp[0]>=previoustemp[3]*1.03)
-				{
-					if(contemp[2]<contemp[0]*0.97)
-					//if(contemp[2]<previoustemp[3])
-					{
-						//returnv[0]=previoustemp[3];
-						returnv[0]=contemp[0]*0.97;
-						tempdata[9]="81";
-						tempdata[5]=date;
-						endcomp=1;
-						//return true;
-					} 
-				}
-			}
+			tempdata[5]=date;
+			
+			return true;
+		}
+		
+		if(stopCompute(contemp,s,tempdata,gg10,row,day))					
+		{
+			tempdata[9]="0";
+			
+			return true;
+		}							
+		
+		System.arraycopy(contemp, 0, previoustemp, 0, contemp.length);
+		day++;		
+	}		
+	
+	return false;
+}
+private void updateHigh(double[] contemp,double[] returnv,String[] tempdata,String date)
+{
+	tempdata[5]=date;
 
-			if (now10==1)
+	returnv[0]=contemp[1];
+
+	returnv[2]=contemp[1]>returnv[2]?contemp[1]:returnv[2];			
+}
+private void updateLow(double[] contemp,double[] returnv,double compoint)
+{							
+	if ((returnv[0]-compoint)/compoint<0.07)
+		returnv[1]=contemp[2];
+}
+private void analyzeBy1stK(double curopen,double curclose,double preclose,Sheet s,String[] tempdata)
+{
+	if (curopen>curclose)
+	{
+		if (curclose>=preclose)
+			tempdata[12]="01";
+		else
+			tempdata[12]="00";
+	}
+	else
+	{
+		if (curclose>=preclose)
+			tempdata[12]="11";
+		else
+			tempdata[12]="10";
+	}
+}
+private boolean stopLoss(double base,double comp)
+{
+	if ((base-comp)/base>0.13)//拉回超過13% 停損出場
+		//if ((predictpoint-contemp[2])/predictpoint>0.1)
+		{
+			return true;
+		}
+	
+	return false;
+}
+private boolean stopCompute(double[] contemp,Sheet s,String[] tempdata,int gg10,int row,int day)
+{
+	if(contemp[6]<Double.parseDouble(s.getCell(7,row+day-1).getContents())&&Double.parseDouble(s.getCell(7,row+day-1).getContents())<Double.parseDouble(s.getCell(7,row+day-2).getContents()))//月趨向下
+	{
+		if (gg10==1)//高點漲超過10%
+		{
+			return true;
+		}							
+	}
+	if(contemp[7]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
+	{
+		if (gg10==1)//高點漲超過10%
+		{
+			return true;
+		}							
+	}
+	
+	return false;
+}
+private boolean stopBenefit(int gg10,int gg20,int now10,double[] contemp,double[] previoustemp,double[] returnv,double previousreturnv[],String[] tempdata,String date)
+{
+	if (gg10==1)//高點漲超過10%		
+	{
+		if (gg20==1)
+		{
+			if (contemp[0]>=previoustemp[3]*1.03)
 			{
-				if (contemp[0]>=contemp[3])
+				if(contemp[2]<contemp[0]*0.97)
+				//if(contemp[2]<previoustemp[3])
 				{
-					if (gg20==1)
+					//returnv[0]=previoustemp[3];
+					returnv[0]=contemp[0]*0.97;
+					tempdata[9]="82";
+					
+					return true;
+				} 
+			}
+		}
+		else
+		{
+			if (contemp[0]>=previoustemp[3]*1.03)
+			{
+				if(contemp[2]<contemp[0]*0.97)
+				//if(contemp[2]<previoustemp[3])
+				{
+					//returnv[0]=previoustemp[3];
+					returnv[0]=contemp[0]*0.97;
+					tempdata[9]="81";
+			
+					return true;
+				} 
+			}
+		}
+
+		if (now10==1)
+		{
+			if (contemp[0]>=contemp[3])
+			{
+				if (gg20==1)
+				{
+					if(contemp[2]<returnv[0]*0.97)
 					{
-						if(contemp[2]<returnv[0]*0.97)
-						{
-							returnv[0]=returnv[0]*0.97;
-							tempdata[9]="121";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						}
-					}
-					else
-					{
-						if(contemp[2]<returnv[0]*0.97)
-						{
-							returnv[0]=returnv[0]*0.97;
-							tempdata[9]="111";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						}
+						returnv[0]=returnv[0]*0.97;
+						tempdata[9]="121";
+					
+						return true;
 					}
 				}
 				else
 				{
-					if (gg20==1)
+					if(contemp[2]<returnv[0]*0.97)
 					{
-						if(contemp[3]<returnv[0]*0.97)
-						{
-							returnv[0]=contemp[3];
-							tempdata[9]="122";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						}
-					}
-					else
-					{
-						if(contemp[3]<returnv[0]*0.97)
-						{
-							returnv[0]=contemp[3];
-							tempdata[9]="112";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						}
+						returnv[0]=returnv[0]*0.97;
+						tempdata[9]="111";
+					
+						return true;
 					}
 				}
-				
-				now10=0;
 			}
 			else
 			{
 				if (gg20==1)
 				{
-					if(contemp[2]<previousreturnv[0]*0.97)
+					if(contemp[3]<returnv[0]*0.97)
 					{
-						if(contemp[0]<previousreturnv[0]*0.97)
-						{
-							returnv[0]=contemp[0];
-							tempdata[9]="221";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						} 
-						else
-						{
-							returnv[0]=previousreturnv[0]*0.97;
-							tempdata[9]="222";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						}
+						returnv[0]=contemp[3];
+						tempdata[9]="122";
+					
+						return true;
 					}
 				}
 				else
 				{
-					if(contemp[2]<previousreturnv[0]*0.97)
+					if(contemp[3]<returnv[0]*0.97)
 					{
-						if(contemp[0]<previousreturnv[0]*0.97)
-						{
-							returnv[0]=contemp[0];
-							tempdata[9]="211";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						} 
-						else
-						{
-							returnv[0]=previousreturnv[0]*0.97;
-							tempdata[9]="212";
-							tempdata[5]=date;
-							//return true;
-							endcomp=1;
-						}
+						returnv[0]=contemp[3];
+						tempdata[9]="112";
+					
+						return true;
 					}
 				}
-			}			
+			}
+			
+			now10=0;
 		}
-							
-		if(contemp[6]<Double.parseDouble(s.getCell(7,row+day-1).getContents())&&Double.parseDouble(s.getCell(7,row+day-1).getContents())<Double.parseDouble(s.getCell(7,row+day-2).getContents()))//月趨向下
+		else
 		{
-			if (gg10==1)//高點漲超過10%
+			if (gg20==1)
 			{
-				tempdata[9]="0";
-				//tempdata[5]=date;
-				return true;
-			}							
-		}
-		if(contemp[7]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
-		{
-			if (gg10==1)//高點漲超過10%
+				if(contemp[2]<previousreturnv[0]*0.97)
+				{
+					if(contemp[0]<previousreturnv[0]*0.97)
+					{
+						returnv[0]=contemp[0];
+						tempdata[9]="221";
+						
+						return true;
+					} 
+					else
+					{
+						returnv[0]=previousreturnv[0]*0.97;
+						tempdata[9]="222";
+					
+						return true;
+					}
+				}
+			}
+			else
 			{
-				tempdata[9]="0";
-				//tempdata[5]=date;
-				return true;
-			}							
-		}
-		
-		System.arraycopy(contemp, 0, previoustemp, 0, contemp.length);
-		day++;		
-	}		
+				if(contemp[2]<previousreturnv[0]*0.97)
+				{
+					if(contemp[0]<previousreturnv[0]*0.97)
+					{
+						returnv[0]=contemp[0];
+						tempdata[9]="211";
+						
+						return true;
+					} 
+					else
+					{
+						returnv[0]=previousreturnv[0]*0.97;
+						tempdata[9]="212";
+					
+						return true;
+					}
+				}
+			}
+		}			
+	}
 	
 	return false;
 }

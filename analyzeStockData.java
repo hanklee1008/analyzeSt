@@ -68,7 +68,7 @@ public String getStockCapital(String stocknum)
 	}
 	return s;
 }
-public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate) throws IOException
+public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate) throws Exception
 {
 	String url="http://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stocknum+"&ctl00$ContentPlaceHolder1$startText="+startdate;
 	//String url="http://www.cnyes.com/twstock/ps_historyprice.aspx?code=1333&ctl00$ContentPlaceHolder1$startText=2015/11/01";
@@ -111,7 +111,7 @@ public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate
             }
         }      
         
-    } catch (IOException e) {
+    } catch (Exception e) {
         e.printStackTrace();
         throw e;
     }
@@ -121,10 +121,42 @@ public static void main(String[] s)
 {
 	analyzeStockData asd=new analyzeStockData();
 	//asd.getStockCapital("1333");
-	//ArrayList<String[]> as=asd.getStockHistoryValue("3008","2015/09/01");
+	//asd.findstock(new File(drive+"software/sdata/low15.xls"),drive+"software/sdata/15base/");
 	//asd.updateStockDailyKToExcel(new File("c:/ttt.txt"),"2004/03/01");
 	
-	asd.copySheet(drive+"software/sdata/new/",drive+"software/sdata/weeklyKStock.xls");
+	//asd.copySheet(drive+"software/sdata/new/",drive+"software/sdata/weeklyKStock.xls");
+}
+public void findstock(File allstock,String filepath)
+{
+	try{
+		Workbook wb=Workbook.getWorkbook(allstock);
+		Sheet sh=wb.getSheet(0);
+		for (int i=0;i<sh.getRows();++i)
+		{
+			String str=sh.getCell(0, i).getContents().substring(0,4);
+			int count=10;
+			while (count>0)
+			{
+				try{
+					System.out.println(str);
+				ArrayList<String[]> as=getStockHistoryValue(str,"2015/08/31");
+				updateStockDailyKToExcel(as,str,filepath);
+				updateStockWeeklyKToExcel(new File(filepath+str+".xls"),str);
+				count=0;
+				}
+				catch (Exception e)
+				{
+					count--;
+					e.printStackTrace();					
+				}
+			}		
+		}	
+		wb.close();
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
 }
 private void writeFileListToFile(String sourceDir,String destinationFile)
 {
@@ -145,7 +177,7 @@ private void writeFileListToFile(String sourceDir,String destinationFile)
 		e.printStackTrace();
 	}
 }
-private void updateStockDailyKToExcel(File stocksourcef,String date)
+private void updateStockDailyKToExcel(File stocksourcef,String date,String filepath)
 {
 	try {
 		FileReader fr=new FileReader(stocksourcef);
@@ -166,7 +198,7 @@ private void updateStockDailyKToExcel(File stocksourcef,String date)
 				try{
 					System.out.println(stocknum);
 					ArrayList<String[]> as=getStockHistoryValue(stocknum,date);
-					updateStockDailyKToExcel(as,stocknum);
+					updateStockDailyKToExcel(as,stocknum,filepath);
 					end=1;
 				}
 				catch(Exception e)
@@ -181,11 +213,11 @@ private void updateStockDailyKToExcel(File stocksourcef,String date)
 		
 	}
 }
-private void updateStockDailyKToExcel(ArrayList<String[]> as,String stocknum)
+private void updateStockDailyKToExcel(ArrayList<String[]> as,String stocknum,String filepath)
 {
 	try{
 		
-		WritableWorkbook writeBook=Workbook.createWorkbook(new File(drive+"software/sdata/new/"+stocknum+".xls"));  
+		WritableWorkbook writeBook=Workbook.createWorkbook(new File(filepath+stocknum+".xls"));  
 		WritableSheet sss=writeBook.createSheet(stocknum, 0);
 		
 		sss.addCell(new Label(0,0,"date"));
@@ -275,21 +307,21 @@ private void updateStockDailyKToExcel(ArrayList<String[]> as,String stocknum)
 		writeBook.write();
 		writeBook.close();
 
-		updateStockWeeklyKToExcel(new File(drive+"software/sdata/new/"+stocknum+".xls"),stocknum);
+		updateStockWeeklyKToExcel(new File(filepath+stocknum+".xls"),stocknum);
 	}
 	catch (Exception e) {
         e.printStackTrace();
     }
 }
-private void updateStockWeeklyKToExcel(File f,String stocknum)
+private void updateStockWeeklyKToExcel(File stockf,String stocknum)
 {
 	try{
 		String drive="d:/";
 		ArrayList<double[]> as=new ArrayList<double[]>();
 		
 		//Sheet dailysh=Workbook.getWorkbook(new File(drive+"software/sdata/new/new/"+stocknum+".xls")).getSheet(0);
-		Workbook wb=Workbook.getWorkbook(f);
-		WritableWorkbook writeBook=Workbook.createWorkbook(f,wb); 
+		Workbook wb=Workbook.getWorkbook(stockf);
+		WritableWorkbook writeBook=Workbook.createWorkbook(stockf,wb); 
 		Sheet dailysh=wb.getSheet(0);
 		WritableSheet weeklysh=writeBook.createSheet("999", 1);
 		
@@ -458,4 +490,5 @@ private void copySheet(File destination,int dLocation,File source,int sLocation)
 		e.printStackTrace();
 	}
 }
+
 }
