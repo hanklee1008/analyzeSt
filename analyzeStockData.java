@@ -26,7 +26,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-//test git push hanklee1008
+///test git push hanklee1008
 public class analyzeStockData {
 	final static String drive="d:/";
 public String getStockCapital(String stocknum)
