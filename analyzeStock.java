@@ -30,7 +30,7 @@ public class analyzeStock {
 	
  int weeklyRateType,highType=0,quantityType=0,kType=0,quarterLineRedK=0,monthLineRedK=1;
  double turnQuarterLineDegree=0,turnMonthLineDegree=0,test=0;
- final int quarterKCount=14,findstock=1;
+ final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
  static String drive="d:/";
@@ -66,9 +66,9 @@ public static void main(String[] s)
 		String filepath=drive+"software/sdata/15base/";
 		/*analyzeStockData asd=new analyzeStockData();
 		
-		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);*/
+		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);
 		
-		/*File[] temp=new File(filepath).listFiles();
+		File[] temp=new File(filepath).listFiles();
 		for (File f:temp)
 		{
 			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
@@ -2002,10 +2002,10 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate)
 			return false;
 	
-	if (findstock==1&&!data[2].equals(""))
+	/*if (findstock==1&&!data[2].equals(""))
 		return false;
 	if (findstock==0&&data[2].equals(""))
-		return false;
+		return false;*/
 	
 	if(Double.parseDouble(data[6])<50)
 		return false;
@@ -3281,6 +3281,8 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		previoustemp[6]=Double.parseDouble(s.getCell(7,row).getContents());
 		previoustemp[7]=Double.parseDouble(s.getCell(8,row).getContents());
 		previoustemp[8]=Double.parseDouble(s.getCell(9,row).getContents());
+		
+		
 		}
 		catch (Exception e)
 		{			
@@ -3305,7 +3307,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		contemp[6]=Double.parseDouble(s.getCell(7,row+day).getContents());
 		contemp[7]=Double.parseDouble(s.getCell(8,row+day).getContents());
 		contemp[8]=Double.parseDouble(s.getCell(9,row+day).getContents());
-				
+		
 		}
 		catch (Exception e)
 		{			
@@ -3401,18 +3403,18 @@ private void updateLow(double[] contemp,double[] returnv,double compoint)
 	if ((returnv[0]-compoint)/compoint<0.07)
 		returnv[1]=contemp[2];
 }
-private void analyzeBy1stK(double curopen,double curclose,double preclose,Sheet s,String[] tempdata)
+private void analyzeBy1stK(double[] contemp,double[] previoustemp,String[] tempdata)
 {
-	if (curopen>curclose)
+	if (contemp[0]>contemp[3])
 	{
-		if (curclose>=preclose)
+		if (contemp[3]>=previoustemp[3])
 			tempdata[12]="01";
 		else
 			tempdata[12]="00";
 	}
 	else
 	{
-		if (curclose>=preclose)
+		if (contemp[3]>=previoustemp[3])
 			tempdata[12]="11";
 		else
 			tempdata[12]="10";
