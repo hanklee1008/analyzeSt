@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 public static void main(String[] s)
 {		
@@ -63,16 +63,17 @@ public static void main(String[] s)
 		System.out.println("\ncompute end:"+sdFormat.format(new Date()));*/
 		
 		
-		String filepath=drive+"software/sdata/15base/";
+		String filepath=drive+"software/sdata/15foranalyze/";
 		/*analyzeStockData asd=new analyzeStockData();
 		
 		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);
+		*/
 		
 		File[] temp=new File(filepath).listFiles();
 		for (File f:temp)
 		{
 			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
-		}*/
+		}
 		
 		s1.computeReturnByDailyExcel(filepath);
 	}
@@ -601,6 +602,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 	double weeklyrate,lead,quantity,testWeeklyrate=0,highWeeklyrate=0;
 	int day=1;
 	ArrayList<double[]> tt=new ArrayList<double[]>();
+	String[] buyday=new String[7];
 	double[] returnV=new double[2];
 	String[] tempdata=null;
 	ArrayList<String> as=new ArrayList<String>();
@@ -656,7 +658,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 								{
 									day=0;
 									tt=new ArrayList<double[]>();
-									computeDailyK(shfile,s.getName(),s.getCell(0,temp).getContents(),tt,contemp);
+									computeDailyK(shfile,s.getName(),s.getCell(0,temp).getContents(),tt,contemp,buyday);
 									if(tt.size()!=0)
 									do{										
 										if (conditionAnalyzeQ(content,tt.get(day),tt.get(day)[3]))
@@ -683,10 +685,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 												}
 											}
 											
-											Calendar ca =Calendar.getInstance();
-											ca.setTime(new SimpleDateFormat("yyyy/MM/dd").parse(s.getCell(0,temp).getContents()));
-											ca.add(Calendar.DATE, day);
-											as.add(new SimpleDateFormat("yyyy/MM/dd").format(ca.getTime()));
+											as.add(buyday[day]);
 											double[] dd=new double[7];
 											dd[0]=tt.get(day)[0];
 											dd[1]=tt.get(day)[1];
@@ -742,7 +741,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 								{
 									day=0;
 									tt=new ArrayList<double[]>();
-									computeDailyK(shfile,s.getName(),s.getCell(0,temp).getContents(),tt,contemp);
+									computeDailyK(shfile,s.getName(),s.getCell(0,temp).getContents(),tt,contemp,buyday);
 									if(tt.size()!=0)
 									do{										
 										if (conditionAnalyzeQ(content,tt.get(day),tt.get(day)[3]))
@@ -769,11 +768,8 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 													currentLow=enterPoint;
 												}
 											}
-											
-											Calendar ca =Calendar.getInstance();
-											ca.setTime(new SimpleDateFormat("yyyy/MM/dd").parse(s.getCell(0,temp).getContents()));
-											ca.add(Calendar.DATE, day);
-											as.add(new SimpleDateFormat("yyyy/MM/dd").format(ca.getTime()));
+
+											as.add(buyday[day]);
 											double[] dd=new double[7];
 											dd[0]=tt.get(day)[0];
 											dd[1]=tt.get(day)[1];
@@ -3048,7 +3044,7 @@ public void firstComputeK(double[] baseData,double[] contemp)
 		}
 	}
 }
-public void computeDailyK(Sheet s,String name,String buytime,ArrayList<double[]> tt,double[] base)
+public void computeDailyK(Sheet s,String name,String buytime,ArrayList<double[]> tt,double[] base,String[] buyday)
 {	
 	try{
 		Cell c=s.findCell(buytime);
@@ -3069,6 +3065,8 @@ public void computeDailyK(Sheet s,String name,String buytime,ArrayList<double[]>
 		
 		do
 		{
+			buyday[day]=s.getCell(0,row+day).getContents();
+			
 			ktype=new double[7];
 			ktype[0]=Double.parseDouble(s.getCell(1,row).getContents());
 			if(day>=1)
@@ -3308,6 +3306,12 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		contemp[7]=Double.parseDouble(s.getCell(8,row+day).getContents());
 		contemp[8]=Double.parseDouble(s.getCell(9,row+day).getContents());
 		
+		if (day==1)
+		{
+			analyzeBy1stK(contemp,previoustemp,tempdata);
+			tempdata[11]=(contemp[1]-contemp[3])/contemp[1]+"";
+			tempdata[13]=contemp[8]/previoustemp[8]+"";
+		}
 		}
 		catch (Exception e)
 		{			
