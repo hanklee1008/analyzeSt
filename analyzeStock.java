@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="c:/";
+ static String drive="d:/";
  
 public static void main(String[] s)
 {		
@@ -69,11 +69,11 @@ public static void main(String[] s)
 		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);
 		*/
 		
-		File[] temp=new File(filepath).listFiles();
+		/*File[] temp=new File(filepath).listFiles();
 		for (File f:temp)
 		{
 			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
-		}
+		}*/
 		
 		s1.computeReturnByDailyExcel(filepath);
 	}
@@ -3230,7 +3230,7 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 				
 
 				//tempdata[10]=""+predictpoint;
-				//tempdata[11]=""+df.format(100*(computepoint-returnv[1])/computepoint);
+				tempdata[10]=""+df.format(100*(Double.parseDouble(tempdata[15])-returnv[1])/Double.parseDouble(tempdata[15]));
 				//tempdata[12]=""+df.format(basedata[6]-100*(predictpoint-100*basedata[3]/(basedata[6]+100))/(100*basedata[3]/(basedata[6]+100)));
 				
 				/*SimpleDateFormat format=new SimpleDateFormat("yyyy/MM/dd");
@@ -3257,7 +3257,7 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedata,double predictpoint,double[] returnv,String[] tempdata,double compoint)
 {						
 	String date="";
-	int day=1,now10=0,gg10=0,gg20=0;
+	int day=1,now10=0,gg10=0,gg20=0,endbenefit=0;
 	double[] contemp=new double[9],previoustemp=new double[9];
 	double[] previousreturnv=new double[3];
 	
@@ -3310,7 +3310,9 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		{
 			analyzeBy1stK(contemp,previoustemp,tempdata);
 			tempdata[11]=(contemp[1]-contemp[3])/contemp[1]+"";
-			tempdata[13]=contemp[8]/previoustemp[8]+"";
+			tempdata[13]=(contemp[2]-previoustemp[3])/previoustemp[3]+"";
+			tempdata[14]=(contemp[3]-previoustemp[3])/previoustemp[3]+"";
+			tempdata[15]=contemp[3]+"";
 		}
 		}
 		catch (Exception e)
@@ -3373,12 +3375,13 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 				}
 			}
 		}
-			
+		
+		if (endbenefit==0)
 		if (stopBenefit(gg10,gg20,now10,contemp,previoustemp,returnv,previousreturnv,tempdata,date))
 		{
 			tempdata[5]=date;
-			
-			return true;
+			endbenefit=1;
+			//return true;
 		}
 		
 		if(stopCompute(contemp,s,tempdata,gg10,row,day))					
@@ -3404,7 +3407,7 @@ private void updateHigh(double[] contemp,double[] returnv,String[] tempdata,Stri
 }
 private void updateLow(double[] contemp,double[] returnv,double compoint)
 {							
-	if ((returnv[0]-compoint)/compoint<0.07)
+	if ((returnv[0]-compoint)/compoint<0.1)
 		returnv[1]=contemp[2];
 }
 private void analyzeBy1stK(double[] contemp,double[] previoustemp,String[] tempdata)
