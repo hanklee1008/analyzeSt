@@ -1998,10 +1998,10 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate)
 			return false;
 	
-	/*if (findstock==1&&!data[2].equals(""))
+	if (findstock==1&&!data[2].equals(""))
 		return false;
 	if (findstock==0&&data[2].equals(""))
-		return false;*/
+		return false;
 	
 	if(Double.parseDouble(data[6])<50)
 		return false;
@@ -3222,12 +3222,10 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 			{
 				tempdata[2]=""+df.format(100*(returnv[2]-computepoint)/computepoint);
 				tempdata[3]=""+df.format(100*(returnv[0]-computepoint)/computepoint);	
-				tempdata[10]="1";
 			}
+
 			tempdata[0]=f.getName();
 			tempdata[1]=s.getCell(0,row).getContents();
-			tempdata[2]=""+df.format(100*(returnv[2]-computepoint)/computepoint);
-			tempdata[3]=""+df.format(100*(returnv[0]-computepoint)/computepoint);	
 			tempdata[6]=""+basedata[4];
 			tempdata[7]=""+df.format(basedata[6]);
 			tempdata[8]=""+df.format(100*(basedata[1]-basedata[3])/basedata[3]);
@@ -3280,6 +3278,12 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		previoustemp[7]=Double.parseDouble(s.getCell(8,row).getContents());
 		previoustemp[8]=Double.parseDouble(s.getCell(9,row).getContents());
 		
+		tempdata[10]=Double.parseDouble(s.getCell(4,row-2).getContents())+"";
+		tempdata[11]=Double.parseDouble(s.getCell(1,row-1).getContents())+"";
+		tempdata[12]=Double.parseDouble(s.getCell(2,row-1).getContents())+"";
+		tempdata[13]=Double.parseDouble(s.getCell(3,row-1).getContents())+"";
+		tempdata[14]=Double.parseDouble(s.getCell(4,row-1).getContents())+"";
+		tempdata[15]=Double.parseDouble(s.getCell(4,row-1).getContents())-Double.parseDouble(s.getCell(5,row-1).getContents())+"";
 		
 		}
 		catch (Exception e)
@@ -3306,14 +3310,14 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		contemp[7]=Double.parseDouble(s.getCell(8,row+day).getContents());
 		contemp[8]=Double.parseDouble(s.getCell(9,row+day).getContents());
 		
-		if (day==1)
+		/*if (day==1)
 		{
 			analyzeBy1stK(contemp,previoustemp,tempdata);
 			tempdata[11]=(contemp[1]-contemp[3])/contemp[1]+"";
 			tempdata[13]=(contemp[2]-previoustemp[3])/previoustemp[3]+"";
 			tempdata[14]=(contemp[3]-previoustemp[3])/previoustemp[3]+"";
 			tempdata[15]=contemp[3]+"";
-		}
+		}*/
 		}
 		catch (Exception e)
 		{			
