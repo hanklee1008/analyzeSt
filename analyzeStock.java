@@ -30,10 +30,10 @@ public class analyzeStock {
 	
  int weeklyRateType,highType=0,quantityType=0,kType=0,quarterLineRedK=0,monthLineRedK=1;
  double turnQuarterLineDegree=0,turnMonthLineDegree=0,test=0;
- final int quarterKCount=14,findstock=0;
+ final int quarterKCount=14,findstock=1;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 public static void main(String[] s)
 {		
@@ -63,7 +63,7 @@ public static void main(String[] s)
 		System.out.println("\ncompute end:"+sdFormat.format(new Date()));*/
 		
 		
-		String filepath=drive+"software/sdata/15foranalyze/";
+		String filepath=drive+"software/sdata/15/";
 		/*analyzeStockData asd=new analyzeStockData();
 		
 		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);
@@ -3223,9 +3223,9 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 				tempdata[2]=""+df.format(100*(returnv[2]-computepoint)/computepoint);
 				tempdata[3]=""+df.format(100*(returnv[0]-computepoint)/computepoint);	
 			}
+
 			tempdata[0]=f.getName();
 			tempdata[1]=s.getCell(0,row).getContents();
-
 			tempdata[6]=""+basedata[4];
 			tempdata[7]=""+df.format(basedata[6]);
 			tempdata[8]=""+df.format(100*(basedata[1]-basedata[3])/basedata[3]);
