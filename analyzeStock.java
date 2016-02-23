@@ -30,10 +30,10 @@ public class analyzeStock {
 	
  int weeklyRateType,highType=0,quantityType=0,kType=0,quarterLineRedK=0,monthLineRedK=1;
  double turnQuarterLineDegree=0,turnMonthLineDegree=0,test=0;
- final int quarterKCount=14,findstock=1;
+ final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="c:/";
+ static String drive="d:/";
  
 public static void main(String[] s)
 {		
@@ -63,7 +63,7 @@ public static void main(String[] s)
 		System.out.println("\ncompute end:"+sdFormat.format(new Date()));*/
 		
 		
-		String filepath=drive+"software/sdata/15/";
+		String filepath=drive+"software/sdata/15foranalyze/";
 		/*analyzeStockData asd=new analyzeStockData();
 		
 		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);
@@ -1998,6 +1998,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate)
 			return false;
 	
+	//if (data[2].equals(""))
+		//return false;
 	if (findstock==1&&!data[2].equals(""))
 		return false;
 	if (findstock==0&&data[2].equals(""))
@@ -3208,7 +3210,7 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 			returnv[2]=basedata[3];
 			
 			double predictpoint=basedata[5];
-			String[] tempdata={"","","","","","","","","","","","","","","",""};
+			String[] tempdata={"","","","","","","","","","","","","","","","","",""};
 			DecimalFormat df=new DecimalFormat("#.##");
 			
 			double computepoint=predictpoint*1.03;
@@ -3230,7 +3232,6 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 			tempdata[7]=""+df.format(basedata[6]);
 			tempdata[8]=""+df.format(100*(basedata[1]-basedata[3])/basedata[3]);
 			
-
 			//tempdata[10]=""+predictpoint;
 			//tempdata[10]=""+df.format(100*(Double.parseDouble(tempdata[15])-returnv[1])/Double.parseDouble(tempdata[15]));
 			//tempdata[12]=""+df.format(basedata[6]-100*(predictpoint-100*basedata[3]/(basedata[6]+100))/(100*basedata[3]/(basedata[6]+100)));
@@ -3255,18 +3256,10 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedata,double predictpoint,double[] returnv,String[] tempdata,double compoint)
 {						
 	String date="";
-	int day=1,now10=0,gg10=0,gg20=0,endbenefit=0;
+	int day=1,now10=0,gg10=0,endbenefit=0;
 	double[] contemp=new double[9],previoustemp=new double[9];
 	double[] previousreturnv=new double[3];
-	
-	if ((returnv[0]-compoint)/compoint>=0.1)
-	{
-		tempdata[4]=s.getCell(0,row).getContents();
-			gg10=1;
-		if (tempdata[9].equals(""))
-			tempdata[9]="1";		
-	}
-	
+		
 	try{
 		previoustemp[0]=Double.parseDouble(s.getCell(1,row).getContents());
 		previoustemp[1]=Double.parseDouble(s.getCell(2,row).getContents());
@@ -3278,12 +3271,9 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		previoustemp[7]=Double.parseDouble(s.getCell(8,row).getContents());
 		previoustemp[8]=Double.parseDouble(s.getCell(9,row).getContents());
 		
-		tempdata[10]=Double.parseDouble(s.getCell(4,row-2).getContents())+"";
-		tempdata[11]=Double.parseDouble(s.getCell(1,row-1).getContents())+"";
-		tempdata[12]=Double.parseDouble(s.getCell(2,row-1).getContents())+"";
-		tempdata[13]=Double.parseDouble(s.getCell(3,row-1).getContents())+"";
-		tempdata[14]=Double.parseDouble(s.getCell(4,row-1).getContents())+"";
-		tempdata[15]=Double.parseDouble(s.getCell(4,row-1).getContents())-Double.parseDouble(s.getCell(5,row-1).getContents())+"";
+		{
+			tempdata[11]=previoustemp[8]/Double.parseDouble(s.getCell(9,row-1).getContents())+"";
+		}
 		
 		}
 		catch (Exception e)
@@ -3310,14 +3300,10 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		contemp[7]=Double.parseDouble(s.getCell(8,row+day).getContents());
 		contemp[8]=Double.parseDouble(s.getCell(9,row+day).getContents());
 		
-		/*if (day==1)
+		if (day==1)
 		{
-			analyzeBy1stK(contemp,previoustemp,tempdata);
-			tempdata[11]=(contemp[1]-contemp[3])/contemp[1]+"";
-			tempdata[13]=(contemp[2]-previoustemp[3])/previoustemp[3]+"";
-			tempdata[14]=(contemp[3]-previoustemp[3])/previoustemp[3]+"";
-			tempdata[15]=contemp[3]+"";
-		}*/
+			tempdata[12]=contemp[8]/previoustemp[8]+"";
+		}
 		}
 		catch (Exception e)
 		{			
@@ -3325,35 +3311,41 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 			//e.printStackTrace();
 			break;
 		}
-		
-		if (stopLoss(basedata[3],contemp[2]))
-		{
-			tempdata[9]="-1";
-			tempdata[5]=date;
-			
-			return true;
-		}
-			
+				
 		if(contemp[0]>contemp[3])
 		{
 			if (contemp[1]>returnv[0])
 			{
-				updateHigh(contemp,returnv,tempdata,date);			
+				updateHigh(contemp,returnv,tempdata,date,endbenefit);	
 			}
-			if (contemp[2]<returnv[1])			
-			{								
+			/*if (contemp[2]<returnv[1])			
+			{							
 				updateLow(contemp,returnv,compoint);
-			}	
+			}*/	
+			if (stopLoss(basedata[3],contemp[2]))
+			{
+				tempdata[9]="-1";
+				tempdata[5]=date;
+				
+				return true;
+			}
 		}
 		else
 		{
-			if (contemp[2]<returnv[1])			
-			{								
+			/*if (contemp[2]<returnv[1])			
+			{							
 				updateLow(contemp,returnv,compoint);
-			}			
+			}	*/
+			if (stopLoss(basedata[3],contemp[2]))
+			{
+				tempdata[9]="-1";
+				tempdata[5]=date;
+				
+				return true;
+			}
 			if (contemp[1]>returnv[0])
 			{
-				updateHigh(contemp,returnv,tempdata,date);								
+				updateHigh(contemp,returnv,tempdata,date,endbenefit);		
 			}			
 		}
 		
@@ -3369,19 +3361,9 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 					tempdata[9]="1";
 			}
 		}
-		else
-		{
-			if (gg20==0)				
-			{
-				if ((returnv[0]-compoint)/compoint>=0.2)
-				{
-					gg20=1;
-				}
-			}
-		}
 		
 		if (endbenefit==0)
-		if (stopBenefit(gg10,gg20,now10,contemp,previoustemp,returnv,previousreturnv,tempdata,date))
+		if (stopBenefit(gg10,now10,contemp,previoustemp,returnv,previousreturnv,tempdata,date))
 		{
 			tempdata[5]=date;
 			endbenefit=1;
@@ -3401,18 +3383,21 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 	
 	return false;
 }
-private void updateHigh(double[] contemp,double[] returnv,String[] tempdata,String date)
+private void updateHigh(double[] contemp,double[] returnv,String[] tempdata,String date,int endbenefit)
 {
+	
 	tempdata[5]=date;
-
+	
+	if (endbenefit==0)
 	returnv[0]=contemp[1];
 
 	returnv[2]=contemp[1]>returnv[2]?contemp[1]:returnv[2];			
 }
 private void updateLow(double[] contemp,double[] returnv,double compoint)
-{							
-	if ((returnv[0]-compoint)/compoint<0.1)
+{					
+	if ((returnv[2]-compoint)/compoint<0.1)
 		returnv[1]=contemp[2];
+	
 }
 private void analyzeBy1stK(double[] contemp,double[] previoustemp,String[] tempdata)
 {
@@ -3443,104 +3428,57 @@ private boolean stopLoss(double base,double comp)
 }
 private boolean stopCompute(double[] contemp,Sheet s,String[] tempdata,int gg10,int row,int day)
 {
-	if(contemp[6]<Double.parseDouble(s.getCell(7,row+day-1).getContents())&&Double.parseDouble(s.getCell(7,row+day-1).getContents())<Double.parseDouble(s.getCell(7,row+day-2).getContents()))//月趨向下
+	if (gg10==1)//高點漲超過10%
 	{
-		if (gg10==1)//高點漲超過10%
+		if(contemp[6]<Double.parseDouble(s.getCell(7,row+day-1).getContents())&&Double.parseDouble(s.getCell(7,row+day-1).getContents())<Double.parseDouble(s.getCell(7,row+day-2).getContents()))//月趨向下
 		{
-			return true;
-		}							
-	}
-	if(contemp[7]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
-	{
-		if (gg10==1)//高點漲超過10%
+			return true;						
+		}
+		if(contemp[7]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
 		{
-			return true;
-		}							
+			return true;							
+		}
 	}
-	
+		
 	return false;
 }
-private boolean stopBenefit(int gg10,int gg20,int now10,double[] contemp,double[] previoustemp,double[] returnv,double previousreturnv[],String[] tempdata,String date)
+private boolean stopBenefit(int gg10,int now10,double[] contemp,double[] previoustemp,double[] returnv,double previousreturnv[],String[] tempdata,String date)
 {
 	if (gg10==1)//高點漲超過10%		
 	{
-		if (gg20==1)
+		if (contemp[0]>=previoustemp[3]*1.03)
 		{
-			if (contemp[0]>=previoustemp[3]*1.03)
+			if(contemp[2]<contemp[0]*0.97)
+			//if(contemp[2]<previoustemp[3])
 			{
-				if(contemp[2]<contemp[0]*0.97)
-				//if(contemp[2]<previoustemp[3])
-				{
-					//returnv[0]=previoustemp[3];
-					returnv[0]=contemp[0]*0.97;
-					tempdata[9]="82";
-					
-					return true;
-				} 
-			}
-		}
-		else
-		{
-			if (contemp[0]>=previoustemp[3]*1.03)
-			{
-				if(contemp[2]<contemp[0]*0.97)
-				//if(contemp[2]<previoustemp[3])
-				{
-					//returnv[0]=previoustemp[3];
-					returnv[0]=contemp[0]*0.97;
-					tempdata[9]="81";
-			
-					return true;
-				} 
-			}
+				//returnv[0]=previoustemp[3];
+				returnv[0]=contemp[0]*0.97;
+				tempdata[9]="82";
+				
+				return true;
+			} 
 		}
 
 		if (now10==1)
 		{
 			if (contemp[0]>=contemp[3])
 			{
-				if (gg20==1)
+				if(contemp[2]<returnv[0]*0.97)
 				{
-					if(contemp[2]<returnv[0]*0.97)
-					{
-						returnv[0]=returnv[0]*0.97;
-						tempdata[9]="121";
-					
-						return true;
-					}
-				}
-				else
-				{
-					if(contemp[2]<returnv[0]*0.97)
-					{
-						returnv[0]=returnv[0]*0.97;
-						tempdata[9]="111";
-					
-						return true;
-					}
+					returnv[0]=returnv[0]*0.97;
+					tempdata[9]="111";
+				
+					return true;
 				}
 			}
 			else
 			{
-				if (gg20==1)
+				if(contemp[3]<returnv[0]*0.97)
 				{
-					if(contemp[3]<returnv[0]*0.97)
-					{
-						returnv[0]=contemp[3];
-						tempdata[9]="122";
-					
-						return true;
-					}
-				}
-				else
-				{
-					if(contemp[3]<returnv[0]*0.97)
-					{
-						returnv[0]=contemp[3];
-						tempdata[9]="112";
-					
-						return true;
-					}
+					returnv[0]=contemp[3];
+					tempdata[9]="112";
+				
+					return true;
 				}
 			}
 			
@@ -3548,44 +3486,21 @@ private boolean stopBenefit(int gg10,int gg20,int now10,double[] contemp,double[
 		}
 		else
 		{
-			if (gg20==1)
+			if(contemp[2]<previousreturnv[0]*0.97)
 			{
-				if(contemp[2]<previousreturnv[0]*0.97)
+				if(contemp[0]<previousreturnv[0]*0.97)
 				{
-					if(contemp[0]<previousreturnv[0]*0.97)
-					{
-						returnv[0]=contemp[0];
-						tempdata[9]="221";
-						
-						return true;
-					} 
-					else
-					{
-						returnv[0]=previousreturnv[0]*0.97;
-						tempdata[9]="222";
+					returnv[0]=contemp[0];
+					tempdata[9]="211";
 					
-						return true;
-					}
-				}
-			}
-			else
-			{
-				if(contemp[2]<previousreturnv[0]*0.97)
+					return true;
+				} 
+				else
 				{
-					if(contemp[0]<previousreturnv[0]*0.97)
-					{
-						returnv[0]=contemp[0];
-						tempdata[9]="211";
-						
-						return true;
-					} 
-					else
-					{
-						returnv[0]=previousreturnv[0]*0.97;
-						tempdata[9]="212";
-					
-						return true;
-					}
+					returnv[0]=previousreturnv[0]*0.97;
+					tempdata[9]="212";
+				
+					return true;
 				}
 			}
 		}			
