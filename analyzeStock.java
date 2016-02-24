@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=0,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 public static void main(String[] s)
 {		
@@ -3363,7 +3363,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		}
 		
 		if (endbenefit==0)
-		if (stopBenefit(gg10,now10,contemp,previoustemp,returnv,previousreturnv,tempdata,date))
+		if (stopBenefit(gg10,now10,contemp,previoustemp,returnv,previousreturnv,tempdata,date,basedata))
 		{
 			tempdata[5]=date;
 			endbenefit=1;
@@ -3372,7 +3372,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 		
 		if(stopCompute(contemp,s,tempdata,gg10,row,day))					
 		{
-			tempdata[9]="0";
+			//tempdata[9]="0";
 			
 			return true;
 		}							
@@ -3442,7 +3442,7 @@ private boolean stopCompute(double[] contemp,Sheet s,String[] tempdata,int gg10,
 		
 	return false;
 }
-private boolean stopBenefit(int gg10,int now10,double[] contemp,double[] previoustemp,double[] returnv,double previousreturnv[],String[] tempdata,String date)
+private boolean stopBenefit(int gg10,int now10,double[] contemp,double[] previoustemp,double[] returnv,double previousreturnv[],String[] tempdata,String date,double[] basedata)
 {
 	if (gg10==1)//°ªÂIº¦¶W¹L10%		
 	{
