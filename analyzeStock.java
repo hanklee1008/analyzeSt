@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=1,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 public static void main(String[] s)
 {		
@@ -56,7 +56,7 @@ public static void main(String[] s)
 		
 		System.out.println("\nanalyzeStock end:"+sdFormat.format(new Date()));*/
 	
-		String filepath=drive+"software/sdata/15test/";
+		String filepath=drive+"software/sdata/15foranalyze/";
 		
 		/*analyzeStockData asd=new analyzeStockData();
 		
@@ -107,8 +107,8 @@ private void computeReturnByWeeklyExcelByMonthline(String filepath)
 	for (File f:temp)
 	{
 		try{
-		//	analyzeStockResultByQuarterLineM(Workbook.getWorkbook(f).getSheet(1),allTimePoint,"test");
-			computeReturnMDay(f,allTimePoint);
+			analyzeStockResultByQuarterLineM(Workbook.getWorkbook(f).getSheet(1),allTimePoint,f.getName());
+			//computeReturnMDay(f,allTimePoint);
 		}
 		catch(Exception e)
 		{
@@ -3438,11 +3438,29 @@ public void computeReturnMDay(File f,ArrayList<String[]> allTimePoint)
 			isComputeReturn=0;
 			content=new ArrayList<double[]>();			
 			String[] tempdata={"","","","","","","","","","","","","","","","","",""};
-			
 			int row=Integer.parseInt(s.getCell(basePosition,i+1).getContents());
 			int nextrow=Integer.parseInt(s.getCell(basePosition,i+2).getContents());	
 			
-			double pre4kcloseprice=Double.parseDouble(s.getCell(4,row-2).getContents());
+			
+			contemp=new double[7];
+			contemp[0]=Double.parseDouble(s.getCell(1,row-2).getContents());
+			contemp[1]=Double.parseDouble(s.getCell(2,row-2).getContents());
+			contemp[2]=Double.parseDouble(s.getCell(3,row-2).getContents());
+			contemp[3]=Double.parseDouble(s.getCell(4,row-2).getContents());
+			contemp[4]=Double.parseDouble(s.getCell(5,row-2).getContents());
+			contemp[5]=Double.parseDouble(s.getCell(6,row-2).getContents());
+			contemp[6]=Double.parseDouble(s.getCell(7,row-2).getContents());
+			content.add(contemp);
+			contemp=new double[7];
+			contemp[0]=Double.parseDouble(s.getCell(1,row-1).getContents());
+			contemp[1]=Double.parseDouble(s.getCell(2,row-1).getContents());
+			contemp[2]=Double.parseDouble(s.getCell(3,row-1).getContents());
+			contemp[3]=Double.parseDouble(s.getCell(4,row-1).getContents());
+			contemp[4]=Double.parseDouble(s.getCell(5,row-1).getContents());
+			contemp[5]=Double.parseDouble(s.getCell(6,row-1).getContents());
+			contemp[6]=Double.parseDouble(s.getCell(7,row-1).getContents());
+			content.add(contemp);
+			
 			
 			while(row+day<nextrow)
 			{
@@ -3455,23 +3473,28 @@ public void computeReturnMDay(File f,ArrayList<String[]> allTimePoint)
 				contemp[5]=Double.parseDouble(s.getCell(6,row+day).getContents());
 				contemp[6]=Double.parseDouble(s.getCell(7,row+day).getContents());
 					
-				if (content.size()>=2)
+				if (content.size()>=1)
 				{
 					try {	
 						if (isComputeReturn==0)
 						{						
-							if (content.get(content.size()-2)[4]>=content.get(content.size()-1)[4]&&contemp[4]>=content.get(content.size()-1)[4])
+							if (Double.parseDouble(s.getCell(5,row+day-2).getContents())>content.get(content.size()-1)[4]&&contemp[4]>=content.get(content.size()-1)[4])
 							{
 								if(conditionAnalyzeMM(content,contemp))							
 								{										
 									isComputeReturn=1;
 									baseData=contemp;
 									enterPoint=contemp[3];
+									
 									buytime=s.getCell(0,row+day).getContents();
+									if (content.get(content.size()-1)[3]!=0)
 									weeklyrate=(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
+									else
+										weeklyrate=1;
 									lead=(contemp[1]-contemp[3])/contemp[3]*100;
 									quantity=contemp[6];	
-
+									
+									double pre4kcloseprice=Double.parseDouble(s.getCell(4,row+day-4).getContents());
 									if (predict==1)
 									{
 										enterPoint=enterPoint>pre4kcloseprice*1.03?pre4kcloseprice*1.03:enterPoint;
@@ -3479,7 +3502,7 @@ public void computeReturnMDay(File f,ArrayList<String[]> allTimePoint)
 									returnv[0]=enterPoint;
 									returnv[1]=enterPoint;
 									returnv[2]=enterPoint;
-
+									
 									tempdata[0]=f.getName();
 									tempdata[1]=buytime;
 									tempdata[6]=""+quantity;
@@ -3489,15 +3512,25 @@ public void computeReturnMDay(File f,ArrayList<String[]> allTimePoint)
 							}														
 						}
 						else
-						{								
-							if (endComputeReturnMDay(content,contemp,returnv,enterPoint,tempdata))
+						{							
+							if (endComputeReturnMDay(content,contemp,returnv,enterPoint,tempdata,s.getCell(0,row+day).getContents()))
 							{
 								tempdata[2]=""+df.format(100*(returnv[2]-enterPoint)/enterPoint);
 								tempdata[3]=""+df.format(100*(returnv[0]-enterPoint)/enterPoint);	
-
-
-								break;
+								
+								allTimePoint.add(tempdata);
+																								
+								isComputeReturn=0;
+															
+								tempdata=new String[18];
+								for (int l=0;l<tempdata.length;l++)
+								{
+									tempdata[l]="";
+								}
 							}	
+							if(contemp[5]<content.get(content.size()-1)[5])//©u½u¦V¤U
+								if (100*(returnv[0]-enterPoint)/enterPoint>=10)
+									break;
 						}
 					}	
 					catch (Exception e)
@@ -3511,7 +3544,7 @@ public void computeReturnMDay(File f,ArrayList<String[]> allTimePoint)
 				content.add(contemp);
 				
 			}		
-			allTimePoint.add(tempdata);
+			
 		}
 	}
 	catch (Exception e)
@@ -3520,9 +3553,8 @@ public void computeReturnMDay(File f,ArrayList<String[]> allTimePoint)
 		e.printStackTrace();
 	}	
 }
-public boolean endComputeReturnMDay(ArrayList<double[]> content,double[] contemp,double[] returnv,double compoint,String[] tempdata)
+public boolean endComputeReturnMDay(ArrayList<double[]> content,double[] contemp,double[] returnv,double compoint,String[] tempdata,String date)
 {						
-	String date="";
 	int now10=0,gg10=0,endbenefit=0;
 		
 		//System.arraycopy(returnv, 0, previousreturnv, 0, returnv.length);
@@ -3568,6 +3600,7 @@ public boolean endComputeReturnMDay(ArrayList<double[]> content,double[] contemp
 		{			
 			if ((returnv[0]-compoint)/compoint>=0.1)
 			{
+				if (tempdata[4].equals(""))
 				tempdata[4]=date;
 				gg10=1;
 				now10=1;
@@ -3588,7 +3621,7 @@ public boolean endComputeReturnMDay(ArrayList<double[]> content,double[] contemp
 		if(stopComputeM(content,contemp,gg10))					
 		{
 			//tempdata[9]="0";
-			
+			tempdata[5]=date;
 			return true;
 		}							
 			
@@ -3596,9 +3629,6 @@ public boolean endComputeReturnMDay(ArrayList<double[]> content,double[] contemp
 }
 private void updateHigh(double[] contemp,double[] returnv,String[] tempdata,String date,int endbenefit)
 {
-	
-	tempdata[5]=date;
-	
 	if (endbenefit==0)
 	returnv[0]=contemp[1];
 
