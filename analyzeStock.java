@@ -30,7 +30,7 @@ public class analyzeStock {
 	
  int weeklyRateType,highType=0,quantityType=0,kType=0,quarterLineRedK=0,monthLineRedK=1;
  double turnQuarterLineDegree=0,turnMonthLineDegree=0,test=0;
- final int quarterKCount=14,findstock=0;
+ final int quarterKCount=14,findstock=1;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=1,qpredict=0; //0:old 1:new 0:no predict 1:predict
  static String drive="d:/";
@@ -56,7 +56,7 @@ public static void main(String[] s)
 		
 		System.out.println("\nanalyzeStock end:"+sdFormat.format(new Date()));*/
 	
-		String filepath=drive+"software/sdata/15test/";
+		String filepath=drive+"software/sdata/15foranalyze/";
 		
 		/*analyzeStockData asd=new analyzeStockData();
 		
@@ -68,8 +68,8 @@ public static void main(String[] s)
 			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
 		}*/
 		
-		//s1.computeReturnByDailyExcel(filepath);
-		s1.computeReturnByWeeklyExcelByMonthline(filepath);
+		s1.computeReturnByDailyExcel(filepath);
+		//s1.computeReturnByWeeklyExcelByMonthline(filepath);
 	}
 	catch (Exception e)
 	{
@@ -90,7 +90,7 @@ public static void main(String[] s)
 		computeReturnQDay(temp[i],allTimePoint);
 	}
 	//fillInAllconditionBydaily(allTimePoint);
-	fillInData(allTimePoint,new File(drive+"software/sdata/15All.xls"),20040301,0);
+	fillInData(allTimePoint,new File(drive+"software/sdata/15Allquarterline.xls"),20040301,0);
 	//computeResult(allTimePoint,20040301,0);
 	
 	System.out.println("\ncompute end:"+sdFormat.format(new Date()));
@@ -107,8 +107,8 @@ private void computeReturnByWeeklyExcelByMonthline(String filepath)
 	for (File f:temp)
 	{
 		try{
-		//	analyzeStockResultByQuarterLineM(Workbook.getWorkbook(f).getSheet(1),allTimePoint,"test");
-			computeReturnMDay(f,allTimePoint);
+			analyzeStockResultByQuarterLineM(Workbook.getWorkbook(f).getSheet(1),allTimePoint,f.getName());
+			//computeReturnMDay(f,allTimePoint);
 		}
 		catch(Exception e)
 		{
@@ -116,7 +116,7 @@ private void computeReturnByWeeklyExcelByMonthline(String filepath)
 		}
 	}
 	//fillInAllconditionBydaily(allTimePoint);
-	fillInData(allTimePoint,new File(drive+"software/sdata/15All.xls"),20040301,0);
+	fillInData(allTimePoint,new File(drive+"software/sdata/15Allmonthline.xls"),20040301,0);
 	//computeResult(allTimePoint,20040301,0);
 	
 	System.out.println("\ncompute end:"+sdFormat.format(new Date()));
@@ -562,7 +562,7 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 						if(whichK<=4)
 							fourHigh=currentHigh;
 						
-						if (endComputeReturnQ(currentHigh,previousData,baseData,contemp,content))
+						if (endComputeReturnQ(currentHigh,baseData,contemp,content))
 						{
 							if (enterPoint!=9999)
 							{	
@@ -1216,7 +1216,7 @@ public void analyzeStockResultByQuarterLineM(Sheet s,ArrayList<String[]> allTime
 							currentHigh=contemp[1];								
 						}
 
-						if (endComputeReturnQ(currentHigh,previousData,baseData,contemp,content))
+						if (endComputeReturnQ(currentHigh,baseData,contemp,content))
 						{							
 							isComputeReturn=0;
 							quarterLineRedK=0;
@@ -1332,12 +1332,12 @@ public void analyzeStockResultByQuarterLineMM(Sheet s,ArrayList<String[]> allTim
 							
 							fillInData(allTimePoint,2,""+df.format(100*(currentHighM-enterPointM)/enterPointM));						
 							fillInData(allTimePoint,9,""+df.format(100*(baseDataM[3]-currentLowM)/baseDataM[3]));
-							//System.out.print("\nhere1"+testHighM+" "+enterPointM+" "+(testHighM-enterPointM)/enterPointM);
-							if((testHighM-enterPointM)/enterPointM>0.07)
+							
+							/*if((testHighM-enterPointM)/enterPointM>0.07)
 							{
 								//System.out.print("\nhere"+testHighM+" "+enterPointM+" "+(testHighM-enterPointM)/enterPointM);
 								fillInData(allTimePoint,11,"1");
-							}
+							}*/
 							
 							isComputeReturnM=0;
 							monthLineRedTypeM=0;
@@ -1347,7 +1347,7 @@ public void analyzeStockResultByQuarterLineMM(Sheet s,ArrayList<String[]> allTim
 	}
 	catch (Exception e)
 	{
-		System.out.print("\nanalyzeStockResultByMonthLine");
+		System.out.println("analyzeStockResultByQuarterLineMM");
 		e.printStackTrace();
 	}
 }
@@ -2209,7 +2209,7 @@ public boolean conditionAnalyzeM(ArrayList<double[]> base,double[] compare)
 }
 public boolean conditionAnalyzeMM(ArrayList<double[]> base,double[] compare)
 {
-	double[] p1,p2,p3,p4;
+	double[] p1,p2;
 	
 	p1=base.get(base.size()-1);
 	p2=base.get(base.size()-2);
@@ -2219,15 +2219,15 @@ public boolean conditionAnalyzeMM(ArrayList<double[]> base,double[] compare)
 	if((compare[5]>=p1[5])&&(p1[5]>=p2[5]))//季線連2紅
 	{
 		//if ((p4[1]-compare[2])/p4[1]<=0.1)
-		if (compare[3]>=p1[3])
-		if(compare[3]>compare[4])
+		if (compare[3]>=p1[3])//收漲
+		if(compare[3]>compare[4])//收在月線上
 		{	
 			if(compare[3]>compare[0])
 				test=1;
 			else
 				test=2;
 			
-				return true;			
+			return true;			
 		}
 	}
 								
@@ -2821,7 +2821,7 @@ public int isOverHighB(ArrayList<double[]> base,double[] compare)
 	
 	return 0;
 }
-public boolean endComputeReturnQ(double currentHigh,double[] previousData,double[] baseData,double[] contemp,ArrayList<double[]> content)
+public boolean endComputeReturnQ(double currentHigh,double[] baseData,double[] contemp,ArrayList<double[]> content)
 {	
 	if ((baseData[3]-contemp[2])/baseData[3]>0.12)//拉回超過12%
 	{
@@ -2832,11 +2832,7 @@ public boolean endComputeReturnQ(double currentHigh,double[] previousData,double
 		if ((currentHigh-baseData[3])/baseData[3]>=0.1)//高點漲超過10%
 		{
 			return true;
-		}
-		else
-		{
-
-		}								
+		}							
 	}
 		
 	return false;
