@@ -58,7 +58,7 @@ public static void main(String[] s)
 		}*/
 		
 		//s1.computeReturnByDailyExcel(filepath);
-		//s1.computeReturnByWeeklyExcelByMonthline(filepath);
+		s1.computeReturnByWeeklyExcelByMonthline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterline(filepath);
 	}
 	catch (Exception e)
