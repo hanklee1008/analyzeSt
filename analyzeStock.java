@@ -45,7 +45,7 @@ public static void main(String[] s)
 		int analyzeCondition=4;//0:
 		int isPredict=1;
 	
-		String filepath=drive+"software/sdata/15foranalyze/";
+		String filepath=drive+"software/sdata/15test/";
 		
 		/*analyzeStockData asd=new analyzeStockData();
 		
@@ -58,7 +58,7 @@ public static void main(String[] s)
 		}*/
 		
 		//s1.computeReturnByDailyExcel(filepath);
-		s1.computeReturnByWeeklyExcelByMonthline(filepath);
+		//s1.computeReturnByWeeklyExcelByMonthline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterline(filepath);
 		s1.computeReturnByWeeklyExcelByQuarterlineB(filepath);
 		//s1.computeReturnByWeeklyExcelByMonthlineB(filepath);
@@ -869,7 +869,7 @@ public void analyzeStockResultByQuarterLineB(Sheet s,ArrayList<String[]> allTime
 				}
 				
 				
-				if (content.size()>=quarterKCount-1)
+				if (content.size()>=quarterKCount)
 				{
 					if (isComputeReturn==0)
 					{
@@ -877,11 +877,12 @@ public void analyzeStockResultByQuarterLineB(Sheet s,ArrayList<String[]> allTime
 						{
 							if (content.get(content.size()-1)[5]>=content.get(content.size()-2)[5]&&contemp[5]<content.get(content.size()-1)[5])
 							{
+								//System.out.println(s.getCell(0,temp).getContents()+" "+contemp[5]+" "+content.get(content.size()-1)[5]+" "+content.get(content.size()-2)[5]);
 								quarterLineRedK=1;
 							}
 						}
 
-						if (quarterLineRedK>=3&&quarterLineRedK<=5)
+						if (quarterLineRedK>=2&&quarterLineRedK<=5)
 						{
 							if (contemp[5]<content.get(content.size()-1)[5])
 							{//System.out.print("\n"+s.getCell(0,temp).getContents());
@@ -897,7 +898,7 @@ public void analyzeStockResultByQuarterLineB(Sheet s,ArrayList<String[]> allTime
 									weeklyrate=-(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 									lead=-(contemp[2]-contemp[3])/contemp[3]*100;
 									quantity=contemp[6];
-									
+									//System.out.println(buytime+" "+quarterLineRedK);
 									/*highWeeklyrate=(contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 									testHigh=0;
 									if(weeklyrate>=6&&(contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100>=divideWeeklyrate)
@@ -911,7 +912,7 @@ public void analyzeStockResultByQuarterLineB(Sheet s,ArrayList<String[]> allTime
 										testWeeklyrate=(enterPoint-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 									}*/
 
-									fillStockData(allTimePoint,s.getName(),buytime,quantity+"",df.format(weeklyrate),df.format(lead));	
+									fillStockData(allTimePoint,name,buytime,quantity+"",df.format(weeklyrate),df.format(lead));	
 									
 								}
 								else
@@ -1423,7 +1424,7 @@ public void analyzeStockResultByMonthLineB(Sheet s,ArrayList<String[]> allTimePo
 							double lead=-(contemp[2]-contemp[3])/contemp[3]*100;
 							double quantity=contemp[6];
 
-							fillStockData(allTimePoint,s.getName(),buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
+							fillStockData(allTimePoint,name,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
 						}
 					}					
 				}
