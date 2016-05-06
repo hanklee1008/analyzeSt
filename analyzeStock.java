@@ -45,7 +45,7 @@ public static void main(String[] s)
 		int analyzeCondition=4;//0:
 		int isPredict=1;
 	
-		String filepath=drive+"software/sdata/15test/";
+		String filepath=drive+"software/sdata/15foranalyze/";
 		
 		/*analyzeStockData asd=new analyzeStockData();
 		
@@ -183,7 +183,7 @@ private void computeReturnByWeeklyExcelByMonthlineB(String filepath)
 			e.printStackTrace();
 		}
 	}
-	fillInAllconditionBydaily(allTimePoint);
+	//fillInAllconditionBydaily(allTimePoint);
 	fillInData(allTimePoint,new File(drive+"software/sdata/15AllqlineB.xls"),20040301,4);
 	//computeResult(allTimePoint,20040301,0);
 	
@@ -1522,22 +1522,23 @@ public void analyzeStockResultBearByTopMonthLine(Sheet s,ArrayList<String[]> all
 				if (isComputeReturn==0)
 				{
 					if (content.get(content.size()-2)[5]>content.get(content.size()-3)[5]&&content.get(content.size()-1)[5]>content.get(content.size()-2)[5]&&contemp[5]>content.get(content.size()-1)[5])
-					{
-						if(conditionAnalyzeTopMB(content,contemp))							
-						{	
-							isComputeReturn=1;
-							String buytime=s.getCell(0,temp).getContents();
-							baseData=contemp;
-							enterPoint=contemp[3];
-							currentHigh=contemp[3];
-							currentLow=contemp[3];
-							double weeklyrate=-(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
-							double lead=-(contemp[2]-contemp[3])/contemp[3]*100;
-							double quantity=contemp[6];
+						if (content.get(content.size()-2)[4]>content.get(content.size()-3)[4]&&content.get(content.size()-1)[4]>content.get(content.size()-2)[4])		 
+						{//System.out.println(s.getCell(0,temp).getContents());
+							if(conditionAnalyzeTopMB(content,contemp))							
+							{	//System.out.println(s.getCell(0,temp).getContents());
+								isComputeReturn=1;
+								String buytime=s.getCell(0,temp).getContents();
+								baseData=contemp;
+								enterPoint=contemp[3];
+								currentHigh=contemp[3];
+								currentLow=contemp[3];
+								double weeklyrate=-(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
+								double lead=-(contemp[2]-contemp[3])/contemp[3]*100;
+								double quantity=contemp[6];
 
-							fillStockData(allTimePoint,name,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
-						}
-					}					
+								fillStockData(allTimePoint,name,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
+							}
+						}					
 				}
 				else 
 				{	
@@ -2289,12 +2290,12 @@ public boolean conditionAnalyzeTopMB(ArrayList<double[]> base,double[] compare)
 	
 	double m1,q1,q2,q3,q4;
 	
-	
+	if (compare[1]>p1[1])
+		if (compare[0]>p1[3])
+			if (compare[3]<p1[3])
 	if((compare[0]>compare[3]))
-		if ((compare[3]-p1[3])/p1[3]<=-0.05)
-			if((p1[4]-p1[5])/p1[5]>0.17)
-				if (base.get(base.size()-1)[4]>=base.get(base.size()-2)[4]&&compare[4]<base.get(base.size()-1)[4])//¤ë½u¬õÂ½¶Â
-
+		if((p1[0]<p1[3]))
+			if((compare[4]-compare[5])/compare[5]>0.2)
 					return true;											
 	
 					
