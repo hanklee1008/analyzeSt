@@ -61,7 +61,7 @@ public static void main(String[] s)
 		//s1.computeReturnByWeeklyExcelByMonthline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterlineB(filepath);
-		s1.computeReturnByWeeklyExcelByMonthlineB(filepath);
+		//s1.computeReturnByWeeklyExcelByMonthlineB(filepath); 
 	}
 	catch (Exception e)
 	{
