@@ -39,8 +39,7 @@ public class bullStrategy1 {
 		ArrayList<double[]> content=new ArrayList<double[]>();
 		DecimalFormat df=new DecimalFormat("#.##");
 		String buytime="";
-		double weeklyrate,lead,quantity,testWeeklyrate=0,highWeeklyrate=0;
-		ArrayList<double[]> tt=new ArrayList<double[]>();
+		double weeklyrate,lead,quantity,highWeeklyrate=0;
 		String[] buyday=new String[7];
 		double[] returnV=new double[2];
 		int[] kstate=new int[4]; //[0]:quarterline red count [1]:monthline red count [2]:if last day [3]:days of the week
@@ -81,18 +80,17 @@ public class bullStrategy1 {
 							weeklyrate=(entrypoint[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 							lead=(entrypoint[1]-entrypoint[3])/entrypoint[3]*100;
 							quantity=entrypoint[6];
-							//System.out.println("find1:"+s.getCell(0,temp).getContents()+" "+enterPoint);
+							
 							{
 								highWeeklyrate=(entrypoint[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 
 								if(weeklyrate>=6&&highWeeklyrate>=divideWeeklyrate)
 								{													
 									enterPoint=computeEnterPoint(content,entrypoint);
-									testWeeklyrate=(enterPoint-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 									currentLow=enterPoint;
 								}
 							}
-							//System.out.println("find2:"+s.getCell(0,temp).getContents()+" "+enterPoint);
+							
 							as.add(buyday[kstate[2]]);
 							buytimeAll.add(buytime);
 							double[] dd=new double[7];
@@ -109,18 +107,15 @@ public class bullStrategy1 {
 
 							returnV[0]=currentHigh;
 							returnV[1]=currentLow;
-							//System.out.println("end1:"+buytime+":"+s.getCell(0,temp).getContents()+" "+returnV[0]+" "+enterPoint+" "+kstate[2]+" "+kstate[3]);
+							//System.out.println(buytime+":"+buyday[kstate[2]]);
 							if(kstate[2]+1<kstate[3])
 							{	
 								if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),baseData,enterPoint,returnV,kstate[2]+1))
-								{//System.out.println("end1:"+s.getCell(0,temp).getContents()+" "+returnV[0]+" "+enterPoint);
+								{
 									tempdata[2]=""+df.format(100*(returnV[0]-enterPoint)/enterPoint);
 									tempdata[9]=""+df.format(100*(enterPoint-returnV[1])/enterPoint);
-									tempdata[12]=""+df.format(highWeeklyrate);
-									tempdata[13]=""+df.format(testWeeklyrate);
 
 									allTimePoint.add(tempdata);
-
 									isComputeReturn=0;
 									kstate[0]=0;
 								}
@@ -130,14 +125,11 @@ public class bullStrategy1 {
 					else
 					{							
 						if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),baseData,enterPoint,returnV,0))
-						{	//System.out.println("end2:"+buytime+":"+s.getCell(0,temp).getContents()+" "+returnV[0]+" "+enterPoint);
+						{	
 							tempdata[2]=""+df.format(100*(returnV[0]-enterPoint)/enterPoint);
 							tempdata[9]=""+df.format(100*(enterPoint-returnV[1])/enterPoint);
-							tempdata[12]=""+df.format(highWeeklyrate);
-							tempdata[13]=""+df.format(testWeeklyrate);
 
 							allTimePoint.add(tempdata);
-
 							isComputeReturn=0;
 							kstate[0]=0;
 
@@ -175,15 +167,15 @@ public class bullStrategy1 {
 					{
 						day=0;
 						tt=new ArrayList<double[]>();
-						computeDailyK(shfile,s.getName(),s.getCell(0,temp).getContents(),tt,contemp,buyday);
+						computeDailyK(shfile,s.getCell(0,temp).getContents(),tt,contemp,buyday);
 						
 						if(tt.size()!=0)
 							do{										
 								if (conditionAnalyze(content,tt.get(day),tt.get(day)[3]))
 								{
-									//entrypoint=tt.get(day);
+									
 									System.arraycopy(tt.get(day), 0, entrypoint, 0, entrypoint.length);
-									//System.out.println("end:"+entrypoint[3]);
+									
 									kstate[2]=day;
 									kstate[3]=tt.size();
 									return true;									
@@ -203,15 +195,15 @@ public class bullStrategy1 {
 				{
 					day=0;
 					tt=new ArrayList<double[]>();
-					computeDailyK(shfile,s.getName(),s.getCell(0,temp).getContents(),tt,contemp,buyday);
+					computeDailyK(shfile,s.getCell(0,temp).getContents(),tt,contemp,buyday);
 					
 					if(tt.size()!=0)
 						do{										
 							if (conditionAnalyze(content,tt.get(day),tt.get(day)[3]))
 							{
-								//entrypoint=tt.get(day);
+
 								System.arraycopy(tt.get(day), 0, entrypoint, 0, entrypoint.length);
-								//System.out.println("end2:"+entrypoint[3]);
+
 								kstate[2]=day;
 								kstate[3]=tt.size();
 								return true;
@@ -299,8 +291,6 @@ public class bullStrategy1 {
 		if(enterPoint>currentMline)//站上月線
 			if((enterPoint-currentMline)>=(currentMline-compare[0]))//k棒明顯突破月線
 			{
-				//turnMonthLineDegree=(currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4];//翻轉幅度
-
 				if((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>=(currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5])
 				{
 					return true;
@@ -711,7 +701,7 @@ public class bullStrategy1 {
 		
 		return false;
 	}
-	public void computeDailyK(Sheet s,String name,String buytime,ArrayList<double[]> tt,double[] base,String[] buyday)
+	public void computeDailyK(Sheet s,String buytime,ArrayList<double[]> tt,double[] base,String[] buyday)
 	{	
 		try{
 			Cell c=s.findCell(buytime);
@@ -742,6 +732,7 @@ public class bullStrategy1 {
 						ktype[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
 					else
 						ktype[1]=tt.get(day-1)[1];
+					
 					if(Double.parseDouble(s.getCell(3,row+day).getContents())<tt.get(day-1)[2])
 						ktype[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
 					else
@@ -758,8 +749,8 @@ public class bullStrategy1 {
 				}
 				ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
 
-				ktype[4]=base[4];
-				ktype[5]=base[5];
+				ktype[4]=(ktype[3]-base[3])/4+base[4];
+				ktype[5]=(ktype[3]-base[3])/13+base[5];
 
 
 				day++;
@@ -769,7 +760,7 @@ public class bullStrategy1 {
 		}
 		catch(Exception e)
 		{
-			System.out.println("computeDailyK "+name+" "+buytime);
+			System.out.println("computeDailyK "+" "+buytime);
 			e.printStackTrace();
 		}
 	}

@@ -773,7 +773,7 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 													currentLow=enterPoint;
 												}
 											}
-
+											//System.out.println(buytime+":"+buyday[day]);
 											as.add(buyday[day]);
 											buytimeAll.add(buytime);
 											double[] dd=new double[7];
