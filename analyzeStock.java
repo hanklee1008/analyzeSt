@@ -45,7 +45,7 @@ public static void main(String[] s)
 		int analyzeCondition=0;//0:
 		int isPredict=1;
 	
-		String filepath=drive+"software/sdata/15temp/";
+		String filepath=drive+"software/sdata/15test/";
 		
 		/*analyzeStockData asd=new analyzeStockData();
 		
@@ -55,7 +55,7 @@ public static void main(String[] s)
 		File[] temp=new File(filepath).listFiles();
 		for (File f:temp)
 		{
-			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
+			//s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
 			
 			/*Workbook workbook;
 			Sheet shd,shw;
@@ -74,11 +74,11 @@ public static void main(String[] s)
 			}*/
 			
 		}
-		s1.fillInData(allTimePoint,new File(drive+"software/sdata/ttt.xls"),20040301,0);
+		//s1.fillInData(allTimePoint,new File(drive+"software/sdata/here.xls"),20040301,0);
 		
 		
 		
-		//s1.computeReturnByDailyExcel(filepath);
+		s1.computeReturnByDailyExcel(filepath);
 		//s1.computeReturnByWeeklyExcelByMonthline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterlineB(filepath);
@@ -3077,7 +3077,7 @@ public int isOverHighB(ArrayList<double[]> base,double[] compare)
 }
 public boolean endComputeReturnQ(double currentHigh,double[] baseData,double[] contemp,ArrayList<double[]> content)
 {	
-	if ((baseData[3]-contemp[2])/baseData[3]>0.12)//拉回超過12%
+	if ((baseData[3]-contemp[2])/baseData[3]>0.13)//拉回超過12%
 	{
 		return true;
 	}
@@ -3495,7 +3495,7 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 			
 			double computepoint=predictpoint*1.03;
 			//if (computepoint>basedata[3])
-				computepoint=basedata[3];
+				//computepoint=basedata[3];
 			//computepoint=predictpoint;
 			
 			returnv[0]=returnv[2]=basedata[1];
