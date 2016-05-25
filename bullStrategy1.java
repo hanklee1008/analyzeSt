@@ -154,6 +154,7 @@ public class bullStrategy1 {
 		if (kstate[0]==0)
 		{	
 			if (content.get(content.size()-1)[5]<=content.get(content.size()-2)[5])
+			{
 				if (contemp[5]>=content.get(content.size()-1)[5])
 				{
 					kstate[0]=1;
@@ -167,6 +168,7 @@ public class bullStrategy1 {
 								return true;							
 						}
 				}
+			}		
 		}
 
 		if (kstate[0]>=1&&kstate[0]<=8)
@@ -242,21 +244,6 @@ public class bullStrategy1 {
 				if(weeklyRateType!=0)
 				{				
 					//if ((quantityType>=1&&quantityType<=3)||highType!=0)
-					if (kType(0,base,compare,enterPoint))
-						return true;
-				}
-
-		return false;
-	}
-	private boolean conditionAnalyzeKKK(ArrayList<double[]> base,double[] compare,double enterPoint)
-	{	
-		int weeklyRateType;
-		weeklyRateType=weeklyRateType(base,compare);
-
-		if(isTurnQuarterLine(base,compare,enterPoint))
-			if(isTurnMonthLine(base,compare,enterPoint))
-				if(weeklyRateType!=0)
-				{				
 					if (kType(0,base,compare,enterPoint))
 						return true;
 				}
@@ -777,72 +764,6 @@ public class bullStrategy1 {
 			e.printStackTrace();
 		}
 	}
-	private void computeDailyKKK(Sheet s,String buytime,ArrayList<double[]> tt,double[] base,String[] buyday)
-	{	
-		try{
-			Cell c=s.findCell(buytime);
-			if (c==null)
-				return;
-			int row=c.getRow();
-
-			SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd"); 
-			int day=0;
-			double[] ktype;
-
-			Calendar cal = Calendar.getInstance(); 
-			cal.setTime(format.parse(s.getCell(0,row).getContents()));  
-			int dayOfWeek=cal.get(Calendar.DAY_OF_WEEK);
-			long sundayTime;
-
-			sundayTime=format.parse(s.getCell(0,row).getContents()).getTime()+(8-dayOfWeek)*(24*60*60*1000);
-
-			do
-			{
-				buyday[day]=s.getCell(0,row+day).getContents();
-
-				ktype=new double[7];
-				ktype[0]=Double.parseDouble(s.getCell(1,row).getContents());
-				if(day>=1)
-				{
-					if(Double.parseDouble(s.getCell(2,row+day).getContents())>tt.get(day-1)[1])
-						ktype[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
-					else
-						ktype[1]=tt.get(day-1)[1];
-					
-					if(Double.parseDouble(s.getCell(3,row+day).getContents())<tt.get(day-1)[2])
-						ktype[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
-					else
-						ktype[2]=tt.get(day-1)[2];
-
-					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents())+tt.get(day-1)[6];
-				}
-				else
-				{
-					ktype[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
-					ktype[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
-					
-					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents());
-				}
-				if (Double.parseDouble(s.getCell(2,row+day).getContents())>=Double.parseDouble(s.getCell(1,row+day).getContents())*1.03)
-					ktype[3]=Double.parseDouble(s.getCell(2,row+day).getContents());
-				else
-					ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
-
-				ktype[4]=(ktype[3]-base[3])/4+base[4];
-				ktype[5]=(ktype[3]-base[3])/13+base[5];
-
-
-				day++;
-				tt.add(ktype);
-			}
-			while((row+day)<s.getRows()&&format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);
-		}
-		catch(Exception e)
-		{
-			System.out.println("computeDailyK "+" "+buytime);
-			e.printStackTrace();
-		}
-	}
 	private double computeEnterPoint(ArrayList<double[]> base,double[] compare)
 	{
 		double keypoint;
@@ -993,6 +914,87 @@ public class bullStrategy1 {
 			return 5;
 
 		return 99;
+	}
+	private boolean conditionAnalyzeKKK(ArrayList<double[]> base,double[] compare,double enterPoint)
+	{	
+		int weeklyRateType;
+		weeklyRateType=weeklyRateType(base,compare);
+
+		if(isTurnQuarterLine(base,compare,enterPoint))
+			if(isTurnMonthLine(base,compare,enterPoint))
+				if(weeklyRateType!=0)
+				{				
+					if (kType(0,base,compare,enterPoint))
+						return true;
+				}
+
+		return false;
+	}
+	private void computeDailyKKK(Sheet s,String buytime,ArrayList<double[]> tt,double[] base,String[] buyday)
+	{	
+		try{
+			Cell c=s.findCell(buytime);
+			if (c==null)
+				return;
+			int row=c.getRow();
+
+			SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd"); 
+			int day=0;
+			double[] ktype;
+
+			Calendar cal = Calendar.getInstance(); 
+			cal.setTime(format.parse(s.getCell(0,row).getContents()));  
+			int dayOfWeek=cal.get(Calendar.DAY_OF_WEEK);
+			long sundayTime;
+
+			sundayTime=format.parse(s.getCell(0,row).getContents()).getTime()+(8-dayOfWeek)*(24*60*60*1000);
+
+			do
+			{
+				buyday[day]=s.getCell(0,row+day).getContents();
+
+				ktype=new double[7];
+				ktype[0]=Double.parseDouble(s.getCell(1,row).getContents());
+				if(day>=1)
+				{
+					if(Double.parseDouble(s.getCell(2,row+day).getContents())>tt.get(day-1)[1])
+						ktype[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
+					else
+						ktype[1]=tt.get(day-1)[1];
+					
+					if(Double.parseDouble(s.getCell(3,row+day).getContents())<tt.get(day-1)[2])
+						ktype[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
+					else
+						ktype[2]=tt.get(day-1)[2];
+
+					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents())+tt.get(day-1)[6];
+				}
+				else
+				{
+					ktype[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
+					ktype[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
+					
+					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents());
+				}
+				if (Double.parseDouble(s.getCell(2,row+day).getContents())>=Double.parseDouble(s.getCell(1,row+day).getContents())*1.03)
+					ktype[3]=Double.parseDouble(s.getCell(2,row+day).getContents());
+				else
+					ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
+
+				ktype[4]=(ktype[3]-base[3])/4+base[4];
+				ktype[5]=(ktype[3]-base[3])/13+base[5];
+
+
+				day++;
+				tt.add(ktype);
+			}
+			while((row+day)<s.getRows()&&format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);
+		}
+		catch(Exception e)
+		{
+			System.out.println("computeDailyK "+" "+buytime);
+			e.printStackTrace();
+		}
 	}
 }
 

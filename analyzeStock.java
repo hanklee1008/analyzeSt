@@ -3097,7 +3097,7 @@ public boolean endComputeReturnQDay(Sheet s,String name,String buytime,double[] 
 	
 	int row=0;	
 	double[] contemp=new double[5];
-	double enterPoint=baseData[3];									
+	double enterPoint=predictpoint;//baseData[3];									
 	double currentHigh=returnV[0];
 	double currentLow=returnV[1];
 	double curtime=0;
@@ -3494,8 +3494,8 @@ public void computeReturnQDay(File f,ArrayList<String[]> allTimePoint)
 			DecimalFormat df=new DecimalFormat("#.##");
 			
 			double computepoint=predictpoint*1.03;
-			//if (computepoint>basedata[3])
-				//computepoint=basedata[3];
+			if (computepoint>basedata[3])
+				computepoint=basedata[3];
 			//computepoint=predictpoint;
 			
 			returnv[0]=returnv[2]=basedata[1];
@@ -3602,7 +3602,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 			{							
 				updateLow(contemp,returnv,compoint);
 			}	
-			if (stopLoss(basedata[3],contemp[2]))
+			if (stopLoss(compoint,contemp[2]))
 			{
 				tempdata[9]="-1";
 				tempdata[5]=date;
@@ -3616,7 +3616,7 @@ public boolean endComputeReturnQDay(Sheet s,int row,int nextrow,double[] basedat
 			{							
 				updateLow(contemp,returnv,compoint);
 			}	
-			if (stopLoss(basedata[3],contemp[2]))
+			if (stopLoss(compoint,contemp[2]))
 			{
 				tempdata[9]="-1";
 				tempdata[5]=date;
