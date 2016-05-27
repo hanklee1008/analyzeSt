@@ -24,7 +24,7 @@ import jxl.write.WriteException;
 public class bullStrategy1 {
 
 	final int quarterKCount=14;
-	final double divideWeeklyrate=9;
+	final double divideWeeklyrate=0.09;
 	
 	public void bullStrategy1()
 	{
@@ -48,7 +48,7 @@ public class bullStrategy1 {
 		ArrayList<String> as=new ArrayList<String>(),buytimeAll=new ArrayList<String>();
 		ArrayList<double[]> mdata=new ArrayList<double[]>();
 
-		kstate[0]=0;	
+		kstate[0]=0;
 
 		try {			
 			int temp=1;
@@ -82,12 +82,13 @@ public class bullStrategy1 {
 							quantity=entrypoint[6];
 							
 							{
-								highWeeklyrate=(entrypoint[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
-
-								if(weeklyrate>=6&&highWeeklyrate>=divideWeeklyrate)
+								//highWeeklyrate=(entrypoint[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
+								
+								//if(weeklyrate>=6&&highWeeklyrate>=divideWeeklyrate)
 								{													
-									enterPoint=computeEnterPoint(content,entrypoint);
+									//enterPoint=computeEnterPoint(content,entrypoint);
 									currentLow=enterPoint;
+									currentHigh=enterPoint;
 								}
 							}
 							
@@ -103,14 +104,14 @@ public class bullStrategy1 {
 							dd[6]=weeklyrate;
 							mdata.add(dd);
 
-							tempdata=new String[]{stockname,buytime,"","","","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
+							tempdata=new String[]{stockname,buytime,"",""+content.get(content.size()-1)[3],""+enterPoint,""+entrypoint[3],quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
 
 							returnV[0]=currentHigh;
 							returnV[1]=currentLow;
-							//System.out.println(buytime+":"+buyday[kstate[2]]);
+							
 							if(kstate[2]+1<kstate[3])
 							{	
-								if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),baseData,enterPoint,returnV,kstate[2]+1))
+								if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),enterPoint,returnV,kstate[2]+1))
 								{
 									tempdata[2]=""+df.format(100*(returnV[0]-enterPoint)/enterPoint);
 									tempdata[9]=""+df.format(100*(enterPoint-returnV[1])/enterPoint);
@@ -124,7 +125,7 @@ public class bullStrategy1 {
 					}
 					else
 					{							
-						if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),baseData,enterPoint,returnV,0))
+						if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),enterPoint,returnV,0))
 						{	
 							tempdata[2]=""+df.format(100*(returnV[0]-enterPoint)/enterPoint);
 							tempdata[9]=""+df.format(100*(enterPoint-returnV[1])/enterPoint);
@@ -132,7 +133,6 @@ public class bullStrategy1 {
 							allTimePoint.add(tempdata);
 							isComputeReturn=0;
 							kstate[0]=0;
-
 						}
 					}
 				}
@@ -162,7 +162,7 @@ public class bullStrategy1 {
 				else
 				{
 					if ((contemp[1]-contemp[3])/13+contemp[5]>=content.get(content.size()-1)[5])
-						if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=0.09)
+						if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
 						{							
 							if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 								return true;							
@@ -175,7 +175,7 @@ public class bullStrategy1 {
 		{
 			if (contemp[5]>=content.get(content.size()-1)[5])
 			{		
-				if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=0.09)
+				if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
 				{
 					if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 						return true;
@@ -184,6 +184,15 @@ public class bullStrategy1 {
 			}
 			else
 			{
+				if ((contemp[1]-contemp[3])/13+contemp[5]>=content.get(content.size()-1)[5])
+				{
+					if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
+					{							
+						if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
+							return true;							
+					}
+				}
+					
 				kstate[0]=0;
 			}
 		}
@@ -210,18 +219,25 @@ public class bullStrategy1 {
 
 		if(tt.size()!=0)
 			do{
-				if(conditionAnalyzeKKK(content,ttt.get(day),ttt.get(day)[3]))
+				/*if(conditionAnalyzeKKK(content,ttt.get(day),ttt.get(day)[3]))
 				{
 					double enterPoint=computeEnterPointKKK(content,ttt.get(day));
 					
-					if((enterPoint*1.03)<ttt.get(day)[3])
-					System.out.println("1:"+buyday1[day]+" "+(enterPoint*1.03)+" "+ttt.get(day)[3]);
-				}
+					if(enterPoint<ttt.get(day)[3])
+					System.out.println("1:"+buyday1[day]+" "+(enterPoint)+" "+ttt.get(day)[3]);
+				}*/
 				if (conditionAnalyze(content,tt.get(day),tt.get(day)[3]))
 				{
 					System.arraycopy(tt.get(day), 0, entrypoint, 0, entrypoint.length);
-					
-					System.out.println("2:"+buyday[day]);
+					/*kstate[1]=1;
+					//System.out.println("2:"+buyday[day]);
+					for (int i=content.size()-1;i>=1;i--)
+					{
+						if (content.get(i)[4]>content.get(i-1)[4])
+							kstate[1]+=1;
+						else
+							break;
+					}*/
 					kstate[2]=day;
 					kstate[3]=tt.size();
 					return true;									
@@ -302,7 +318,7 @@ public class bullStrategy1 {
 	public int weeklyRateType(ArrayList<double[]> base,double[] compare)
 	{	//System.out.print("\nisweeklyRateType\n");
 		{
-			if ((compare[1]-base.get(base.size()-1)[3])/base.get(base.size()-1)[3]>=0.09)
+			if ((compare[1]-base.get(base.size()-1)[3])/base.get(base.size()-1)[3]>=divideWeeklyrate)
 				return 1;
 		}
 			
@@ -581,15 +597,13 @@ public class bullStrategy1 {
 
 		return 0;
 	}
-	public boolean endComputeReturn(Sheet s,String name,String buytime,double[] baseData,double predictpoint,double[] returnV,int day)
+	public boolean endComputeReturn(Sheet s,String name,String buytime,double predictpoint,double[] returnV,int day)
 	{	
 			
 		
 		int row=0;	
 		double[] contemp=new double[5];
-		double enterPoint=baseData[3];									
-		double currentHigh=returnV[0];
-		double currentLow=returnV[1];
+		double enterPoint=predictpoint;									
 		double curtime=0;
 		long sundayTime;
 
@@ -602,8 +616,7 @@ public class bullStrategy1 {
 			row=c.getRow();		
 
 			cal.setTime(format.parse(s.getCell(0,row).getContents()));  
-			int dayOfWeek=cal.get(Calendar.DAY_OF_WEEK);
-			
+			int dayOfWeek=cal.get(Calendar.DAY_OF_WEEK);			
 
 			sundayTime=format.parse(s.getCell(0,row).getContents()).getTime()+(8-dayOfWeek)*(24*60*60*1000);
 		}
@@ -614,10 +627,10 @@ public class bullStrategy1 {
 			
 		do
 		{
-				if (row+day>=s.getRows())
-					break;
-				
-				try{
+			if (row+day>=s.getRows())
+				break;
+
+			try{
 				contemp[0]=Double.parseDouble(s.getCell(1,row+day).getContents());
 				contemp[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
 				contemp[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
@@ -626,64 +639,60 @@ public class bullStrategy1 {
 
 				if (contemp[0]>=contemp[3])
 				{
-					if (contemp[1]>currentHigh)
-					{
-						currentHigh=contemp[1];			
-						returnV[0]=currentHigh;
+					if (contemp[1]>returnV[0])
+					{		
+						returnV[0]=contemp[1];	
 					}
 
-					if ((predictpoint-contemp[2])/predictpoint>0.1&&(enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
+					if ((enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
 					{
 						return true;
 					}
 					else if(contemp[4]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
 					{
-						if ((currentHigh-enterPoint)/enterPoint>=0.1)//高點漲超過10%
+						if ((returnV[0]-enterPoint)/enterPoint>=0.1)//高點漲超過10%
 						{
 							return true;
 						}							
 					}
 
-					if (contemp[2]<currentLow)
+					if (contemp[2]<returnV[1])
 					{
-						if ((currentHigh-predictpoint)/predictpoint<0.07)//高點不超過7%
+						if ((returnV[0]-enterPoint)/enterPoint<0.07)//高點不超過7%
 						{
-							currentLow=contemp[2];		
-							returnV[1]=currentLow;
+							returnV[1]=contemp[2];		
 						}				
 					}
 				}
 				else
 				{
-					if (contemp[2]<currentLow)
+					if (contemp[2]<returnV[1])
 					{					
-						if ((currentHigh-predictpoint)/predictpoint<0.07)//高點不超過7%
+						if ((returnV[0]-enterPoint)/enterPoint<0.07)//高點不超過7%
 						{
-							currentLow=contemp[2];		
-							returnV[1]=currentLow;
+							returnV[1]=contemp[2];	
 						}
 					}
 
-					if ((predictpoint-contemp[2])/predictpoint>0.1&&(enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
+					if ((enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
 					{
 						return true;
 					}
 					else if(contemp[4]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
 					{
-						if ((currentHigh-enterPoint)/enterPoint>=0.1)//高點漲超過10%
+						if ((returnV[0]-enterPoint)/enterPoint>=0.1)//高點漲超過10%
 						{
 							return true;
 						}							
 					}
 
-					if (contemp[1]>currentHigh)
+					if (contemp[1]>returnV[0])
 					{
-						currentHigh=contemp[1];		
-						returnV[0]=currentHigh;
+						returnV[0]=contemp[1];		
 					}
 				}								
 				day++;
-				
+
 				if ((row+day)<s.getRows())
 					curtime=format.parse(s.getCell(0,row+day).getContents()).getTime();
 			}
@@ -767,35 +776,8 @@ public class bullStrategy1 {
 	private double computeEnterPoint(ArrayList<double[]> base,double[] compare)
 	{
 		double keypoint;
-
-		//keypoint=divideWeeklyrate/100*base.get(base.size()-1)[3]+base.get(base.size()-1)[3];
-		keypoint=1.06*base.get(base.size()-1)[3];
-
-		while(keypoint<compare[3])
-		{
-			if(isTurnQuarterLine(base,compare,keypoint))//站上季線		
-				if(isTurnMonthLine(base,compare,keypoint))//站上月線		
-					if (kType(0,base,compare,keypoint))
-					{
-						break;
-					}
-			keypoint=keypoint+stockPriceUnit(keypoint);
-
-		}
-
-		//keypoint*=1.02;
-
-		if(keypoint>compare[3])
-			keypoint=compare[3];
-
-		return keypoint;
-	}
-	private double computeEnterPointKKK(ArrayList<double[]> base,double[] compare)
-	{
-		double keypoint;
-
-		//keypoint=divideWeeklyrate/100*base.get(base.size()-1)[3]+base.get(base.size()-1)[3];
-		keypoint=1.06*base.get(base.size()-1)[3];
+		
+		keypoint=1.03*base.get(base.size()-1)[3];
 
 		while(keypoint<compare[3])
 		{
@@ -809,10 +791,10 @@ public class bullStrategy1 {
 
 		}
 
-		//keypoint*=1.02;
+		keypoint*=1.03;
 
-		//if(keypoint>compare[3])
-		//	keypoint=compare[3];
+		//if(keypoint>compare[1])
+		//	keypoint=compare[1];
 
 		return keypoint;
 	}
@@ -995,6 +977,31 @@ public class bullStrategy1 {
 			System.out.println("computeDailyK "+" "+buytime);
 			e.printStackTrace();
 		}
+	}
+	private double computeEnterPointKKK(ArrayList<double[]> base,double[] compare)
+	{
+		double keypoint;
+
+		keypoint=1.0*base.get(base.size()-1)[3];
+
+		while(keypoint<compare[3])
+		{
+			if(isTurnQuarterLine(base,compare,keypoint))//站上季線		
+				if(isTurnMonthLine(base,compare,keypoint))//站上月線		
+					if (kType(0,base,compare,keypoint))
+					{
+						break;
+					}
+			keypoint=keypoint+stockPriceUnit(keypoint);
+
+		}
+
+		keypoint*=1.03;
+
+		//if(keypoint>compare[3])
+		//	keypoint=compare[3];
+
+		return keypoint;
 	}
 }
 

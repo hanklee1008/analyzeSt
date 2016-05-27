@@ -35,7 +35,7 @@ public class analyzeStock {
  static int oldOrNew=0,predict=1,qpredict=0; //0:old 1:new 0:no predict 1:predict
  static String drive="d:/";
  
-public static void main(String[] s)
+/*public static void main(String[] s)
 {		
 	try{
 		analyzeStock s1=new analyzeStock();	
@@ -45,11 +45,11 @@ public static void main(String[] s)
 		int analyzeCondition=0;//0:
 		int isPredict=1;
 	
-		String filepath=drive+"software/sdata/15test/";
+		String filepath=drive+"software/sdata/15temp/";
 		
-		/*analyzeStockData asd=new analyzeStockData();
+		analyzeStockData asd=new analyzeStockData();
 		
-		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);*/
+		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);
 		bullStrategy1 st1=new bullStrategy1();
 		
 		File[] temp=new File(filepath).listFiles();
@@ -57,7 +57,7 @@ public static void main(String[] s)
 		{
 			//s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
 			
-			/*Workbook workbook;
+			Workbook workbook;
 			Sheet shd,shw;
 			
 			try{	
@@ -71,14 +71,14 @@ public static void main(String[] s)
 				System.out.print("\n analyze:"+" "+f.getName());
 				e.printStackTrace();
 				return;
-			}*/
+			}
 			
 		}
 		//s1.fillInData(allTimePoint,new File(drive+"software/sdata/here.xls"),20040301,0);
 		
 		
 		
-		s1.computeReturnByDailyExcel(filepath);
+		//s1.computeReturnByDailyExcel(filepath);
 		//s1.computeReturnByWeeklyExcelByMonthline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterline(filepath);
 		//s1.computeReturnByWeeklyExcelByQuarterlineB(filepath);
@@ -90,7 +90,7 @@ public static void main(String[] s)
 		System.out.println("main\n");
 		e.printStackTrace();
 	}
-}
+}*/
 private void computeReturnByDailyExcel(String filepath)
 {
 	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
@@ -3136,62 +3136,58 @@ public boolean endComputeReturnQDay(Sheet s,String name,String buytime,double[] 
 
 			if (contemp[0]>=contemp[3])
 			{
-				if (contemp[1]>currentHigh)
-				{
-					currentHigh=contemp[1];			
-					returnV[0]=currentHigh;
+				if (contemp[1]>returnV[0])
+				{		
+					returnV[0]=contemp[1];	
 				}
 
-				if ((predictpoint-contemp[2])/predictpoint>0.1&&(enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
+				if ((enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
 				{
 					return true;
 				}
 				else if(contemp[4]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
 				{
-					if ((currentHigh-enterPoint)/enterPoint>=0.1)//高點漲超過10%
+					if ((returnV[0]-enterPoint)/enterPoint>=0.1)//高點漲超過10%
 					{
 						return true;
 					}							
 				}
 
-				if (contemp[2]<currentLow)
+				if (contemp[2]<returnV[1])
 				{
-					if ((currentHigh-predictpoint)/predictpoint<0.07)//高點不超過7%
+					if ((returnV[0]-enterPoint)/enterPoint<0.07)//高點不超過7%
 					{
-						currentLow=contemp[2];		
-						returnV[1]=currentLow;
+						returnV[1]=contemp[2];		
 					}				
 				}
 			}
 			else
 			{
-				if (contemp[2]<currentLow)
+				if (contemp[2]<returnV[1])
 				{					
-					if ((currentHigh-predictpoint)/predictpoint<0.07)//高點不超過7%
+					if ((returnV[0]-enterPoint)/enterPoint<0.07)//高點不超過7%
 					{
-						currentLow=contemp[2];		
-						returnV[1]=currentLow;
+						returnV[1]=contemp[2];	
 					}
 				}
 
-				if ((predictpoint-contemp[2])/predictpoint>0.1&&(enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
+				if ((enterPoint-contemp[2])/enterPoint>0.13)//拉回超過13%
 				{
 					return true;
 				}
 				else if(contemp[4]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
 				{
-					if ((currentHigh-enterPoint)/enterPoint>=0.1)//高點漲超過10%
+					if ((returnV[0]-enterPoint)/enterPoint>=0.1)//高點漲超過10%
 					{
 						return true;
 					}							
 				}
 
-				if (contemp[1]>currentHigh)
+				if (contemp[1]>returnV[0])
 				{
-					currentHigh=contemp[1];		
-					returnV[0]=currentHigh;
+					returnV[0]=contemp[1];		
 				}
-			}								
+			}
 			day++;
 			
 			if ((row+day)<s.getRows())
@@ -3372,7 +3368,7 @@ public double computeEnterPoint(ArrayList<double[]> base,double[] compare)
 		
 	}
 	
-	//keypoint*=1.02;
+	keypoint*=1.03;
 	
 	if(keypoint>compare[3])
 		keypoint=compare[3];
