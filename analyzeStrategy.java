@@ -17,12 +17,13 @@ public class analyzeStrategy {
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
 			
-			String filepath=drive+"software/sdata/15foranalyze/";
+			String filepath=drive+"software/sdata/15temp/";
+
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
 			bullStrategy1 st1=new bullStrategy1();
 			Workbook workbook;
 			Sheet shd,shw;		
-						
+
 			analyzeStock s1=new analyzeStock();	
 			File[] temp=new File(filepath).listFiles();
 			for (File f:temp)
@@ -40,6 +41,7 @@ public class analyzeStrategy {
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/c1.xls"),20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
+
 		}
 		catch (Exception e)
 		{

@@ -268,42 +268,40 @@ public class bullStrategy1 {
 		return false;
 	}
 	public boolean isTurnQuarterLine(ArrayList<double[]> base,double[] compare,double enterPoint)
-	{//System.out.print("\nisTurnQuarterLine");
+	{
 		double currentQline;
 
-		currentQline=((enterPoint-compare[3])/13+compare[5])*1.04;
+		currentQline=((enterPoint-compare[3])/13+compare[5]);
 
 		if(enterPoint>currentQline)//站上季線
 			if((enterPoint-currentQline)>=(currentQline-compare[0]))//k棒明顯突破季線
-			{			//System.out.println("hhhh1 "+enterPoint+" "+compare[3]+" "+compare[5]);
+			{			
 				if ((currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5]>=0.0)
-				{//System.out.println("hhhh2 "+enterPoint+" "+compare[3]+" "+compare[5]);
-					return true;
-				}
-
-				//turnQuarterLineDegree=(currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5];//翻轉幅度
-
-				/*if (turnQuarterLineDegree>=0.001)//翻轉超過0.001 ***
-			{
-				return true;
-			}
-			else
-			{
-				if (compare[3]==compare[1])//收最高
 				{
 					return true;
 				}
-			}	*/	
+
+				/*if ((currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5]>=0.001)//翻轉超過0.001 ***
+				{
+					return true;
+				}
+				else
+				{
+					if (compare[3]==compare[1])//收最高
+					{
+						return true;
+					}
+				}*/	
 			}
 		return false;
 	}
 	public boolean isTurnMonthLine(ArrayList<double[]> base,double[] compare,double enterPoint)
-	{//System.out.print("\nisTurnMonthLine\n");
+	{
 		double currentMline;
 		double currentQline;
 
-		currentQline=((enterPoint-compare[3])/13+compare[5])*1.04;
-		currentMline=((enterPoint-compare[3])/4+compare[4])*1.02;
+		currentQline=((enterPoint-compare[3])/13+compare[5]);
+		currentMline=((enterPoint-compare[3])/4+compare[4]);
 
 		if(enterPoint>currentMline)//站上月線
 			if((enterPoint-currentMline)>=(currentMline-compare[0]))//k棒明顯突破月線
@@ -699,8 +697,8 @@ public class bullStrategy1 {
 			}
 			catch(Exception e)
 			{
-				System.out.println(row+" "+day+" "+s.getRows());
-				System.out.println(s.getName()+" "+buytime);
+				//System.out.println(row+" "+day+" "+s.getRows());
+				//System.out.println(s.getName()+" "+buytime);
 				System.out.println("endComputeReturnQDay ");
 				e.printStackTrace();
 				day++;
@@ -752,10 +750,10 @@ public class bullStrategy1 {
 				}
 				else
 				{
-					ktype[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
-					ktype[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
+					ktype[1]=Double.parseDouble(s.getCell(2,row).getContents());
+					ktype[2]=Double.parseDouble(s.getCell(3,row).getContents());
 
-					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents());
+					ktype[6]=Double.parseDouble(s.getCell(9,row).getContents());
 				}
 				ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
 
