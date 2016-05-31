@@ -45,7 +45,7 @@ public class analyzeStock {
 		int analyzeCondition=0;//0:
 		int isPredict=1;
 
-		String filepath=drive+"software/sdata/15foranalyze/";
+		String filepath=drive+"software/sdata/15test/";
 		
 		//analyzeStockData asd=new analyzeStockData();
 
@@ -56,7 +56,7 @@ public class analyzeStock {
 		{
 			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
 		}
-		s1.fillInData(allTimePoint,new File(drive+"software/sdata/herekkkkk.xls"),20040301,0);
+		s1.fillInData(allTimePoint,new File(drive+"software/sdata/c1.xls"),20040301,0);
 		
 		
 		//s1.computeReturnByDailyExcel(filepath);
@@ -646,9 +646,9 @@ public void analyzeStockResultByQuarterLinePredict(Sheet s,Sheet shfile,ArrayLis
 									tt=new ArrayList<double[]>();
 									computeDailyK(shfile,s.getName(),s.getCell(0,temp).getContents(),tt,contemp,buyday);
 									if(tt.size()!=0)
-									do{										
+									do{	//System.out.println(s.getCell(0,temp).getContents()+" "+day+" "+tt.get(day)[3]);									
 										if (conditionAnalyzeQ(content,tt.get(day),tt.get(day)[3]))
-										{									
+										{								
 											isComputeReturn=1;
 											baseData=tt.get(day);									
 											enterPoint=tt.get(day)[3];									
@@ -2362,7 +2362,10 @@ public boolean conditionAnalyzeQ(ArrayList<double[]> base,double[] compare,doubl
 			{				
 				//if ((quantityType>=1&&quantityType<=3)||highType!=0)
 				if (kType(quantityType,base,compare,enterPoint))
+				{
+					
 					return true;
+				}
 			}
 							
 	return false;
@@ -2541,15 +2544,16 @@ public boolean conditionAnalyzeTopMB(ArrayList<double[]> base,double[] compare)
 }
 public boolean isTurnQuarterLine(ArrayList<double[]> base,double[] compare,double enterPoint)
 {//System.out.print("\nisTurnQuarterLine");
+	//System.out.println("hhhh "+enterPoint);	
 	double currentQline;
 	
 	currentQline=(enterPoint-compare[3])/13+compare[5];
 
 	if(enterPoint>currentQline)//站上季線
 	if((enterPoint-currentQline)>=(currentQline-compare[0]))//k棒明顯突破季線
-	{			
+	{			//System.out.println("hhhh1 "+enterPoint+" "+compare[3]+" "+compare[5]);	
 		if ((currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5]>=0)
-		{
+		{//System.out.println("hhhh2 "+enterPoint+" "+compare[3]+" "+compare[5]);
 			return true;
 		}
 		
@@ -2591,6 +2595,7 @@ public boolean isTurnQuarterLineB(ArrayList<double[]> base,double[] compare,doub
 }
 public boolean isTurnMonthLine(ArrayList<double[]> base,double[] compare,double enterPoint)
 {//System.out.print("\nisTurnMonthLine\n");
+	//System.out.println("qqqq "+enterPoint);	
 	double currentMline;
 	double currentQline;
 	
@@ -3086,8 +3091,6 @@ public boolean endComputeReturnQDay(Sheet s,String name,String buytime,double[] 
 	int row=0;	
 	double[] contemp=new double[5];
 	double enterPoint=predictpoint;//baseData[3];									
-	double currentHigh=returnV[0];
-	double currentLow=returnV[1];
 	double curtime=0;
 	long sundayTime;
 
@@ -3322,8 +3325,8 @@ public void computeDailyK(Sheet s,String name,String buytime,ArrayList<double[]>
 			}
 			ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
 			
-			ktype[4]=base[4];
-			ktype[5]=base[5];
+			ktype[4]=(ktype[3]-base[3])/4+base[4];
+			ktype[5]=(ktype[3]-base[3])/13+base[5];
 			
 			
 			day++;

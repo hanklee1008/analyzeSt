@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -81,7 +82,7 @@ public class bullStrategy1 {
 							lead=(entrypoint[1]-entrypoint[3])/entrypoint[3]*100;
 							quantity=entrypoint[6];
 							
-							{
+							/*{
 								//highWeeklyrate=(entrypoint[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 								
 								//if(weeklyrate>=6&&highWeeklyrate>=divideWeeklyrate)
@@ -90,7 +91,7 @@ public class bullStrategy1 {
 									currentLow=enterPoint;
 									currentHigh=enterPoint;
 								}
-							}
+							}*/
 							
 							as.add(buyday[kstate[2]]);
 							buytimeAll.add(buytime);
@@ -184,14 +185,14 @@ public class bullStrategy1 {
 			}
 			else
 			{
-				if ((contemp[1]-contemp[3])/13+contemp[5]>=content.get(content.size()-1)[5])
+				/*if ((contemp[1]-contemp[3])/13+contemp[5]>=content.get(content.size()-1)[5])
 				{
 					if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
 					{							
 						if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 							return true;							
 					}
-				}
+				}*/
 					
 				kstate[0]=0;
 			}
@@ -213,12 +214,12 @@ public class bullStrategy1 {
 		
 		computeDailyK(shfile,s.getCell(0,temp).getContents(),tt,contemp,buyday);
 		
-		ArrayList<double[]> ttt=new ArrayList<double[]>();
+		/*ArrayList<double[]> ttt=new ArrayList<double[]>();
 		String[] buyday1=new String[7];
-		computeDailyKKK(shfile,s.getCell(0,temp).getContents(),ttt,contemp,buyday1);
+		computeDailyKKK(shfile,s.getCell(0,temp).getContents(),ttt,contemp,buyday1);*/
 
 		if(tt.size()!=0)
-			do{
+			do{//System.out.println(s.getCell(0,temp).getContents()+" "+day+" "+tt.get(day)[3]);		
 				/*if(conditionAnalyzeKKK(content,ttt.get(day),ttt.get(day)[3]))
 				{
 					double enterPoint=computeEnterPointKKK(content,ttt.get(day));
@@ -258,7 +259,7 @@ public class bullStrategy1 {
 		if(isTurnQuarterLine(base,compare,enterPoint))
 			if(isTurnMonthLine(base,compare,enterPoint))
 				if(weeklyRateType!=0)
-				{				
+				{				//System.out.println("hhhh "+enterPoint);
 					//if ((quantityType>=1&&quantityType<=3)||highType!=0)
 					if (kType(0,base,compare,enterPoint))
 						return true;
@@ -270,13 +271,13 @@ public class bullStrategy1 {
 	{//System.out.print("\nisTurnQuarterLine");
 		double currentQline;
 
-		currentQline=(enterPoint-compare[3])/13+compare[5];
+		currentQline=((enterPoint-compare[3])/13+compare[5])*1.04;
 
 		if(enterPoint>currentQline)//站上季線
 			if((enterPoint-currentQline)>=(currentQline-compare[0]))//k棒明顯突破季線
-			{			
-				if ((currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5]>=0)
-				{
+			{			//System.out.println("hhhh1 "+enterPoint+" "+compare[3]+" "+compare[5]);
+				if ((currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5]>=0.0)
+				{//System.out.println("hhhh2 "+enterPoint+" "+compare[3]+" "+compare[5]);
 					return true;
 				}
 
@@ -301,8 +302,8 @@ public class bullStrategy1 {
 		double currentMline;
 		double currentQline;
 
-		currentQline=(enterPoint-compare[3])/13+compare[5];
-		currentMline=(enterPoint-compare[3])/4+compare[4];
+		currentQline=((enterPoint-compare[3])/13+compare[5])*1.04;
+		currentMline=((enterPoint-compare[3])/4+compare[4])*1.02;
 
 		if(enterPoint>currentMline)//站上月線
 			if((enterPoint-currentMline)>=(currentMline-compare[0]))//k棒明顯突破月線
@@ -761,7 +762,6 @@ public class bullStrategy1 {
 				ktype[4]=(ktype[3]-base[3])/4+base[4];
 				ktype[5]=(ktype[3]-base[3])/13+base[5];
 
-
 				day++;
 				tt.add(ktype);
 			}
@@ -1004,5 +1004,6 @@ public class bullStrategy1 {
 		return keypoint;
 	}
 }
+
 
 
