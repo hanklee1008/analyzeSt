@@ -9,7 +9,7 @@ import jxl.Workbook;
 
 public class analyzeStrategy {
 	
-	static String drive="d:/";
+	static String drive="c:/";
 	
 	public static void main(String[] s)
 	{
@@ -22,7 +22,7 @@ public class analyzeStrategy {
 			bullStrategy1 st1=new bullStrategy1();
 			Workbook workbook;
 			Sheet shd,shw;		
-						
+
 			analyzeStock s1=new analyzeStock();	
 			File[] temp=new File(filepath).listFiles();
 			for (File f:temp)
@@ -40,6 +40,7 @@ public class analyzeStrategy {
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/c1.xls"),20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
+
 		}
 		catch (Exception e)
 		{

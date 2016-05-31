@@ -750,10 +750,10 @@ public class bullStrategy1 {
 				}
 				else
 				{
-					ktype[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
-					ktype[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
+					ktype[1]=Double.parseDouble(s.getCell(2,row).getContents());
+					ktype[2]=Double.parseDouble(s.getCell(3,row).getContents());
 
-					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents());
+					ktype[6]=Double.parseDouble(s.getCell(9,row).getContents());
 				}
 				ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
 

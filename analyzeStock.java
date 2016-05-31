@@ -45,7 +45,11 @@ public class analyzeStock {
 		int analyzeCondition=0;//0:
 		int isPredict=1;
 
+<<<<<<< HEAD
 		String filepath=drive+"software/sdata/15test/";
+=======
+		String filepath=drive+"software/sdata/15foranalyze/";
+>>>>>>> 03be8ecec943a218c05ab231db235056a83ce865
 		
 		//analyzeStockData asd=new analyzeStockData();
 
@@ -56,7 +60,11 @@ public class analyzeStock {
 		{
 			s1.analyzeBullByFile(f,0,allTimePoint,isPredict,analyzeCondition,filepath);
 		}
+<<<<<<< HEAD
 		s1.fillInData(allTimePoint,new File(drive+"software/sdata/c1.xls"),20040301,0);
+=======
+		s1.fillInData(allTimePoint,new File(drive+"software/sdata/herekkkkk.xls"),20040301,0);
+>>>>>>> 03be8ecec943a218c05ab231db235056a83ce865
 		
 		
 		//s1.computeReturnByDailyExcel(filepath);
