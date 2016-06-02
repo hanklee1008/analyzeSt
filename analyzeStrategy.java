@@ -37,7 +37,7 @@ public class analyzeStrategy {
 				
 			}			
 			
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/c2.xls"),20040301,0);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/c4.xls"),20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 
