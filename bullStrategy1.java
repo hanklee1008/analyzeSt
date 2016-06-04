@@ -76,23 +76,25 @@ public class bullStrategy1 {
 						{
 							isComputeReturn=1;									
 							enterPoint=entrypoint[3];									
-							currentHigh=entrypoint[3];
+							currentHigh=entrypoint[1];
 							currentLow=entrypoint[3];
 							buytime=s.getCell(0,temp).getContents();
 							weeklyrate=(entrypoint[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 							lead=(entrypoint[1]-entrypoint[3])/entrypoint[3]*100;
 							quantity=entrypoint[6];
 							
-							/*{
+							double testpoint=1;
+							{
 								//highWeeklyrate=(entrypoint[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 								
 								//if(weeklyrate>=6&&highWeeklyrate>=divideWeeklyrate)
-								{													
+								{		
+									//testpoint=computeEnterPoint(content,entrypoint);
 									//enterPoint=computeEnterPoint(content,entrypoint);
-									currentLow=enterPoint;
-									currentHigh=enterPoint;
+									//currentLow=enterPoint;
+									//currentHigh=enterPoint;
 								}
-							}*/
+							}
 							
 							as.add(buyday[kstate[2]]);
 							buytimeAll.add(buytime);
@@ -106,7 +108,7 @@ public class bullStrategy1 {
 							dd[6]=weeklyrate;
 							mdata.add(dd);
 
-							tempdata=new String[]{stockname,buyday[kstate[2]],"",""+test,"","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
+							tempdata=new String[]{stockname,buyday[kstate[2]],"",""+(entrypoint[1]-testpoint)/testpoint,""+test,"",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
 
 							returnV[0]=currentHigh;
 							returnV[1]=currentLow;
@@ -186,14 +188,14 @@ public class bullStrategy1 {
 			}
 			else
 			{
-				/*if ((contemp[1]-contemp[3])/13+contemp[5]>=content.get(content.size()-1)[5])
+				if ((contemp[1]-contemp[3])/13+contemp[5]>=content.get(content.size()-1)[5])
 				{
 					if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
 					{							
 						if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 							return true;							
 					}
-				}*/
+				}
 					
 				kstate[0]=0;
 			}
@@ -253,7 +255,7 @@ public class bullStrategy1 {
 	}
 	private boolean conditionAnalyze(ArrayList<double[]> base,double[] compare,double enterPoint,double[] currentk)
 	{	
-		test=(currentk[3]-currentk[0])/currentk[0];
+		//test=(currentk[3]-currentk[0])/currentk[0];
 		
 		int weeklyRateType;
 		//quantityType=isOverQuantity(base,compare);
@@ -337,15 +339,19 @@ public class bullStrategy1 {
 	}
 	public int isRedK(int quantityType,ArrayList<double[]> base,double[] compare,double enterPoint)
 	{//System.out.print("\nisRedK");
-				
-		if((compare[1] - base.get(base.size() - 1)[3]) / base.get(base.size() - 1)[3] >=0.09&&compare[1]==compare[3])
+			
+		if ((enterPoint-compare[0])/compare[0]*100>=6)//次跋办>=5%
+		{
+			return 2;
+		}
+		/*if((compare[1] - base.get(base.size() - 1)[3]) / base.get(base.size() - 1)[3] >=0.09&&compare[1]==compare[3])
 			return 9;
-
+		
 		/*if (base.get(base.size() - 1)[1]== base.get(base.size() - 1)[3]&&(enterPoint - base.get(base.size() - 1)[3]) / base.get(base.size() - 1)[3] >=0.05)
 		{
 			return 1;
 		}
-		else*/
+		else
 		{
 			if ((enterPoint-compare[0])/compare[0]*100>=5)//次跋办>=5%
 			{
@@ -353,7 +359,7 @@ public class bullStrategy1 {
 			}	
 			else
 			{
-				/*if((enterPoint-compare[2])/compare[2]*100>=7)//眖翴衡>=7%
+				if((enterPoint-compare[2])/compare[2]*100>=7)//眖翴衡>=7%
 				{
 					if ((enterPoint - compare[0]) / compare[0] > 0.02)// 2%次
 					{
@@ -372,9 +378,9 @@ public class bullStrategy1 {
 				else
 				{
 					return 0;
-				}*/
+				}
 			}	
-		}	
+		}	*/
 
 		return 0;
 	}
@@ -785,7 +791,8 @@ public class bullStrategy1 {
 	{
 		double keypoint;
 		
-		keypoint=1.03*base.get(base.size()-1)[3];
+		//keypoint=base.get(base.size()-1)[3];
+		keypoint=compare[0]*1.05;
 
 		while(keypoint<compare[3])
 		{
@@ -799,10 +806,10 @@ public class bullStrategy1 {
 
 		}
 
-		keypoint*=1.03;
+		//keypoint*=1.03;
 
-		//if(keypoint>compare[1])
-		//	keypoint=compare[1];
+		if(keypoint>compare[3])
+			keypoint=compare[3];
 
 		return keypoint;
 	}

@@ -9,7 +9,7 @@ import jxl.Workbook;
 
 public class analyzeStrategy {
 	
-	static String drive="d:/";
+	static String drive="c:/";
 	
 	public static void main(String[] s)
 	{
@@ -17,7 +17,7 @@ public class analyzeStrategy {
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
 
-			String filepath=drive+"software/sdata/15temp/";
+			String filepath=drive+"software/sdata/15foranalyze/";
 
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
 			bullStrategy1 st1=new bullStrategy1();
@@ -38,7 +38,7 @@ public class analyzeStrategy {
 				
 			}			
 			
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/c4.xls"),20040301,0);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/c5.xls"),20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 
