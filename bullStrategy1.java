@@ -27,7 +27,7 @@ public class bullStrategy1 {
 	final int quarterKCount=13;
 	final double divideWeeklyrate=0.06;
 	
-	double test;
+	double test,test1=0;
 	
 	/*public void bullStrategy1()
 	{
@@ -221,20 +221,31 @@ public class bullStrategy1 {
 		ArrayList<double[]> ttt=new ArrayList<double[]>();
 		String[] buyday1=new String[7];
 		computeDailyKKK(shfile,s.getCell(0,temp).getContents(),ttt,contemp,buyday1);
-
+		double enterPoint=0;
 		if(combineK.size()!=0)
 			do{//System.out.println("9:"+s.getCell(0,temp).getContents());		
 				if(conditionAnalyzeKKK(content,ttt.get(day),ttt.get(day)[3]))
 				{
-					double enterPoint=computeEnterPointKKK(content,ttt.get(day));
+					enterPoint=computeEnterPointKKK(content,ttt.get(day));
 					
-					if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.02)
-					System.out.println("1:"+buyday1[day]+" "+(enterPoint)+" "+ttt.get(day)[3]+" "+shfile.getName());
+					if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.03)
+					{
+						test1++;
+						System.out.println("1:"+buyday1[day]+" "+shfile.getName());
+					}
 				}
 				if (conditionAnalyze(content,combineK.get(day),combineK.get(day)[3],currentK.get(day)))
 				{
 					System.arraycopy(combineK.get(day), 0, entrypoint, 0, entrypoint.length);
-					System.out.println("2:"+buyday[day]);
+					//enterPoint=computeEnterPointKKK(content,ttt.get(day));
+					
+					if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.03)
+						//if(!buyday[day].equals(buyday1[day]))
+					{
+						test1--;
+						System.out.println("2:"+buyday[day]+" "+shfile.getName());
+					}
+					
 					/*kstate[1]=1;
 					
 					for (int i=content.size()-1;i>=1;i--)
@@ -986,10 +997,10 @@ public class bullStrategy1 {
 					
 					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents());
 				}
-				/*if (Double.parseDouble(s.getCell(2,row+day).getContents())>=Double.parseDouble(s.getCell(1,row+day).getContents())*1.03)
+				if (Double.parseDouble(s.getCell(1,row+day).getContents())<=Double.parseDouble(s.getCell(4,row+day-1).getContents()))
 					ktype[3]=Double.parseDouble(s.getCell(2,row+day).getContents());
-				else*/
-					ktype[3]=Double.parseDouble(s.getCell(2,row+day).getContents());
+				else
+					ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
 
 				ktype[4]=(ktype[3]-base[3])/4+base[4];
 				ktype[5]=(ktype[3]-base[3])/13+base[5];
@@ -1009,13 +1020,14 @@ public class bullStrategy1 {
 	private double computeEnterPointKKK(ArrayList<double[]> base,double[] compare)
 	{
 		double keypoint;
-
-		keypoint=1.0*base.get(base.size()-1)[3];
+		
+		keypoint=compare[0]*1.06;
+		//keypoint=base.get(base.size()-1)[3];
 
 		while(keypoint<compare[3])
 		{
 			if(isTurnQuarterLine(base,compare,keypoint))//站上季線		
-				if(isTurnMonthLine(base,compare,keypoint))//站上月線		
+				if(isTurnMonthLine(base,compare,keypoint))//站上月線	
 					if (kType(0,base,compare,keypoint))
 					{
 						break;
@@ -1024,10 +1036,10 @@ public class bullStrategy1 {
 
 		}
 
-		keypoint*=1.03;
+		//keypoint*=1.03;
 
-		//if(keypoint>compare[3])
-		//	keypoint=compare[3];
+		if(keypoint>compare[3])
+			keypoint=compare[3];
 
 		return keypoint;
 	}
