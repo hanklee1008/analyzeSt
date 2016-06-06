@@ -223,13 +223,13 @@ public class bullStrategy1 {
 		computeDailyKKK(shfile,s.getCell(0,temp).getContents(),ttt,contemp,buyday1);
 
 		if(combineK.size()!=0)
-			do{//System.out.println(s.getCell(0,temp).getContents()+" "+day+" "+tt.get(day)[3]);		
+			do{//System.out.println("9:"+s.getCell(0,temp).getContents());		
 				if(conditionAnalyzeKKK(content,ttt.get(day),ttt.get(day)[3]))
 				{
 					double enterPoint=computeEnterPointKKK(content,ttt.get(day));
 					
 					if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.02)
-					System.out.println("1:"+buyday1[day]+" "+(enterPoint)+" "+ttt.get(day)[3]);
+					System.out.println("1:"+buyday1[day]+" "+(enterPoint)+" "+ttt.get(day)[3]+" "+shfile.getName());
 				}
 				if (conditionAnalyze(content,combineK.get(day),combineK.get(day)[3],currentK.get(day)))
 				{
@@ -275,7 +275,7 @@ public class bullStrategy1 {
 		return false;
 	}
 	public boolean isTurnQuarterLine(ArrayList<double[]> base,double[] compare,double enterPoint)
-	{
+	{//System.out.println("isTurnQuarterLine");
 		double currentQline;
 
 		currentQline=((enterPoint-compare[3])/13+compare[5]);
@@ -303,7 +303,7 @@ public class bullStrategy1 {
 		return false;
 	}
 	public boolean isTurnMonthLine(ArrayList<double[]> base,double[] compare,double enterPoint)
-	{
+	{//System.out.println("isTurnMonthLine");
 		double currentMline;
 		double currentQline;
 
@@ -322,7 +322,7 @@ public class bullStrategy1 {
 		return false;
 	}
 	public int weeklyRateType(ArrayList<double[]> base,double[] compare)
-	{	//System.out.print("\nisweeklyRateType\n");
+	{	//System.out.println("isweeklyRateType");
 		{
 			if ((compare[1]-base.get(base.size()-1)[3])/base.get(base.size()-1)[3]>=divideWeeklyrate)
 				return 1;
@@ -339,7 +339,7 @@ public class bullStrategy1 {
 		return false;	
 	}
 	public int isRedK(int quantityType,ArrayList<double[]> base,double[] compare,double enterPoint)
-	{//System.out.print("\nisRedK");
+	{//System.out.println("isRedK");
 			
 		if ((enterPoint-compare[0])/compare[0]*100>=6)//¬õ´Î°Ï°ì>=5%
 		{
