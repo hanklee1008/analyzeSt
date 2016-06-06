@@ -40,7 +40,7 @@ public class analyzeStrategy {
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t8.xls"),20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
-
+			System.out.println(st1.test1);
 		}
 		catch (Exception e)
 		{
