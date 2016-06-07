@@ -212,7 +212,7 @@ public class bullStrategy1 {
 	}
 	private boolean isfindEntry(Sheet s,Sheet shfile,ArrayList<double[]> content,double[] contemp,int temp,int[] kstate,double[] entrypoint,String[] buyday)
 	{
-		int day=0;
+		int day=0,test=0;
 		ArrayList<double[]> combineK=new ArrayList<double[]>();
 		ArrayList<double[]> currentK=new ArrayList<double[]>();
 		
@@ -231,7 +231,8 @@ public class bullStrategy1 {
 					if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.03)
 					{
 						test1++;
-						System.out.println("1:"+buyday1[day]+" "+shfile.getName());
+						test=1;
+						//System.out.println("1:"+buyday1[day]+" "+shfile.getName());
 					}
 				}
 				if (conditionAnalyze(content,combineK.get(day),combineK.get(day)[3],currentK.get(day)))
@@ -239,13 +240,18 @@ public class bullStrategy1 {
 					System.arraycopy(combineK.get(day), 0, entrypoint, 0, entrypoint.length);
 					//enterPoint=computeEnterPointKKK(content,ttt.get(day));
 					
-					if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.03)
-						//if(!buyday[day].equals(buyday1[day]))
+					//if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.03)
+					if(test==1)
+					if(buyday[day].equals(buyday1[day]))
 					{
-						test1--;
-						System.out.println("2:"+buyday[day]+" "+shfile.getName());
+						test1--;	
+						test=0;
+						//System.out.println("2:"+buyday[day]+" "+shfile.getName());
 					}
-					
+					else
+					{
+						test=0;
+					}
 					/*kstate[1]=1;
 					
 					for (int i=content.size()-1;i>=1;i--)
@@ -352,7 +358,7 @@ public class bullStrategy1 {
 	public int isRedK(int quantityType,ArrayList<double[]> base,double[] compare,double enterPoint)
 	{//System.out.println("isRedK");
 			
-		if ((enterPoint-compare[0])/compare[0]*100>=6)//次跋办>=5%
+		if ((enterPoint-compare[0])/compare[0]*100>=5)//次跋办>=5%
 		{
 			return 2;
 		}
@@ -814,7 +820,7 @@ public class bullStrategy1 {
 	{
 		double keypoint;
 		
-		keypoint=compare[0]*1.06;
+		keypoint=compare[0]*1.05;
 		//keypoint=base.get(base.size()-1)[3];
 
 
@@ -997,8 +1003,13 @@ public class bullStrategy1 {
 					
 					ktype[6]=Double.parseDouble(s.getCell(9,row+day).getContents());
 				}
-				if (Double.parseDouble(s.getCell(1,row+day).getContents())<=Double.parseDouble(s.getCell(4,row+day-1).getContents()))
-					ktype[3]=Double.parseDouble(s.getCell(2,row+day).getContents());
+				if (Double.parseDouble(s.getCell(1,row+day).getContents())<=Double.parseDouble(s.getCell(4,row+day-1).getContents())&&Double.parseDouble(s.getCell(2,row+day).getContents())>=Double.parseDouble(s.getCell(1,row+day).getContents())*1.03)
+				{	
+					if (Double.parseDouble(s.getCell(4,row+day-1).getContents())!=Double.parseDouble(s.getCell(2,row+day-1).getContents()))
+						ktype[3]=Double.parseDouble(s.getCell(2,row+day).getContents());
+					else
+						ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
+				}
 				else
 					ktype[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
 
@@ -1021,7 +1032,7 @@ public class bullStrategy1 {
 	{
 		double keypoint;
 		
-		keypoint=compare[0]*1.06;
+		keypoint=compare[0]*1.05;
 		//keypoint=base.get(base.size()-1)[3];
 
 		while(keypoint<compare[3])
