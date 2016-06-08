@@ -17,7 +17,7 @@ public class analyzeStrategy {
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
 			
-			String filepath=drive+"software/sdata/15temp/";
+			String filepath=drive+"software/sdata/15foranalyze/";
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
 			bullStrategy1 st1=new bullStrategy1();
 			Workbook workbook;
@@ -31,16 +31,16 @@ public class analyzeStrategy {
 				shd=workbook.getSheet(0);
 				shw=workbook.getSheet(1);
 				
+				
 				st1.analyzeStock(shw,shd,allTimePoint,filepath,f.getName());
 
 				workbook.close();
 				
 			}			
-			
+			s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t8.xls"),20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
-			System.out.println(st1.test1);
 		}
 		catch (Exception e)
 		{
