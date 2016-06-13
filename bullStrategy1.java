@@ -28,12 +28,15 @@ public class bullStrategy1 {
 	final double divideWeeklyrate=0.06;
 	
 	double test,test1=0,test2=0;
-	
+		
 	/*public void bullStrategy1()
 	{
 		
 	}*/
-	
+	public String strategyName()
+	{
+		return "quaterline+inside of the week";
+	}
 	public void analyzeStock(Sheet s,Sheet shfile,ArrayList<String[]> allTimePoint,String filepath,String stockname)
 	{	
 		int isComputeReturn=0; //0:exit 1:enter
