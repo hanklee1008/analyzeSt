@@ -25,7 +25,7 @@ import jxl.write.WriteException;
 public class bullStrategy1 {
 
 	final int quarterKCount=13;
-	final double divideWeeklyrate=0.06;
+	final double divideWeeklyrate=0.09;
 	
 	double test,test1=0;
 	
@@ -83,13 +83,13 @@ public class bullStrategy1 {
 							lead=(entrypoint[1]-entrypoint[3])/entrypoint[3]*100;
 							quantity=entrypoint[6];
 							
-							double testpoint;
+							double testpoint=1;
 							{
 								//highWeeklyrate=(entrypoint[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 								
 								//if(weeklyrate>=6&&highWeeklyrate>=divideWeeklyrate)
 								{		
-									testpoint=computeEnterPoint(content,entrypoint);
+									//testpoint=computeEnterPoint(content,entrypoint);
 									//enterPoint=computeEnterPoint(content,entrypoint);
 									//currentLow=enterPoint;
 									//currentHigh=entrypoint[1];;
@@ -212,46 +212,17 @@ public class bullStrategy1 {
 	}
 	private boolean isfindEntry(Sheet s,Sheet shfile,ArrayList<double[]> content,double[] contemp,int temp,int[] kstate,double[] entrypoint,String[] buyday)
 	{
-		int day=0,test=0;
+		int day=0;
 		ArrayList<double[]> combineK=new ArrayList<double[]>();
 		ArrayList<double[]> currentK=new ArrayList<double[]>();
 		
 		computeDailyK(shfile,s.getCell(0,temp).getContents(),combineK,contemp,buyday,currentK);
 		
-		ArrayList<double[]> ttt=new ArrayList<double[]>();
-		String[] buyday1=new String[7];
-		computeDailyKKK(shfile,s.getCell(0,temp).getContents(),ttt,contemp,buyday1);
-		double enterPoint=0;
 		if(combineK.size()!=0)
-			do{//System.out.println("9:"+s.getCell(0,temp).getContents());		
-				if(conditionAnalyzeKKK(content,ttt.get(day),ttt.get(day)[3]))
-				{
-					enterPoint=computeEnterPointKKK(content,ttt.get(day));
-					
-					if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.03)
-					{
-						test1++;
-						test=1;
-						//System.out.println("1:"+buyday1[day]+" "+shfile.getName());
-					}
-				}
+			do{
 				if (conditionAnalyze(content,combineK.get(day),combineK.get(day)[3],currentK.get(day)))
 				{
 					System.arraycopy(combineK.get(day), 0, entrypoint, 0, entrypoint.length);
-					//enterPoint=computeEnterPointKKK(content,ttt.get(day));
-					
-					//if(((ttt.get(day)[1]-enterPoint)/content.get(content.size()-1)[3])>=0.03)
-					if(test==1)
-					if(buyday[day].equals(buyday1[day]))
-					{
-						test1--;	
-						test=0;
-						//System.out.println("2:"+buyday[day]+" "+shfile.getName());
-					}
-					else
-					{
-						test=0;
-					}
 					/*kstate[1]=1;
 					
 					for (int i=content.size()-1;i>=1;i--)
@@ -358,7 +329,7 @@ public class bullStrategy1 {
 	public int isRedK(int quantityType,ArrayList<double[]> base,double[] compare,double enterPoint)
 	{//System.out.println("isRedK");
 			
-		if ((enterPoint-compare[0])/compare[0]*100>=5)//次跋办>=5%
+		if ((enterPoint-compare[0])/compare[0]*100>=6)//次跋办>=5%
 		{
 			return 2;
 		}
