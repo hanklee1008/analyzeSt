@@ -4,17 +4,10 @@ import java.util.ArrayList;
 import jxl.Sheet;
 
 public class bullStrategy2 {
-	int monthLineRedTypeM;//0:black 1,2,3:red
-	int isComputeReturnM; //0:exit 1:enter
-	int mm;
-	double[] baseDataM;
-	double currentHighM,currentLowM,enterPointM,testHighM;
 	
-	int weeklyRateType,highType=0,quantityType=0,kType=0,quarterLineRedK=0,monthLineRedK=1;
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
-	static int predict=1; //0:no predict 1:predict
-	static String drive="d:/";
+	final int predict=1; //0:no predict 1:predict
 	 
 	public void analyzeStock(Sheet sweek,Sheet sday,ArrayList<String[]> allTimePoint,String filepath,String stockname)
 	{	
@@ -24,19 +17,12 @@ public class bullStrategy2 {
 		ArrayList<double[]> content=new ArrayList<double[]>();
 		DecimalFormat df=new DecimalFormat("#.##");
 		String buytime="";
-		double weeklyrate,lead,quantity,kRate;
-		String[] tempdata=null;
+		String[] tempdata=null;		
+		int quarterLineRedK=0;
 		
-		monthLineRedK=1;
-		quarterLineRedK=0;
-			
-		monthLineRedTypeM=0;//0:black 1,2,3:red
-		isComputeReturnM=0; //0:exit 1:enter
-		mm=0;
-		baseDataM=new double[7];
-		currentHighM=0;
-		currentLowM=0;
-		enterPointM=0;
+		double[] mmstate=new double[7]; //mm=0;isComputeReturnM=0;monthLineRedTypeM=0;currentHighM=0;currentLowM=0;enterPointM=0;testHighM=0;
+		for (double element:mmstate)
+			element=0;
 			
 		try {
 				int temp=1;
@@ -77,7 +63,7 @@ public class bullStrategy2 {
 										currentHigh=contemp[3];
 										currentLow=contemp[3];
 
-										mm=1;									
+										mmstate[0]=1;									
 									}
 									else
 										quarterLineRedK++;
@@ -85,7 +71,6 @@ public class bullStrategy2 {
 								else
 								{
 									quarterLineRedK=0;
-									monthLineRedK=1;
 								}
 							}
 							else if(quarterLineRedK>=9) 
@@ -95,7 +80,6 @@ public class bullStrategy2 {
 								else
 								{
 									quarterLineRedK=0;
-									monthLineRedK=1;
 								}
 							}															
 						}
@@ -110,14 +94,13 @@ public class bullStrategy2 {
 							{							
 								isComputeReturn=0;
 								quarterLineRedK=0;
-								monthLineRedK=1;
 
-								mm=0;
+								mmstate[0]=0;
 							}
 						}
 						
 						buytime=sweek.getCell(0,temp).getContents();
-						analyzeStockResultByQuarterLineMM(sweek,allTimePoint,buytime,contemp,content,stockname,tempdata);
+						analyzeStockResultByQuarterLineMM(sweek,allTimePoint,buytime,contemp,content,stockname,tempdata,mmstate);
 					}
 					
 					temp++;
@@ -126,111 +109,72 @@ public class bullStrategy2 {
 		}
 		catch (Exception e)
 		{
-			System.out.print("\nanalyzeStockResultByQuarterLine"+","+sweek.getName());
+			System.out.print("\nanalyzeStock"+","+sweek.getName());
 			e.printStackTrace();
 		}
 	}
-	private void analyzeStockResultByQuarterLineMM(Sheet s,ArrayList<String[]> allTimePoint,String buytime,double[] contemp,ArrayList<double[]> content,String stockname,String[] tempdata)
+	private void analyzeStockResultByQuarterLineMM(Sheet s,ArrayList<String[]> allTimePoint,String buytime,double[] contemp,ArrayList<double[]> content,String stockname,String[] tempdata,double[] mmstate)
 	{	
 		DecimalFormat df=new DecimalFormat("#.##");
-		
-		
+			
 		try {		
 					if (content.size()>=2)
 					{
-						if (isComputeReturnM==0&&mm==1)
+						if (mmstate[1]==0&&mmstate[0]==1)
 						{
-							testHighM=0;
-							
-								if (monthLineRedTypeM==0)
-								{
-									if (contemp[4]>content.get(content.size()-1)[4]&&content.get(content.size()-2)[4]>content.get(content.size()-1)[4])
-									{																	
-										monthLineRedTypeM=1;
-									}
+							mmstate[6]=0;
+
+							if (mmstate[2]==0)
+							{
+								if (contemp[4]>content.get(content.size()-1)[4]&&content.get(content.size()-2)[4]>content.get(content.size()-1)[4])
+								{																	
+									mmstate[2]=1;
 								}
-								if (monthLineRedTypeM==1)
-								{
-									if(conditionAnalyzeMM(content,contemp))							
-									{										
-											isComputeReturnM=1;
-											baseDataM=contemp;
-											enterPointM=contemp[3];
-											currentHighM=contemp[3];
-											currentLowM=contemp[3];
-											double weeklyrate=(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
-											double lead=(contemp[1]-contemp[3])/contemp[3]*100;
-											double quantity=contemp[6];
-	
-											//tempdata=new String[]{stockname,buytime,"","","","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
-											fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));											
-											
-											/*if (predict==1)
+							}
+							if (mmstate[2]==1)
+							{
+								if(conditionAnalyzeMM(content,contemp))							
+								{										
+									mmstate[1]=1;									
+									mmstate[3]=contemp[3];
+									mmstate[4]=contemp[3];
+									mmstate[5]=contemp[3];
+									double weeklyrate=(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
+									double lead=(contemp[1]-contemp[3])/contemp[3]*100;
+									double quantity=contemp[6];
+
+									//tempdata=new String[]{stockname,buytime,"","","","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
+									fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));											
+
+									/*if (predict==1)
 											{
 												if(enterPointM>content.get(content.size()-4)[3]*1.03)
 													enterPointM=content.get(content.size()-4)[3]*1.03;
-												
+
 												testHighM=contemp[1];
 											}*/
-											
-											monthLineRedTypeM=0;
-									}
-									else
-										monthLineRedTypeM=0;
-								}														
+								}
+								else
+									mmstate[2]=0;
+							}														
 						}
-						else if (isComputeReturnM==1)
+						else if (mmstate[1]==1)
 						{							
-							if (contemp[0]>=contemp[3])
+							if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
 							{
-								if (contemp[1]>currentHighM)
-								{
-									currentHighM=contemp[1];								
-								}
-								if (contemp[2]<currentLowM)
-								{
-									if ((currentHighM-baseDataM[3])/baseDataM[3]<0.07)
-									{
-										if ((currentHighM-enterPointM)/enterPointM<0.07&&(testHighM-enterPointM)/enterPointM<0.07)
-											currentLowM=contemp[2];
-										
-									}
-								}
-							}
-							else
-							{
-								if (contemp[2]<currentLowM)
-								{
-									if ((currentHighM-baseDataM[3])/baseDataM[3]<0.07)
-									{
-										if ((currentHighM-enterPointM)/enterPointM<0.07&&(testHighM-enterPointM)/enterPointM<0.07)
-											currentLowM=contemp[2];
-										
-									}
-								}								
-								if (contemp[1]>currentHighM)
-								{
-									if ((enterPointM-currentLowM)/enterPointM<0.12)
-										currentHighM=contemp[1];								
-								}
-								
-							}
-							
-							if (endComputeReturnM(currentHighM,baseDataM,contemp,content,enterPointM))
-							{
-								if(testHighM>currentHighM)
-									currentHighM=testHighM;
+								//if(testHighM>currentHighM)
+									//currentHighM=testHighM;
 
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
-								fillInData(allTimePoint,2,""+df.format(100*(currentHighM-enterPointM)/enterPointM));						
-								fillInData(allTimePoint,9,""+df.format(100*(baseDataM[3]-currentLowM)/baseDataM[3]));
+								fillInData(allTimePoint,2,""+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));						
+								fillInData(allTimePoint,9,""+df.format(100*(mmstate[5]-mmstate[4])/mmstate[5]));
 								
 								
 								//allTimePoint.add(tempdata);
 								
-								isComputeReturnM=0;
-								monthLineRedTypeM=0;
+								mmstate[1]=0;
+								mmstate[2]=0;
 							}
 						}
 					}							
@@ -243,7 +187,7 @@ public class bullStrategy2 {
 	}
 	private void fillStockData(ArrayList<String[]> allTimePoint,String stockNum,String buytime,String quantity,String weeklyrate,String lead)
 	{	
-		String[] temp={stockNum,buytime,"","","","",quantity+"",weeklyrate,lead,"","","","","","","","",""+kType,"1"};
+		String[] temp={stockNum,buytime,"","","","",quantity+"",weeklyrate,lead,"","","","","","","","","","1"};
 		allTimePoint.add(temp);
 	}
 	private void fillInData(ArrayList<String[]> allTimePoint,int location,String firstComputeReturn)
@@ -251,23 +195,10 @@ public class bullStrategy2 {
 		allTimePoint.get(allTimePoint.size()-1)[location]=firstComputeReturn;
 	}
 	private boolean conditionAnalyzeQ(ArrayList<double[]> base,double[] compare,double enterPoint)
-	{	
-		int weeklyRateType;
-		//quantityType=isOverQuantity(base,compare);
-		//highType=isOverHigh(base,compare);
-		weeklyRateType=weeklyRateType(base,compare);
-		
+	{			
 		if(isTurnQuarterLine(base,compare,enterPoint))
 			if(isTurnMonthLine(base,compare,enterPoint))
-				if(weeklyRateType!=0)
-				{				
-					//if ((quantityType>=1&&quantityType<=3)||highType!=0)
-					if (kType(quantityType,base,compare,enterPoint))
-					{
-						
-						return true;
-					}
-				}
+				return true;
 								
 		return false;
 	}
@@ -293,38 +224,24 @@ public class bullStrategy2 {
 	}
 	private boolean isTurnQuarterLine(ArrayList<double[]> base,double[] compare,double enterPoint)
 	{//System.out.print("\nisTurnQuarterLine");
-		//System.out.println("hhhh "+enterPoint);	
+		
 		double currentQline;
 		
 		currentQline=(enterPoint-compare[3])/13+compare[5];
 
 		if(enterPoint>currentQline)//站上季線
 		if((enterPoint-currentQline)>=(currentQline-compare[0]))//k棒明顯突破季線
-		{			//System.out.println("hhhh1 "+enterPoint+" "+compare[3]+" "+compare[5]);	
+		{				
 			if ((currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5]>=0)
-			{//System.out.println("hhhh2 "+enterPoint+" "+compare[3]+" "+compare[5]);
-				return true;
-			}
-			
-			//turnQuarterLineDegree=(currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5];//翻轉幅度
-			
-			/*if (turnQuarterLineDegree>=0.001)//翻轉超過0.001 ***
 			{
 				return true;
 			}
-			else
-			{
-				if (compare[3]==compare[1])//收最高
-				{
-					return true;
-				}
-			}	*/	
 		}
 				return false;
 	}
 	private boolean isTurnMonthLine(ArrayList<double[]> base,double[] compare,double enterPoint)
 	{//System.out.print("\nisTurnMonthLine\n");
-		//System.out.println("qqqq "+enterPoint);	
+			
 		double currentMline;
 		double currentQline;
 		
@@ -334,87 +251,17 @@ public class bullStrategy2 {
 		if(enterPoint>currentMline)//站上月線
 		if((enterPoint-currentMline)>=(currentMline-compare[0]))//k棒明顯突破月線
 		{
-			//turnMonthLineDegree=(currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4];//翻轉幅度
-			
-			if((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>=(currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5])
+			if ((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>=0)
 			{
 				return true;
 			}
+			/*if((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>=(currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5])
+			{
+				return true;
+			}*/
 		}
 
 			return false;
-	}
-	private int weeklyRateType(ArrayList<double[]> base,double[] compare)
-	{	//System.out.print("\nisweeklyRateType\n");
-		if (predict==1)
-		{
-			if ((compare[1]-base.get(base.size()-1)[3])/base.get(base.size()-1)[3]>=0.09)
-				return 1;
-		}
-		else
-		{
-			if ((compare[3]-base.get(base.size()-1)[3])/base.get(base.size()-1)[3]*100>0)
-			{		
-				if ((compare[3]-base.get(base.size()-1)[3])/base.get(base.size()-1)[3]*100<6)
-				{
-					if ((compare[1]-compare[3])/compare[3]*100>1)
-						return 0;
-				}
-				return 1;
-			}
-		}	
-		
-		return 0;
-	}
-	private boolean kType(int quantityType,ArrayList<double[]> base,double[] compare,double enterPoint)
-	{
-		if ((kType=isRedK(quantityType,base,compare,enterPoint))!=0)
-			return true;		
-
-		return false;	
-	}
-	private int isRedK(int quantityType,ArrayList<double[]> base,double[] compare,double enterPoint)
-	{//System.out.print("\nisRedK");
-		
-		if((compare[1] - base.get(base.size() - 1)[3]) / base.get(base.size() - 1)[3] >=0.09&&compare[1]==compare[3])
-			return 9;
-		
-		if (base.get(base.size() - 1)[1]== base.get(base.size() - 1)[3]&&(enterPoint - base.get(base.size() - 1)[3]) / base.get(base.size() - 1)[3] >=0.05)
-		{
-			return 1;
-		}
-		else
-		{
-			if ((enterPoint-compare[0])/compare[0]*100>=5)//紅棒區域>=5%
-			{
-				return 2;
-			}	
-			else
-			{
-				if((enterPoint-compare[2])/compare[2]*100>=7)//從低點算>=7%
-				{
-					if ((enterPoint - compare[0]) / compare[0] > 0.02)// 大於2%紅棒
-					{
-						return 3;
-					} 
-					else 
-					{
-						if(enterPoint >= compare[0])// 紅k
-							if (base.get(base.size() - 1)[3]>=base.get(base.size() - 1)[0])// 前一根紅k
-								if (base.get(base.size() - 1)[1] - compare[2] > compare[1]- base.get(base.size() - 1)[1])// k棒多半落在前一k棒裡面
-								{
-									return 4;
-								}
-					}
-				}
-				else
-				{
-					return 0;
-				}
-			}	
-		}	
-			
-			return 0;
 	}
 	private boolean endComputeReturnQ(double currentHigh,double[] baseData,double[] contemp,ArrayList<double[]> content)
 	{	
@@ -432,21 +279,73 @@ public class bullStrategy2 {
 			
 		return false;
 	}
-	private boolean endComputeReturnM(double currentHigh,double[] baseData,double[] contemp,ArrayList<double[]> content,double enterPointM)
+	private boolean endComputeReturnM(double[] mmstate,double[] contemp,ArrayList<double[]> content,double enterPoint)
+	{		
+		if (contemp[0]>=contemp[3])
+		{
+			updateHigh(contemp[1],mmstate);
+			
+			if(stopLoss(enterPoint,contemp[2]))
+				return true;
+			
+			if(stopCompute(contemp[4],content.get(content.size()-1)[4],mmstate[3],enterPoint))
+				return true;
+			
+			updateLow(contemp[2],mmstate,enterPoint);
+		}
+		else
+		{
+			updateLow(contemp[2],mmstate,enterPoint);
+				
+			if(stopLoss(enterPoint,contemp[2]))
+				return true;
+			
+			if(stopCompute(contemp[4],content.get(content.size()-1)[4],mmstate[3],enterPoint))
+				return true;
+			
+			updateHigh(contemp[1],mmstate);
+		}
+			
+		return false;
+	}
+	private boolean stopLoss(double enterpoint,double low)
 	{
-		if ((enterPointM-contemp[2])/enterPointM>0.13)//拉回超過12%
+		if ((enterpoint-low)/enterpoint>0.13)//拉回超過13%
 		{
 			return true;
 		}
-		else if(contemp[4]<content.get(content.size()-1)[4])//月線向下
-		{
-			if ((currentHigh-enterPointM)/enterPointM>=0.1)//高點漲超過10%
-			{
-				return true;
-			}
-		}
 		
 		return false;
+	}
+	private boolean stopCompute(double curMonthline,double preMonthline,double low,double enterpoint)
+	{
+		if(curMonthline<preMonthline)//月線向下
+		{
+			if ((low-enterpoint)/enterpoint>=0.1)//高點漲超過10%
+			{
+				return true;
+			}							
+		}
+			
+		return false;
+	}
+	private void updateHigh(double high,double[] returnv)
+	{
+		if (high>returnv[3])
+		{		
+			returnv[3]=high;	
+		}	
+	}
+	private void updateLow(double low,double[] returnv,double enterpoint)
+	{					
+		if (low<returnv[4])
+		{
+			if ((returnv[3]-enterpoint)/enterpoint<0.07)//高點不超過7%
+			{
+				returnv[4]=low;		
+			}				
+		}
+		
 	}
 }
 

@@ -2189,53 +2189,59 @@ public void computeResult(ArrayList<String[]> allTimePoint,int baseDate,int cond
 	int r1=0,r2=0,r3=0,r11=0,r12=0,r13=0;
 	
 	for (int i=0;i<allTimePoint.size();i++)	
-	{		
-		if(setDataCondition(allTimePoint.get(i),baseDate,condition))
-		{
-			if(Double.parseDouble(allTimePoint.get(i)[7])>=divideWeeklyrate)
+	{	
+		try{
+			if(setDataCondition(allTimePoint.get(i),baseDate,condition))
 			{
-				if (!allTimePoint.get(i)[2].equals(""))
-				{
-					if(Double.parseDouble(allTimePoint.get(i)[2])>=10)
-					{
-						r11++;
-					}
-					else if(Double.parseDouble(allTimePoint.get(i)[2])>=7&&Double.parseDouble(allTimePoint.get(i)[2])<10)
-					{
-						r12++;
-					}
-					else
-					{
-						r13++;
-					}	
-				}
-			}
-			else
-			{
-				if(Double.parseDouble(allTimePoint.get(i)[7])>=-6)
+				if(Double.parseDouble(allTimePoint.get(i)[7])>=divideWeeklyrate)
 				{
 					if (!allTimePoint.get(i)[2].equals(""))
 					{
 						if(Double.parseDouble(allTimePoint.get(i)[2])>=10)
 						{
-							r1++;
+							r11++;
 						}
 						else if(Double.parseDouble(allTimePoint.get(i)[2])>=7&&Double.parseDouble(allTimePoint.get(i)[2])<10)
 						{
-							r2++;
+							r12++;
 						}
 						else
 						{
-							r3++;
+							r13++;
 						}	
-					}	
+					}
 				}
 				else
 				{
-					
-				}
-			}		
-		}		
+					if(Double.parseDouble(allTimePoint.get(i)[7])>=-6)
+					{
+						if (!allTimePoint.get(i)[2].equals(""))
+						{
+							if(Double.parseDouble(allTimePoint.get(i)[2])>=10)
+							{
+								r1++;
+							}
+							else if(Double.parseDouble(allTimePoint.get(i)[2])>=7&&Double.parseDouble(allTimePoint.get(i)[2])<10)
+							{
+								r2++;
+							}
+							else
+							{
+								r3++;
+							}	
+						}	
+					}
+					else
+					{
+
+					}
+				}		
+			}	
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	if((r1+r2+r3)!=0)
 		System.out.print("\n"+(r1+r2+r3)+","+r1*1000/(r1+r2+r3)+","+r2*1000/(r1+r2+r3)+","+r3*1000/(r1+r2+r3));
