@@ -250,11 +250,11 @@ public class bullStrategy2 {
 		
 		if(enterPoint>currentMline)//站上月線
 		if((enterPoint-currentMline)>=(currentMline-compare[0]))//k棒明顯突破月線
-		{return true;
-			/*if ((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>0)
+		{
+			if ((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>=0)
 			{
 				return true;
-			}*/
+			}
 			/*if((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>=(currentQline-base.get(base.size()-1)[5])/base.get(base.size()-1)[5])
 			{
 				return true;
