@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=1,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 /*public static void main(String[] s)
 {		
@@ -1924,10 +1924,10 @@ public void fillInAllconditionBydaily(ArrayList<String[]> allTimePoint)
 	{
 		String[] tt=allTimePoint.get(i);
 		String[] temp=allStockConditionBydaily(tt[0],tt[1],s);
-		tt[9]=temp[1];
-		tt[10]=temp[2];
+		//tt[9]=temp[1];
+		//tt[10]=temp[2];
 		tt[11]=temp[3];
-		tt[12]=temp[4];
+		//tt[12]=temp[4];
 	}
 	}
 	catch(Exception e)
