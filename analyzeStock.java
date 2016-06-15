@@ -438,7 +438,7 @@ public ArrayList<String[]> analyzeBear(Workbook workbook,int filetype,ArrayList<
 }
 public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimePoint,String name)
 {	
-	int isComputeReturn=0,firstComputek=0; //0:exit 1:enter
+	int isComputeReturn=0; //0:exit 1:enter
 	double[] baseData=new double[7],contemp=new double[7];
 	double currentHigh=0,currentLow=0,enterPoint=0;
 	ArrayList<double[]> content=new ArrayList<double[]>();
@@ -447,7 +447,7 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 	double weeklyrate,lead,quantity,kRate;
 	
 	monthLineRedK=1;
-	quarterLineRedK=0;	
+	int quarterLineRedK=0;	
 
 	try {			
 			int temp=1;
@@ -470,7 +470,11 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 				{
 					for (int j=0;j<6;++j)
 					{
-						contemp[j]=Double.parseDouble(s.getCell(j+1,temp).getContents());
+						String st=s.getCell(j+1,temp).getContents();
+						if (!st.equals(""))
+							contemp[j]=Double.parseDouble(st);
+						else
+							contemp[j]=0;
 					}
 					contemp[6]=Double.parseDouble(s.getCell(11,temp).getContents());
 				}
@@ -512,7 +516,6 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 							else
 							{
 								quarterLineRedK=0;
-								monthLineRedK=1;
 							}
 						}
 						else if(quarterLineRedK>=9) 
@@ -522,7 +525,6 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 							else
 							{
 								quarterLineRedK=0;
-								monthLineRedK=1;
 							}
 						}															
 					}
@@ -549,7 +551,7 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 							}								
 							if (contemp[1]>currentHigh)
 							{
-								if ((enterPoint-currentLow)/enterPoint<0.12)
+								if ((enterPoint-currentLow)/enterPoint<0.13)
 									currentHigh=contemp[1];								
 							}							
 						}
@@ -570,8 +572,6 @@ public void analyzeStockResultByQuarterLine(Sheet s,ArrayList<String[]> allTimeP
 							
 							isComputeReturn=0;
 							quarterLineRedK=0;
-							monthLineRedK=1;
-							firstComputek=1;
 						}
 					}
 				}				
@@ -1916,10 +1916,10 @@ public void fillInAllconditionBydaily(ArrayList<String[]> allTimePoint)
 	{
 		String[] tt=allTimePoint.get(i);
 		String[] temp=allStockConditionBydaily(tt[0],tt[1],s);
-		tt[9]=temp[1];
-		tt[10]=temp[2];
+		//tt[9]=temp[1];
+		//tt[10]=temp[2];
 		tt[11]=temp[3];
-		tt[12]=temp[4];
+		//tt[12]=temp[4];
 	}
 	}
 	catch(Exception e)

@@ -785,15 +785,17 @@ public class bullStrategy1 {
 
 				ktype[4]=(ktype[3]-base[3])/4+base[4];
 				ktype[5]=(ktype[3]-base[3])/13+base[5];
-
-				for (int i=0;i<9;i++)
-				{
-					currentk[i]=Double.parseDouble(s.getCell(i+1,row+day).getContents());
-				}
 				
 				day++;
 				combineK.add(ktype);
-				currentKlist.add(currentk);
+				
+				/*for (int i=0;i<9;i++)
+				{
+					if (!s.getCell(i+1,row+day).getContents().equals(""))
+						currentk[i]=Double.parseDouble(s.getCell(i+1,row+day).getContents());
+				}
+				
+				currentKlist.add(currentk);*/
 			
 			}
 			while((row+day)<s.getRows()&&format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);

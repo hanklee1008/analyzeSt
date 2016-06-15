@@ -81,8 +81,73 @@ public class analyzeStrategy {
 				workbook.close();
 				
 			}			
-			//s1.fillInAllconditionBydaily(allTimePoint);
+			s1.fillInAllconditionBydaily(allTimePoint);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t999.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
+			
+			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
+		}
+		catch (Exception e)
+		{
+			System.out.println("analyze\n");
+			e.printStackTrace();
+		}
+	}
+	private void analyze3()
+	{
+		try{
+			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
+			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
+			
+			String filepath=drive+"software/sdata/15foranalyze/";
+			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
+			bullStrategy22 st1=new bullStrategy22();
+			Workbook workbook;
+			Sheet shd,shw;		
+
+			analyzeStock s1=new analyzeStock();	
+			File[] temp=new File(filepath).listFiles();
+			for (File f:temp)
+			{									
+				workbook=Workbook.getWorkbook(f);
+				shd=workbook.getSheet(0);
+				shw=workbook.getSheet(1);
+				
+				
+				st1.analyzeStock(shw,shd,allTimePoint,filepath,f.getName());
+
+				workbook.close();
+				
+			}			
+			s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t88.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
+			
+			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
+		}
+		catch (Exception e)
+		{
+			System.out.println("analyze\n");
+			e.printStackTrace();
+		}
+	}
+	private void analyze4()
+	{
+		try{
+			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
+			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
+			
+			String filepath=drive+"software/sdata/15foranalyze/";
+			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();				
+
+			analyzeStock s1=new analyzeStock();	
+			File[] temp=new File(filepath).listFiles();
+			for (File f:temp)
+			{
+				s1.analyzeBullByFile(f,0,allTimePoint,1,1,filepath);
+			}
+			s1.fillInAllconditionBydaily(allTimePoint);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t123.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));

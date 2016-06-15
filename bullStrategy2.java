@@ -7,8 +7,11 @@ public class bullStrategy2 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
-	final int predict=1; //0:no predict 1:predict
-	 
+	
+	public String strategyName()
+	{
+		return "monthline on quaterline+end of the week";
+	}
 	public void analyzeStock(Sheet sweek,Sheet sday,ArrayList<String[]> allTimePoint,String filepath,String stockname)
 	{	
 		int isComputeReturn=0; //0:exit 1:enter
@@ -243,13 +246,13 @@ public class bullStrategy2 {
 	{//System.out.print("\nisTurnMonthLine\n");
 			
 		double currentMline;
-		double currentQline;
+		//double currentQline;
 		
-		currentQline=(enterPoint-compare[3])/13+compare[5];
+		//currentQline=(enterPoint-compare[3])/13+compare[5];
 		currentMline=(enterPoint-compare[3])/4+compare[4];
 		
 		if(enterPoint>currentMline)//站上月線
-		if((enterPoint-currentMline)>=(currentMline-compare[0]))//k棒明顯突破月線
+		//if((enterPoint-currentMline)>=(currentMline-compare[0]))//k棒明顯突破月線
 		{
 			if ((currentMline-base.get(base.size()-1)[4])/base.get(base.size()-1)[4]>=0)
 			{
