@@ -1894,10 +1894,10 @@ public void fillInAllcondition(ArrayList<String[]> allTimePoint)
 	{
 		String[] tt=allTimePoint.get(i);
 		String[] temp=allStockCondition(tt[0],tt[1],s,tt[11]);
-		tt[13]=temp[1];
-		tt[14]=temp[2];
-		tt[15]=temp[3];
-		tt[16]=temp[4];
+		tt[10]=temp[3];
+		tt[11]=temp[1];
+		tt[12]=temp[2];
+		tt[13]=temp[4];
 	}
 	}
 	catch(Exception e)
@@ -1916,10 +1916,11 @@ public void fillInAllconditionBydaily(ArrayList<String[]> allTimePoint)
 	{
 		String[] tt=allTimePoint.get(i);
 		String[] temp=allStockConditionBydaily(tt[0],tt[1],s);
-		//tt[9]=temp[1];
-		//tt[10]=temp[2];
-		tt[11]=temp[3];
-		//tt[12]=temp[4];
+		
+		tt[10]=temp[3];
+		tt[11]=temp[1];
+		tt[12]=temp[2];
+		tt[13]=temp[4];
 	}
 	}
 	catch(Exception e)
@@ -1963,13 +1964,12 @@ public String[] allStockConditionBydaily(String Num,String buyTime,Sheet ss)
 			{	
 				if(currentdata[5]<previousdata[5])//月向下
 				{	
-					//if ((currentdata[4]>currentdata[1])&&(currentdata[4]-currentdata[3])/currentdata[3]>0.01)
 					if ((currentdata[4]>currentdata[1]))
 						temp[2]="11";
 					else
 					{
 						if ((currentdata[4]-currentdata[3])/currentdata[3]>0.005)
-						temp[2]="121";
+							temp[2]="121";
 						else
 							temp[2]="122";
 					}
@@ -1984,7 +1984,7 @@ public String[] allStockConditionBydaily(String Num,String buyTime,Sheet ss)
 				if(currentdata[5]<previousdata[5])//月向下
 				{	
 					if (currentdata[4]>currentdata[1])
-					temp[1]="11";
+						temp[1]="11";
 					else
 						temp[1]="12";
 				}
@@ -1998,13 +1998,12 @@ public String[] allStockConditionBydaily(String Num,String buyTime,Sheet ss)
 		{
 			if(currentdata[5]<previousdata[5])//月向下
 			{
-				//if ((currentdata[4]>currentdata[1])&&(currentdata[4]-currentdata[3])/currentdata[3]>0.01)
 				if ((currentdata[4]>currentdata[1]))
 					temp[4]="11";
 				else
 				{	
 					if ((currentdata[4]-currentdata[3])/currentdata[3]>0.005)
-					temp[4]="121";
+						temp[4]="121";
 					else 
 						temp[4]="122";
 				}
