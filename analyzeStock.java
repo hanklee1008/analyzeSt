@@ -1918,9 +1918,9 @@ public void fillInAllconditionBydaily(ArrayList<String[]> allTimePoint)
 		String[] temp=allStockConditionBydaily(tt[0],tt[1],s);
 		
 		tt[10]=temp[3];
-		tt[11]=temp[1];
-		tt[12]=temp[2];
-		tt[13]=temp[4];
+		//tt[11]=temp[1];
+		//tt[12]=temp[2];
+		//tt[13]=temp[4];
 	}
 	}
 	catch(Exception e)
@@ -3889,23 +3889,6 @@ private void updateLow(double[] contemp,double[] returnv,double compoint)
 	if ((returnv[2]-compoint)/compoint<0.1)
 		returnv[1]=contemp[2];
 	
-}
-private void analyzeBy1stK(double[] contemp,double[] previoustemp,String[] tempdata)
-{
-	if (contemp[0]>contemp[3])
-	{
-		if (contemp[3]>=previoustemp[3])
-			tempdata[12]="01";
-		else
-			tempdata[12]="00";
-	}
-	else
-	{
-		if (contemp[3]>=previoustemp[3])
-			tempdata[12]="11";
-		else
-			tempdata[12]="10";
-	}
 }
 private boolean stopLossM(double base,double comp)
 {

@@ -45,13 +45,13 @@ public class analyzeStrategy {
 				
 			}			
 			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t8.xls"),20040301,0);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-mow.xls"),20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
 		{
-			System.out.println("analyze\n");
+			System.out.println("analyze1\n");
 			e.printStackTrace();
 		}
 	}
@@ -61,13 +61,13 @@ public class analyzeStrategy {
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
 			
-			String filepath=drive+"software/sdata/15foranalyze/";
+			String filepath=drive+"software/sdata/15test/";
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
 			bullStrategy2 st1=new bullStrategy2();
 			Workbook workbook;
 			Sheet shd,shw;		
 
-			analyzeStock s1=new analyzeStock();	
+			/*analyzeStock s1=new analyzeStock();	
 			File[] temp=new File(filepath).listFiles();
 			for (File f:temp)
 			{									
@@ -82,14 +82,14 @@ public class analyzeStrategy {
 				
 			}			
 			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t999.xls"),20040301,0);
-			s1.computeResult(allTimePoint,20040301,0);
-			
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-mow.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);*/
+			st1.computeReturnByReturnFiles(new File(drive+"software/sdata/m-mow10result.xls"),allTimePoint);
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
 		{
-			System.out.println("analyze\n");
+			System.out.println("analyze2\n");
 			e.printStackTrace();
 		}
 	}
@@ -120,14 +120,14 @@ public class analyzeStrategy {
 				
 			}			
 			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t88.xls"),20040301,0);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
 		{
-			System.out.println("analyze\n");
+			System.out.println("analyze3\n");
 			e.printStackTrace();
 		}
 	}
@@ -147,14 +147,14 @@ public class analyzeStrategy {
 				s1.analyzeBullByFile(f,0,allTimePoint,1,1,filepath);
 			}
 			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/t123.xls"),20040301,0);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
 		{
-			System.out.println("analyze\n");
+			System.out.println("analyze4\n");
 			e.printStackTrace();
 		}
 	}

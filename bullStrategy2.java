@@ -1,12 +1,19 @@
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import jxl.Cell;
 import jxl.Sheet;
+import jxl.Workbook;
+import jxl.write.Number;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 public class bullStrategy2 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
+	static String drive="d:/";
 	
 	public String strategyName()
 	{
@@ -101,8 +108,10 @@ public class bullStrategy2 {
 								mmstate[0]=0;
 							}
 						}
-						
-						buytime=sweek.getCell(0,temp).getContents();
+						if (temp+1<sweek.getRows())
+							buytime=sweek.getCell(0,temp+1).getContents();
+						else
+							buytime=sweek.getCell(0,temp).getContents();
 						analyzeStockResultByQuarterLineMM(sweek,allTimePoint,buytime,contemp,content,stockname,tempdata,mmstate);
 					}
 					
@@ -147,15 +156,9 @@ public class bullStrategy2 {
 									double quantity=contemp[6];
 
 									//tempdata=new String[]{stockname,buytime,"","","","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
-									fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));											
-
-									/*if (predict==1)
-											{
-												if(enterPointM>content.get(content.size()-4)[3]*1.03)
-													enterPointM=content.get(content.size()-4)[3]*1.03;
-
-												testHighM=contemp[1];
-											}*/
+									fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
+									for (int i=0;i<contemp.length;i++)
+									fillInData(allTimePoint,11+i,""+contemp[i]);	
 								}
 								else
 									mmstate[2]=0;
@@ -165,9 +168,6 @@ public class bullStrategy2 {
 						{							
 							if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
 							{
-								//if(testHighM>currentHighM)
-									//currentHighM=testHighM;
-
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
 								fillInData(allTimePoint,2,""+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));						
@@ -290,7 +290,6 @@ public class bullStrategy2 {
 			
 			if(stopLoss(enterPoint,contemp[2]))
 				return true;
-			
 			if(stopCompute(contemp[4],content.get(content.size()-1)[4],mmstate[3],enterPoint))
 				return true;
 			
@@ -302,7 +301,6 @@ public class bullStrategy2 {
 				
 			if(stopLoss(enterPoint,contemp[2]))
 				return true;
-			
 			if(stopCompute(contemp[4],content.get(content.size()-1)[4],mmstate[3],enterPoint))
 				return true;
 			
@@ -350,4 +348,428 @@ public class bullStrategy2 {
 		}
 		
 	}
-}
+	public void computeReturnByReturnFile(File f,ArrayList<String[]> allTimePoint)
+	{
+		try{
+			Workbook workBook=Workbook.getWorkbook(f);
+			WritableWorkbook writeBook=Workbook.createWorkbook(f,workBook);
+			WritableSheet sss=writeBook.getSheet(0);
+
+			for (int i=1;i<sss.getRows();i++)
+			{
+				String stocknum=sss.getCell(0,i).getContents();
+				String stockdate=sss.getCell(1,i).getContents();
+
+				double[] basedata=new double[7];
+				for (int j=0;j<basedata.length;j++)
+					basedata[j]=Double.parseDouble(sss.getCell(11+j,i).getContents());
+
+				double[] returnv=new double[2];
+				returnv[0]=basedata[3];
+				returnv[1]=basedata[3];
+
+				String[] tempdata={"","","","","","","","","","","","","","","","","",""};
+				DecimalFormat df=new DecimalFormat("#.##");
+
+				Workbook stockbook=Workbook.getWorkbook(new File(drive+"software/sdata/15foranalyze/"+stocknum));
+				Sheet stocksh=stockbook.getSheet(0);
+
+				Cell c=stocksh.findCell(stockdate);
+				int row=c.getRow()-1;
+				int nextrow=stocksh.getRows()-1;
+
+				if (endComputeReturnByReturnFile(stocksh,row,nextrow,basedata,returnv,tempdata,basedata[3]))
+				{
+					//tempdata[2]=""+df.format(100*(returnv[0]-compoint)/compoint);	
+					sss.addCell(new Number(3,i,Double.parseDouble(df.format(100*(returnv[0]-basedata[3])/basedata[3]))));
+				}
+
+				//allTimePoint.add(tempdata);
+				
+			}
+			writeBook.write();
+			writeBook.close();
+			workBook.close();
+		}
+		catch (Exception e)
+		{
+			System.out.print("\n computeReturnByReturnFile");
+			e.printStackTrace();
+		}		
+	}
+	private boolean endComputeReturnByReturnFile(Sheet s,int row,int nextrow,double[] basedata,double[] returnv,String[] tempdata,double compoint)
+	{						
+		String date="";
+		int day=1,gg10=0,now10=0,endbenefit=0;
+		double[] contemp=new double[9],previoustemp=new double[9];
+		double[] previousreturnv=new double[2];
+
+		try{
+			for (int i=0;i<previoustemp.length;i++)
+			{
+				previoustemp[i]=Double.parseDouble(s.getCell(i+1,row).getContents());		
+			}
+		}
+		catch (Exception e)
+		{			
+			e.printStackTrace();
+			return false;
+		}
+
+		while (row+day<nextrow)
+		{		
+			date=s.getCell(0,row+day).getContents();
+
+			System.arraycopy(returnv, 0, previousreturnv, 0, returnv.length);
+
+			try{
+				for (int i=0;i<contemp.length;i++)
+					contemp[i]=Double.parseDouble(s.getCell(i+1,row+day).getContents());		
+
+				if(contemp[0]>contemp[3])
+				{
+					updateHigh(contemp,returnv,endbenefit);	
+
+					if (gg10==0)
+					{			
+						if ((returnv[0]-compoint)/compoint>=0.1)
+						{
+							gg10=1;
+							now10=1;
+						}
+					}
+
+					//if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
+					if (stopBenefit(gg10,now10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
+					{
+						return true;
+					}
+
+					if (stopLoss(compoint,contemp[2]))
+						return true;
+
+					updateLow(contemp,returnv,compoint);					
+				}
+				else
+				{							
+					updateLow(contemp,returnv,compoint);	
+
+					if (stopLoss(compoint,contemp[2]))
+						return true;
+
+					updateHigh(contemp,returnv,endbenefit);	
+
+					if (gg10==0)
+					{			
+						if ((returnv[0]-compoint)/compoint>=0.1)
+						{
+							gg10=1;
+							now10=1;
+						}
+					}
+
+					//if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
+					if (stopBenefit(gg10,now10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
+					{
+						return true;
+					}
+				}
+
+				/*if(stopCompute(contemp,s,gg10,row,day))					
+				{
+					return true;
+				}	*/					
+
+				System.arraycopy(contemp, 0, previoustemp, 0, contemp.length);
+				day++;	
+			}
+			catch (Exception e)
+			{
+				System.out.print("\n endComputeReturnByReturnFile");
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	private void updateHigh(double[] contemp,double[] returnv,int endbenefit)
+	{
+		if (contemp[1]>returnv[0])
+		{
+			if (endbenefit==0)
+				returnv[0]=contemp[1];
+		}				
+	}
+	private void updateLow(double[] contemp,double[] returnv,double compoint)
+	{					
+		if (contemp[2]<returnv[1])	
+			if ((returnv[0]-compoint)/compoint<0.07)
+				returnv[1]=contemp[2];
+	}
+	private boolean stopCompute(double[] contemp,Sheet s,int gg10,int row,int day)
+	{
+		if (gg10==1)//高點漲超過10%
+		{
+			if(contemp[6]<Double.parseDouble(s.getCell(7,row+day-1).getContents())&&Double.parseDouble(s.getCell(7,row+day-1).getContents())<Double.parseDouble(s.getCell(7,row+day-2).getContents()))//月趨向下
+			{
+				return true;						
+			}
+			if(contemp[7]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
+			{
+				return true;							
+			}
+		}
+
+		return false;
+	}
+	private boolean stopBenefit(int gg10,double[] contemp,double[] previoustemp,double enterpoint,double[] returnv,double previousreturnv[])
+	{
+		if (gg10==1)//高點漲超過10%		
+		{
+			if (contemp[0]>=previoustemp[3]*1.03)
+			{
+				if(contemp[2]<contemp[1]*0.95)
+				{
+					returnv[0]=contemp[1]*0.95;
+
+					return true;
+				} 
+			}
+
+			if(contemp[0]>contemp[3])
+			{
+				if(previoustemp[0]>previoustemp[3])
+				{
+					returnv[0]=contemp[3];
+
+					return true;
+				}
+			}
+
+			if(contemp[3]<contemp[4])
+			{
+				returnv[0]=contemp[3];
+
+				return true;
+			}
+			if (enterpoint*1.03>contemp[2])
+			{
+				returnv[0]=enterpoint*1.03;
+				return true;
+			}
+		}
+
+		return false;
+	}
+	private boolean stopBenefit(int gg10,int now10,double[] contemp,double[] previoustemp,double enterpoint,double[] returnv,double previousreturnv[])
+	{
+		if (gg10==1)//高點漲超過10%		
+		{
+			if (contemp[0]>=previoustemp[3]*1.03)
+			{
+				if(contemp[2]<contemp[0]*0.97)
+				{
+					returnv[0]=contemp[0]*0.97;
+
+					return true;
+				} 
+			}
+
+			if (now10==1)
+			{
+				if (contemp[0]>=contemp[3])
+				{
+					if(contemp[2]<returnv[0]*0.97)
+					{
+						returnv[0]=returnv[0]*0.97;
+
+						return true;
+					}
+				}
+				else
+				{
+					if(contemp[3]<returnv[0]*0.97)
+					{
+						returnv[0]=contemp[3];
+
+						return true;
+					}
+				}
+
+				now10=0;
+			}
+			else
+			{
+				if(contemp[2]<previousreturnv[0]*0.97)
+				{
+					if(contemp[0]<previousreturnv[0]*0.97)
+					{
+						returnv[0]=contemp[0];
+
+						return true;
+					} 
+					else
+					{
+						returnv[0]=previousreturnv[0]*0.97;
+
+						return true;
+					}
+				}
+			}			
+		}
+
+		return false;
+	}
+	public void computeReturnByReturnFiles(File f,ArrayList<String[]> allTimePoint)
+	{
+		try{
+			Workbook workBook=Workbook.getWorkbook(f);
+			WritableWorkbook writeBook=Workbook.createWorkbook(f,workBook);
+			WritableSheet sss=writeBook.getSheet(0);
+
+			for (int i=1;i<sss.getRows();i++)
+			{
+				String stocknum=sss.getCell(0,i).getContents();
+				String stockdate=sss.getCell(1,i).getContents();
+
+				double[] basedata=new double[7];
+				for (int j=0;j<basedata.length;j++)
+					basedata[j]=Double.parseDouble(sss.getCell(11+j,i).getContents());
+
+				double[] returnv=new double[2];
+				returnv[0]=basedata[3];
+				returnv[1]=basedata[3];
+
+				DecimalFormat df=new DecimalFormat("#.##");
+
+				Workbook stockbook=Workbook.getWorkbook(new File(drive+"software/sdata/15foranalyze/"+stocknum));
+				Sheet stocksh=stockbook.getSheet(1);
+
+				Cell c=stocksh.findCell(stockdate);
+				int row=c.getRow()-1;
+				int nextrow=stocksh.getRows()-1;
+
+				if (endComputeReturnByReturnFile(stocksh,row,nextrow,basedata,returnv,basedata[3]))
+				{
+					//tempdata[2]=""+df.format(100*(returnv[0]-compoint)/compoint);	
+					sss.addCell(new Number(3,i,Double.parseDouble(df.format(100*(returnv[0]-basedata[3])/basedata[3]))));
+				}
+
+				//allTimePoint.add(tempdata);
+				
+			}
+			writeBook.write();
+			writeBook.close();
+			workBook.close();
+		}
+		catch (Exception e)
+		{
+			System.out.print("\n computeReturnByReturnFile");
+			e.printStackTrace();
+		}		
+	}
+	private boolean endComputeReturnByReturnFile(Sheet s,int row,int nextrow,double[] basedata,double[] returnv,double compoint)
+	{						
+		String date="";
+		int day=1,gg10=0,now10=0,endbenefit=0;
+		double[] contemp=new double[9],previoustemp=new double[9];
+		double[] previousreturnv=new double[2];
+
+		try{
+			for (int i=0;i<previoustemp.length;i++)
+			{
+				previoustemp[i]=Double.parseDouble(s.getCell(i+1,row).getContents());		
+			}
+		}
+		catch (Exception e)
+		{			
+			e.printStackTrace();
+			return false;
+		}
+
+		while (row+day<nextrow)
+		{		
+			date=s.getCell(0,row+day).getContents();
+
+			System.arraycopy(returnv, 0, previousreturnv, 0, returnv.length);
+
+			try{
+				for (int i=0;i<contemp.length;i++)
+					contemp[i]=Double.parseDouble(s.getCell(i+1,row+day).getContents());		
+
+				if(contemp[0]>contemp[3])
+				{
+					updateHigh(contemp,returnv,endbenefit);	
+
+					if (gg10==0)
+					{			
+						if ((returnv[0]-compoint)/compoint>=0.1)
+						{
+							gg10=1;
+							now10=1;
+						}
+					}
+
+					//if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
+					if (stopBenefit(gg10,contemp,basedata[3],returnv))
+					{
+						return true;
+					}
+
+					if (stopLoss(compoint,contemp[2]))
+						return true;
+
+					updateLow(contemp,returnv,compoint);					
+				}
+				else
+				{							
+					updateLow(contemp,returnv,compoint);	
+
+					if (stopLoss(compoint,contemp[2]))
+						return true;
+
+					updateHigh(contemp,returnv,endbenefit);	
+
+					if (gg10==0)
+					{			
+						if ((returnv[0]-compoint)/compoint>=0.1)
+						{
+							gg10=1;
+							now10=1;
+						}
+					}
+
+					//if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
+					if (stopBenefit(gg10,contemp,basedata[3],returnv))
+					{
+						return true;
+					}
+				}
+
+				/*if(stopCompute(contemp,s,gg10,row,day))					
+				{
+					return true;
+				}	*/					
+
+				System.arraycopy(contemp, 0, previoustemp, 0, contemp.length);
+				day++;	
+			}
+			catch (Exception e)
+			{
+				System.out.print("\n endComputeReturnByReturnFile");
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	private boolean stopBenefit(int gg10,double[] contemp,double enterPoint,double[] returnv)
+	{
+		if (returnv[0]>=enterPoint*1.1)
+			if(contemp[0]>contemp[3])
+			{
+				returnv[0]=contemp[3];
+				return true;
+			}
+
+		return false;
+	}
+	}
