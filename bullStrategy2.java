@@ -7,8 +7,11 @@ public class bullStrategy2 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
-	final int predict=1; //0:no predict 1:predict
-	 
+	
+	public String strategyName()
+	{
+		return "monthline on quaterline+end of the week";
+	}
 	public void analyzeStock(Sheet sweek,Sheet sday,ArrayList<String[]> allTimePoint,String filepath,String stockname)
 	{	
 		int isComputeReturn=0; //0:exit 1:enter
