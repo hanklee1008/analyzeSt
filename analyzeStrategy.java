@@ -84,6 +84,7 @@ public class analyzeStrategy {
 				workbook.close();
 				
 			}			
+
 			//s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-mow.xls"),20040301,0);*/
 			//s1.computeResult(allTimePoint,20040301,0);
