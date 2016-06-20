@@ -14,6 +14,7 @@ public class bullStrategy2 {
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
 	static String drive="d:/";
+	int test=0;
 	
 	public String strategyName()
 	{
@@ -112,6 +113,7 @@ public class bullStrategy2 {
 							buytime=sweek.getCell(0,temp+1).getContents();
 						else
 							buytime=sweek.getCell(0,temp).getContents();
+						
 						analyzeStockResultByQuarterLineMM(sweek,allTimePoint,buytime,contemp,content,stockname,tempdata,mmstate);
 					}
 					
@@ -377,11 +379,17 @@ public class bullStrategy2 {
 				Cell c=stocksh.findCell(stockdate);
 				int row=c.getRow()-1;
 				int nextrow=stocksh.getRows()-1;
-
+				
+				if(i!=sss.getRows()-1&&stocknum.equals(sss.getCell(0,i+1).getContents()))
+					nextrow=stocksh.findCell(sss.getCell(1,i+1).getContents()).getRow()-1;
+				
+				//System.out.println(stocknum);
+				
 				if (endComputeReturnByReturnFile(stocksh,row,nextrow,basedata,returnv,tempdata,basedata[3]))
 				{
 					//tempdata[2]=""+df.format(100*(returnv[0]-compoint)/compoint);	
 					sss.addCell(new Number(3,i,Double.parseDouble(df.format(100*(returnv[0]-basedata[3])/basedata[3]))));
+					sss.addCell(new Number(4,i,test));
 				}
 
 				//allTimePoint.add(tempdata);
@@ -417,7 +425,9 @@ public class bullStrategy2 {
 		}
 
 		while (row+day<nextrow)
-		{		
+		{	
+			now10=0;
+			
 			date=s.getCell(0,row+day).getContents();
 
 			System.arraycopy(returnv, 0, previousreturnv, 0, returnv.length);
@@ -564,17 +574,30 @@ public class bullStrategy2 {
 	{
 		if (gg10==1)//°ªÂIº¦¶W¹L10%		
 		{
-			if (contemp[0]>=previoustemp[3]*1.03)
+			if (contemp[2]<=enterpoint)
+			{test=1;
+				returnv[0]=enterpoint;
+				return true;
+			}
+			
+			if (contemp[0]>=previoustemp[3]*1.05)
 			{
-				if(contemp[2]<contemp[0]*0.97)
+				if(contemp[2]<contemp[0]*0.95)
 				{
-					returnv[0]=contemp[0]*0.97;
-
+					returnv[0]=contemp[0]*0.95;
+					test=2;
 					return true;
 				} 
 			}
-
-			if (now10==1)
+			if (contemp[0]>contemp[3])
+				if (contemp[3]<contemp[1]*0.96)
+				{test=3;
+					returnv[0]=contemp[3];
+					return true;
+				}
+			
+			
+			/*if (now10==1)
 			{
 				if (contemp[0]>=contemp[3])
 				{
@@ -614,7 +637,7 @@ public class bullStrategy2 {
 						return true;
 					}
 				}
-			}			
+			}	*/		
 		}
 
 		return false;
@@ -671,7 +694,7 @@ public class bullStrategy2 {
 	{						
 		String date="";
 		int day=1,gg10=0,now10=0,endbenefit=0;
-		double[] contemp=new double[9],previoustemp=new double[9];
+		double[] contemp=new double[7],previoustemp=new double[7];
 		double[] previousreturnv=new double[2];
 
 		try{
@@ -763,12 +786,15 @@ public class bullStrategy2 {
 	}
 	private boolean stopBenefit(int gg10,double[] contemp,double enterPoint,double[] returnv)
 	{
-		if (returnv[0]>=enterPoint*1.1)
+		if (gg10==1)
+		{
 			if(contemp[0]>contemp[3])
 			{
 				returnv[0]=contemp[3];
 				return true;
 			}
+		}
+			
 
 		return false;
 	}
