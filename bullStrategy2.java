@@ -1,6 +1,8 @@
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -110,12 +112,12 @@ public class bullStrategy2 {
 								mmstate[0]=0;
 							}
 						}
-						if (temp+1<sweek.getRows())
+						/*if (temp+1<sweek.getRows())
 							buytime=sweek.getCell(0,temp+1).getContents();
-						else
+						else*/
 							buytime=sweek.getCell(0,temp).getContents();
 						
-						analyzeStockResultByQuarterLineMM(sweek,allTimePoint,buytime,contemp,content,stockname,tempdata,mmstate);
+						analyzeStockResultByQuarterLineMM(sday,sweek,allTimePoint,buytime,contemp,content,stockname,tempdata,mmstate);
 					}
 					
 					temp++;
@@ -128,7 +130,7 @@ public class bullStrategy2 {
 			e.printStackTrace();
 		}
 	}
-	private void analyzeStockResultByQuarterLineMM(Sheet s,ArrayList<String[]> allTimePoint,String buytime,double[] contemp,ArrayList<double[]> content,String stockname,String[] tempdata,double[] mmstate)
+	private void analyzeStockResultByQuarterLineMM(Sheet sday,Sheet sweek,ArrayList<String[]> allTimePoint,String buytime,double[] contemp,ArrayList<double[]> content,String stockname,String[] tempdata,double[] mmstate)
 	{	
 		DecimalFormat df=new DecimalFormat("#.##");
 			
@@ -169,7 +171,8 @@ public class bullStrategy2 {
 						}
 						else if (mmstate[1]==1)
 						{							
-							if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
+							if (endComputeReturnMM(mmstate,sday,stockname,buytime,0))
+							//if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
 							{
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
@@ -310,6 +313,85 @@ public class bullStrategy2 {
 			updateHigh(contemp[1],mmstate);
 		}
 			
+		return false;
+	}
+	private boolean endComputeReturnMM(double[] mmstate,Sheet s,String name,String buytime,int day)
+	{	
+		int row;									
+		double curtime=0;
+		double[] contemp=new double[5];
+		double enterPoint=mmstate[5];		
+		long sundayTime;
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd"); 		
+		Calendar cal = Calendar.getInstance(); 
+		try{
+			Cell c=s.findCell(buytime);
+			if (c==null)
+				return false;
+			row=c.getRow();		
+
+			cal.setTime(format.parse(s.getCell(0,row).getContents()));  
+			int dayOfWeek=cal.get(Calendar.DAY_OF_WEEK);			
+
+			sundayTime=format.parse(s.getCell(0,row).getContents()).getTime()+(8-dayOfWeek)*(24*60*60*1000);
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+			
+		do
+		{
+			if (row+day>=s.getRows())
+				break;
+
+			try{
+				contemp[0]=Double.parseDouble(s.getCell(1,row+day).getContents());
+				contemp[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
+				contemp[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
+				contemp[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
+				contemp[4]=Double.parseDouble(s.getCell(7,row+day).getContents());
+
+				if (contemp[0]>=contemp[3])
+				{
+					updateHigh(contemp[1],mmstate);
+					
+					if(stopLoss(enterPoint,contemp[2]))
+						return true;
+					
+					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
+						return true;
+					
+					updateLow(contemp[2],mmstate,enterPoint);
+				}
+				else
+				{
+					updateLow(contemp[2],mmstate,enterPoint);
+
+					if(stopLoss(enterPoint,contemp[2]))
+						return true;
+					
+					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
+						return true;
+
+					updateHigh(contemp[1],mmstate);
+				}								
+				day++;
+
+				if ((row+day)<s.getRows())
+					curtime=format.parse(s.getCell(0,row+day).getContents()).getTime();
+			}
+			catch(Exception e)
+			{
+				System.out.println("endComputeReturnM");
+				e.printStackTrace();
+				day++;
+				continue;
+			}
+		}
+		while((row+day)<s.getRows()&&curtime<sundayTime);
+		
 		return false;
 	}
 	private boolean stopLoss(double enterpoint,double low)

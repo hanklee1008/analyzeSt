@@ -14,11 +14,11 @@ public class analyzeStrategy {
 	public static void main(String[] s)
 	{
 		analyzeStrategy as=new analyzeStrategy();
-		String filepath=drive+"software/sdata/15temp/";
-		filepath=drive+"software/sdata/t.xls";
-		//as.analyze2(filepath);
+		String filepath=drive+"software/sdata/15foranalyze/";
+		//filepath=drive+"software/sdata/t.xls";
+		as.analyze2(filepath);
 		//as.analyze3(filepath);
-		as.conditionFilter(filepath);
+		//as.conditionFilter(filepath);
 	}
 	private void analyze1(String filepath)
 	{
@@ -84,7 +84,7 @@ public class analyzeStrategy {
 				
 			}			
 
-			s1.fillInAllconditionBydaily(allTimePoint);
+			//s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			//st1.computeReturnByReturnFiles(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
