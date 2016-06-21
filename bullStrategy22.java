@@ -10,7 +10,7 @@ public class bullStrategy22 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
-	
+	int test=0;
 	public String strategyName()
 	{
 		return "monthline on quaterline+middle of the week";
@@ -153,7 +153,7 @@ public class bullStrategy22 {
 								computeDailyK(sday,buytime,combineK,contemp,buyday,currentK);
 
 								if(combineK.size()!=0)
-									do{		
+									do{		//System.out.println(buytime);
 										if (conditionAnalyzeMM(content,combineK.get(day),combineK.get(day)[3]))
 										{										
 											mmstate[1]=1;									
@@ -168,7 +168,7 @@ public class bullStrategy22 {
 											fillStockData(allTimePoint,stockname,buyday[day],""+quantity,""+df.format(weeklyrate),""+df.format(lead));		
 											
 											if(day+1<combineK.size())
-											if (endComputeReturnM(mmstate,sday,stockname,buytime,day))
+											if (endComputeReturnM(mmstate,sday,stockname,buytime,day+1))
 											{
 												//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 												//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
@@ -191,9 +191,9 @@ public class bullStrategy22 {
 							}														
 						}
 						else if (mmstate[1]==1)
-						{							
+						{		//		System.out.println("pre end "+buytime);			
 							if (endComputeReturnM(mmstate,sday,stockname,buytime,0))
-							{
+							{//System.out.println("end "+buytime);
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
 								fillInData(allTimePoint,2,""+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));						
@@ -249,8 +249,11 @@ public class bullStrategy22 {
 			//if ((p4[1]-compare[2])/p4[1]<=0.1)
 			if (enterpoint>=p1[3])//收漲
 			if(enterpoint>currentMline)//收在月線上
-			{				
-				return true;			
+			{
+				if(currentMline>p1[4])
+				{
+					return true;			
+				}
 			}
 		}
 									
@@ -349,7 +352,7 @@ public class bullStrategy22 {
 				contemp[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
 				contemp[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
 				contemp[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
-				contemp[4]=Double.parseDouble(s.getCell(8,row+day).getContents());
+				contemp[4]=Double.parseDouble(s.getCell(7,row+day).getContents());
 
 				if (contemp[0]>=contemp[3])
 				{
@@ -358,7 +361,7 @@ public class bullStrategy22 {
 					if(stopLoss(enterPoint,contemp[2]))
 						return true;
 					
-					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(8,row+day-1).getContents()),mmstate[3],enterPoint))
+					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
 						return true;
 					
 					updateLow(contemp[2],mmstate,enterPoint);
@@ -370,7 +373,7 @@ public class bullStrategy22 {
 					if(stopLoss(enterPoint,contemp[2]))
 						return true;
 					
-					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(8,row+day-1).getContents()),mmstate[3],enterPoint))
+					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
 						return true;
 
 					updateHigh(contemp[1],mmstate);

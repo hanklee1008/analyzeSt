@@ -14,17 +14,17 @@ public class analyzeStrategy {
 	public static void main(String[] s)
 	{
 		analyzeStrategy as=new analyzeStrategy();
-		
-		as.analyze2();
-		//as.conditionFilter();
+		String filepath=drive+"software/sdata/15temp/";
+		filepath=drive+"software/sdata/t.xls";
+		//as.analyze2(filepath);
+		//as.analyze3(filepath);
+		as.conditionFilter(filepath);
 	}
-	private void analyze1()
+	private void analyze1(String filepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-
-			String filepath=drive+"software/sdata/15foranalyze/";
 
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
 			bullStrategy1 st1=new bullStrategy1();
@@ -58,19 +58,18 @@ public class analyzeStrategy {
 			e.printStackTrace();
 		}
 	}
-	private void analyze2()
+	private void analyze2(String filepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
 			
-			String filepath=drive+"software/sdata/15foranalyze/";
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
 			bullStrategy2 st1=new bullStrategy2();
 			Workbook workbook;
 			Sheet shd,shw;		
 			
-			/*analyzeStock s1=new analyzeStock();	
+			analyzeStock s1=new analyzeStock();	
 			File[] temp=new File(filepath).listFiles();
 			for (File f:temp)
 			{									
@@ -85,10 +84,10 @@ public class analyzeStrategy {
 				
 			}			
 
-			//s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-mow.xls"),20040301,0);*/
-			//s1.computeResult(allTimePoint,20040301,0);
-			st1.computeReturnByReturnFile(new File(drive+"software/sdata/m-mow.xls"),allTimePoint);
+			s1.fillInAllconditionBydaily(allTimePoint);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
+			//st1.computeReturnByReturnFiles(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
@@ -97,13 +96,12 @@ public class analyzeStrategy {
 			e.printStackTrace();
 		}
 	}
-	private void analyze3()
+	private void analyze3(String filepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
 			
-			String filepath=drive+"software/sdata/15foranalyze/";
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
 			bullStrategy22 st1=new bullStrategy22();
 			Workbook workbook;
@@ -124,9 +122,7 @@ public class analyzeStrategy {
 				
 			}			
 			s1.fillInAllconditionBydaily(allTimePoint);
-
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
-
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-mow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
@@ -137,13 +133,12 @@ public class analyzeStrategy {
 			e.printStackTrace();
 		}
 	}
-	private void analyze4()
+	private void analyze4(String filepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
 			
-			String filepath=drive+"software/sdata/15foranalyze/";
 			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();				
 
 			analyzeStock s1=new analyzeStock();	
@@ -164,7 +159,7 @@ public class analyzeStrategy {
 			e.printStackTrace();
 		}
 	}
-	private void conditionFilter()
+	private void conditionFilter(String filepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
@@ -173,7 +168,7 @@ public class analyzeStrategy {
 			Workbook workbook;
 			Sheet shd;		
 
-			workbook=Workbook.getWorkbook(new File(drive+"software/sdata/5%.xls"));
+			workbook=Workbook.getWorkbook(new File(filepath));
 			shd=workbook.getSheet(0);
 			
 			double count=1,count7=0,sum=0,sum7=0;
@@ -197,7 +192,8 @@ public class analyzeStrategy {
 				{
 					stock=temp;
 					//System.out.println(stock);
-					if (count7/count<0.4||count<7)
+					//if (count7/count<0.4||count<7)
+					if (count7/count<=0.33&&count>=8)
 					{
 						sum+=count;
 						sum7+=count7;						
@@ -211,7 +207,8 @@ public class analyzeStrategy {
 				}
 				
 			}
-			if (count7/count<0.4||count<7)
+			//if (count7/count<0.4||count<7)
+				if (count7/count<=0.33&&count>=8)
 			{
 				sum+=count;
 				sum7+=count7;
