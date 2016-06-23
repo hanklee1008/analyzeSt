@@ -15,7 +15,7 @@ public class bullStrategy2 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
-	static String drive="c:/";
+	static String drive="d:/";
 	int test=0;
 
 	
@@ -33,6 +33,10 @@ public class bullStrategy2 {
 		String buytime="";
 		String[] tempdata=null;		
 		int quarterLineRedK=0;
+		
+		double[] contemprecord=new double[7];
+		ArrayList<double[]> contentrecord=new ArrayList<double[]>();
+		int temprecord=0,tempstatus=0;
 		
 		double[] mmstate=new double[7]; //mm=0;isComputeReturnM=0;monthLineRedTypeM=0;currentHighM=0;currentLowM=0;enterPointM=0;testHighM=0;
 		for (double element:mmstate)
@@ -55,69 +59,95 @@ public class bullStrategy2 {
 									
 					if (content.size()>=quarterKCount-1)
 					{
-						if (isComputeReturn==0)
+						if (mmstate[1]==1)
 						{
-							if (quarterLineRedK==0)
+							if(tempstatus==0)
 							{
-								if (content.get(content.size()-1)[5]<=content.get(content.size()-2)[5]&&contemp[5]>=content.get(content.size()-1)[5])
-								{
-									quarterLineRedK=1;
-								}
+								contemprecord=contemp;
+								contentrecord=content;
+								temprecord=temp;
+								tempstatus=1;
 							}
-
-							if (quarterLineRedK>=1&&quarterLineRedK<=8)
-							{
-								if (contemp[5]>=content.get(content.size()-1)[5])
-								{
-									if (conditionAnalyzeQ(content,contemp,contemp[3]))
-									{
-										isComputeReturn=1;
-										baseData=contemp;									
-										enterPoint=contemp[3];									
-										currentHigh=contemp[3];
-										currentLow=contemp[3];
-
-										mmstate[0]=1;									
-									}
-									else
-										quarterLineRedK++;
-								}
-								else
-								{
-									quarterLineRedK=0;
-								}
-							}
-							else if(quarterLineRedK>=9) 
-							{
-								if (contemp[5]>content.get(content.size()-1)[5])
-									quarterLineRedK++;
-								else
-								{
-									quarterLineRedK=0;
-								}
-							}															
 						}
 						else
-						{								
-							if (contemp[1]>currentHigh)
+						{
+
+							if(tempstatus==1)
 							{
-								currentHigh=contemp[1];								
+								contemp=contemprecord;
+								content=contentrecord;
+								temp=temprecord;
+								tempstatus=0;
 							}
+							
+							if (isComputeReturn==0)
+							{
+								if (quarterLineRedK==0)
+								{
+									if (content.get(content.size()-1)[5]<=content.get(content.size()-2)[5]&&contemp[5]>=content.get(content.size()-1)[5])
+									{
+										quarterLineRedK=1;
+									}
+								}
 
-							if (endComputeReturnQ(currentHigh,baseData,contemp,content))
-							{							
-								isComputeReturn=0;
-								quarterLineRedK=0;
+								if (quarterLineRedK>=1&&quarterLineRedK<=8)
+								{
+									if (contemp[5]>=content.get(content.size()-1)[5])
+									{
+										if (conditionAnalyzeQ(content,contemp,contemp[3]))
+										{
+											isComputeReturn=1;
+											baseData=contemp;									
+											enterPoint=contemp[3];									
+											currentHigh=contemp[3];
+											currentLow=contemp[3];
 
-								mmstate[0]=0;
+											mmstate[0]=1;									
+										}
+										else
+											quarterLineRedK++;
+									}
+									else
+									{
+										quarterLineRedK=0;
+									}
+								}
+								else if(quarterLineRedK>=9) 
+								{
+									if (contemp[5]>content.get(content.size()-1)[5])
+										quarterLineRedK++;
+									else
+									{
+										quarterLineRedK=0;
+									}
+								}															
+							}
+							else
+							{								
+								if (contemp[1]>currentHigh)
+								{
+									currentHigh=contemp[1];								
+								}
+
+								if (endComputeReturnQ(currentHigh,baseData,contemp,content))
+								{							
+									isComputeReturn=0;
+									quarterLineRedK=0;
+
+									mmstate[0]=0;
+								}
 							}
 						}
-						/*if (temp+1<sweek.getRows())
+						
+						if(mmstate[0]==1||mmstate[1]==1)
+						{
+							/*if (temp+1<sweek.getRows())
 							buytime=sweek.getCell(0,temp+1).getContents();
 						else*/
 							buytime=sweek.getCell(0,temp).getContents();
-						
+													
 						analyzeStockResultByQuarterLineMM(sday,sweek,allTimePoint,buytime,contemp,content,stockname,tempdata,mmstate);
+						}					
 					}
 					
 					temp++;
@@ -137,7 +167,8 @@ public class bullStrategy2 {
 		try {		
 					if (content.size()>=2)
 					{
-						if (mmstate[1]==0&&mmstate[0]==1)
+						//if (mmstate[1]==0&&mmstate[0]==1)
+						if (mmstate[1]==0)
 						{
 							mmstate[6]=0;
 
@@ -169,10 +200,10 @@ public class bullStrategy2 {
 									mmstate[2]=0;
 							}														
 						}
-						else if (mmstate[1]==1)
+						else
 						{							
-							if (endComputeReturnMM(mmstate,sday,stockname,buytime,0))
-							//if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
+							//if (endComputeReturnMM(mmstate,sday,stockname,buytime,0))
+							if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
 							{
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
@@ -466,9 +497,9 @@ public class bullStrategy2 {
 				if(i!=sss.getRows()-1&&stocknum.equals(sss.getCell(0,i+1).getContents()))
 					nextrow=stocksh.findCell(sss.getCell(1,i+1).getContents()).getRow()-1;
 				
-				//System.out.println(stocknum);
+				//System.out.println(stocknum+":"+row+":"+nextrow);
 				
-				if (endComputeReturnByReturnFile(stocksh,row,nextrow,basedata,returnv,tempdata,basedata[3]))
+				if (endComputeReturnByReturnFile_day(stocksh,row,nextrow,basedata,returnv,tempdata,basedata[3]))
 				{
 					//tempdata[2]=""+df.format(100*(returnv[0]-compoint)/compoint);	
 					sss.addCell(new Number(3,i,Double.parseDouble(df.format(100*(returnv[0]-basedata[3])/basedata[3]))));
@@ -488,7 +519,7 @@ public class bullStrategy2 {
 			e.printStackTrace();
 		}		
 	}
-	private boolean endComputeReturnByReturnFile(Sheet s,int row,int nextrow,double[] basedata,double[] returnv,String[] tempdata,double compoint)
+	private boolean endComputeReturnByReturnFile_day(Sheet s,int row,int nextrow,double[] basedata,double[] returnv,String[] tempdata,double compoint)
 	{						
 		String date="";
 		int day=1,gg10=0,now10=0,endbenefit=0;
@@ -614,45 +645,6 @@ public class bullStrategy2 {
 
 		return false;
 	}
-	private boolean stopBenefit(int gg10,double[] contemp,double[] previoustemp,double enterpoint,double[] returnv,double previousreturnv[])
-	{
-		if (gg10==1)//高點漲超過10%		
-		{
-			if (contemp[0]>=previoustemp[3]*1.03)
-			{
-				if(contemp[2]<contemp[1]*0.95)
-				{
-					returnv[0]=contemp[1]*0.95;
-
-					return true;
-				} 
-			}
-
-			if(contemp[0]>contemp[3])
-			{
-				if(previoustemp[0]>previoustemp[3])
-				{
-					returnv[0]=contemp[3];
-
-					return true;
-				}
-			}
-
-			if(contemp[3]<contemp[4])
-			{
-				returnv[0]=contemp[3];
-
-				return true;
-			}
-			if (enterpoint*1.03>contemp[2])
-			{
-				returnv[0]=enterpoint*1.03;
-				return true;
-			}
-		}
-
-		return false;
-	}
 	private boolean stopBenefit(int gg10,int now10,double[] contemp,double[] previoustemp,double enterpoint,double[] returnv,double previousreturnv[])
 	{
 		if (gg10==1)//高點漲超過10%		
@@ -722,7 +714,17 @@ public class bullStrategy2 {
 				}
 			}	*/		
 		}
-
+		else
+		{
+			if (returnv[0]>=enterpoint*1.07)
+			{
+				if(contemp[2]<=enterpoint)
+				{
+					returnv[0]=enterpoint;
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	public void computeReturnByReturnFiles(File f,ArrayList<String[]> allTimePoint)
@@ -750,13 +752,13 @@ public class bullStrategy2 {
 				DecimalFormat df=new DecimalFormat("#.##");
 
 				Workbook stockbook=Workbook.getWorkbook(new File(drive+"software/sdata/15foranalyze/"+stocknum));
-				Sheet stocksh=stockbook.getSheet(1);
+				Sheet stockweek=stockbook.getSheet(1);
 
-				Cell c=stocksh.findCell(stockdate);
+				Cell c=stockweek.findCell(stockdate);
 				int row=c.getRow()-1;
-				int nextrow=stocksh.getRows()-1;
+				int nextrow=stockweek.getRows()-1;
 
-				if (endComputeReturnByReturnFile(stocksh,row,nextrow,basedata,returnv,basedata[3],stocknum))
+				if (endComputeReturnByReturnFile_week(stockweek,row,nextrow,basedata,returnv,basedata[3],stocknum))
 				{
 					//tempdata[2]=""+df.format(100*(returnv[0]-compoint)/compoint);	
 					sss.addCell(new Number(3,i,Double.parseDouble(df.format(100*(returnv[0]-basedata[3])/basedata[3]))));
@@ -775,7 +777,7 @@ public class bullStrategy2 {
 			e.printStackTrace();
 		}		
 	}
-	private boolean endComputeReturnByReturnFile(Sheet s,int row,int nextrow,double[] basedata,double[] returnv,double compoint,String stocknum)
+	private boolean endComputeReturnByReturnFile_week(Sheet stockweek,int row,int nextrow,double[] basedata,double[] returnv,double compoint,String stocknum)
 	{						
 		String date="";
 		int day=1,gg10=0,now10=0,endbenefit=0;
@@ -785,8 +787,8 @@ public class bullStrategy2 {
 		try{
 			for (int i=0;i<previoustemp.length;i++)
 			{
-				if(!s.getCell(i+1,row).getContents().equals(""))
-					previoustemp[i]=Double.parseDouble(s.getCell(i+1,row).getContents());		
+				if(!stockweek.getCell(i+1,row).getContents().equals(""))
+					previoustemp[i]=Double.parseDouble(stockweek.getCell(i+1,row).getContents());		
 				else
 					previoustemp[i]=0;
 			}
@@ -799,15 +801,15 @@ public class bullStrategy2 {
 
 		while (row+day<nextrow)
 		{		
-			date=s.getCell(0,row+day).getContents();
+			date=stockweek.getCell(0,row+day).getContents();
 
 			System.arraycopy(returnv, 0, previousreturnv, 0, returnv.length);
 
 			try{
 				for (int i=0;i<contemp.length;i++)
 				{
-					if(!s.getCell(i+1,row+day).getContents().equals(""))
-						contemp[i]=Double.parseDouble(s.getCell(i+1,row+day).getContents());		
+					if(!stockweek.getCell(i+1,row+day).getContents().equals(""))
+						contemp[i]=Double.parseDouble(stockweek.getCell(i+1,row+day).getContents());		
 					else
 						contemp[i]=0;
 				}
