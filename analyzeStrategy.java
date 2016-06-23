@@ -87,7 +87,7 @@ public class analyzeStrategy {
 			//s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
-			//st1.computeReturnByReturnFiles(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
+			//st1.computeReturnByReturnFile(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)

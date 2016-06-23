@@ -171,8 +171,8 @@ public class bullStrategy2 {
 						}
 						else if (mmstate[1]==1)
 						{							
-							if (endComputeReturnMM(mmstate,sday,stockname,buytime,0))
-							//if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
+							//if (endComputeReturnMM(mmstate,sday,stockname,buytime,0))
+							if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
 							{
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
@@ -722,7 +722,17 @@ public class bullStrategy2 {
 				}
 			}	*/		
 		}
-
+		else
+		{
+			if (returnv[0]>=enterpoint*1.07)
+			{
+				if (contemp[2]<=enterpoint)
+				{test=4;
+					returnv[0]=enterpoint;
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	public void computeReturnByReturnFiles(File f,ArrayList<String[]> allTimePoint)
