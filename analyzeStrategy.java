@@ -9,7 +9,7 @@ import jxl.Workbook;
 
 public class analyzeStrategy {
 	
-	static String drive="c:/";
+	static String drive="d:/";
 	
 	public static void main(String[] s)
 	{
