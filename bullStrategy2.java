@@ -15,7 +15,7 @@ public class bullStrategy2 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
-	static String drive="d:/";
+	static String drive="c:/";
 	int test=0;
 
 	
@@ -63,8 +63,8 @@ public class bullStrategy2 {
 						{
 							if(tempstatus==0)
 							{
-								contemprecord=contemp;
-								contentrecord=content;
+								System.arraycopy(contemp, 0, contemprecord, 0, contemp.length);
+								contentrecord=(ArrayList<double[]>) content.clone();
 								temprecord=temp;
 								tempstatus=1;
 							}
@@ -74,7 +74,7 @@ public class bullStrategy2 {
 
 							if(tempstatus==1)
 							{
-								contemp=contemprecord;
+								System.arraycopy(contemprecord, 0, contemp, 0, contemprecord.length);
 								content=contentrecord;
 								temp=temprecord;
 								tempstatus=0;
@@ -173,9 +173,9 @@ public class bullStrategy2 {
 							mmstate[6]=0;
 
 							if (mmstate[2]==0)
-							{
+							{//System.out.println(buytime+" "+content.get(content.size()-2)[4]+" "+content.get(content.size()-1)[4]+" "+contemp[4]);
 								if (contemp[4]>content.get(content.size()-1)[4]&&content.get(content.size()-2)[4]>content.get(content.size()-1)[4])
-								{																	
+								{		//System.out.println(buytime+" "+content.get(content.size()-2)[4]+" "+content.get(content.size()-1)[4]+" "+contemp[4]);															
 									mmstate[2]=1;
 								}
 							}
@@ -252,8 +252,8 @@ public class bullStrategy2 {
 		if(true)
 		if((compare[5]>=p1[5])&&(p1[5]>=p2[5]))//季線連2紅
 		{
-			//if ((p4[1]-compare[2])/p4[1]<=0.1)
-			if (compare[3]>=p1[3])//收漲
+			//if(compare[0]<=compare[3])
+			//if (compare[3]>=p1[3])//收漲
 			if(compare[3]>compare[4])//收在月線上
 			{				
 				return true;			
@@ -438,7 +438,7 @@ public class bullStrategy2 {
 	{
 		if(curMonthline<preMonthline)//月線向下
 		{
-			if ((low-enterpoint)/enterpoint>=0.1)//高點漲超過10%
+			if ((low-enterpoint)/enterpoint>=0.13)//高點漲超過10%
 			{
 				return true;
 			}							
@@ -494,8 +494,8 @@ public class bullStrategy2 {
 				int row=c.getRow()-1;
 				int nextrow=stocksh.getRows()-1;
 				
-				if(i!=sss.getRows()-1&&stocknum.equals(sss.getCell(0,i+1).getContents()))
-					nextrow=stocksh.findCell(sss.getCell(1,i+1).getContents()).getRow()-1;
+				//if(i!=sss.getRows()-1&&stocknum.equals(sss.getCell(0,i+1).getContents()))
+					//nextrow=stocksh.findCell(sss.getCell(1,i+1).getContents()).getRow()-1;
 				
 				//System.out.println(stocknum+":"+row+":"+nextrow);
 				
@@ -549,7 +549,9 @@ public class bullStrategy2 {
 			try{
 				for (int i=0;i<contemp.length;i++)
 					contemp[i]=Double.parseDouble(s.getCell(i+1,row+day).getContents());		
-
+				
+				test=0;
+				
 				if(contemp[0]>contemp[3])
 				{
 					updateHigh(contemp,returnv,endbenefit);	
@@ -599,10 +601,10 @@ public class bullStrategy2 {
 					}
 				}
 
-				/*if(stopCompute(contemp,s,gg10,row,day))					
+				if(stopCompute(returnv[0],compoint,contemp,s,gg10,row,day))					
 				{
 					return true;
-				}		*/				
+				}						
 
 				System.arraycopy(contemp, 0, previoustemp, 0, contemp.length);
 				day++;	
@@ -629,18 +631,19 @@ public class bullStrategy2 {
 			if ((returnv[0]-compoint)/compoint<0.07)
 				returnv[1]=contemp[2];
 	}
-	private boolean stopCompute(double[] contemp,Sheet s,int gg10,int row,int day)
+	private boolean stopCompute(double high,double enterpoint,double[] contemp,Sheet s,int gg10,int row,int day)
 	{
-		if (gg10==1)//高點漲超過10%
+		//if (gg10==1)//高點漲超過10%
+		if (high>=enterpoint*1.13)
 		{
 			if(contemp[6]<Double.parseDouble(s.getCell(7,row+day-1).getContents())&&Double.parseDouble(s.getCell(7,row+day-1).getContents())<Double.parseDouble(s.getCell(7,row+day-2).getContents()))//月趨向下
 			{
 				return true;						
 			}
-			if(contemp[7]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
+			/*if(contemp[7]<Double.parseDouble(s.getCell(8,row+day-1).getContents()))//季線向下
 			{
 				return true;							
-			}
+			}*/
 		}
 
 		return false;
@@ -649,7 +652,12 @@ public class bullStrategy2 {
 	{
 		if (gg10==1)//高點漲超過10%		
 		{
-			if (contemp[2]<=enterpoint)
+			if (contemp[3]<contemp[5]&&contemp[3]<contemp[2]*1.02)
+			{test=1;
+				returnv[0]=contemp[3];
+				return true;
+			}
+			/*if (contemp[2]<=enterpoint)
 			{test=1;
 				returnv[0]=enterpoint;
 				return true;
@@ -669,7 +677,7 @@ public class bullStrategy2 {
 				{test=3;
 					returnv[0]=contemp[3];
 					return true;
-				}
+				}*/
 			
 			
 			/*if (now10==1)
