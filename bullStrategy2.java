@@ -17,7 +17,7 @@ public class bullStrategy2 {
 	final double divideWeeklyrate=9;
 	static String drive="c:/";
 	int test=0;
-
+	double testbackpoint=0;
 	
 	public String strategyName()
 	{
@@ -59,7 +59,7 @@ public class bullStrategy2 {
 									
 					if (content.size()>=quarterKCount-1)
 					{
-						if (mmstate[1]==1)
+						/*if (mmstate[1]==1)
 						{
 							if(tempstatus==0)
 							{
@@ -69,16 +69,16 @@ public class bullStrategy2 {
 								tempstatus=1;
 							}
 						}
-						else
+						else*/
 						{
 
-							if(tempstatus==1)
+							/*if(tempstatus==1)
 							{
 								System.arraycopy(contemprecord, 0, contemp, 0, contemprecord.length);
 								content=contentrecord;
 								temp=temprecord;
 								tempstatus=0;
-							}
+							}*/
 							
 							if (isComputeReturn==0)
 							{
@@ -141,9 +141,9 @@ public class bullStrategy2 {
 						
 						if(mmstate[0]==1||mmstate[1]==1)
 						{
-							/*if (temp+1<sweek.getRows())
+							if (temp+1<sweek.getRows())
 							buytime=sweek.getCell(0,temp+1).getContents();
-						else*/
+						else
 							buytime=sweek.getCell(0,temp).getContents();
 													
 						analyzeStockResultByQuarterLineMM(sday,sweek,allTimePoint,buytime,contemp,content,stockname,tempdata,mmstate);
@@ -174,13 +174,13 @@ public class bullStrategy2 {
 
 							if (mmstate[2]==0)
 							{//System.out.println(buytime+" "+content.get(content.size()-2)[4]+" "+content.get(content.size()-1)[4]+" "+contemp[4]);
-								if (contemp[4]>content.get(content.size()-1)[4]&&content.get(content.size()-2)[4]>content.get(content.size()-1)[4])
+								if (contemp[4]>=content.get(content.size()-1)[4]&&content.get(content.size()-2)[4]>content.get(content.size()-1)[4])
 								{		//System.out.println(buytime+" "+content.get(content.size()-2)[4]+" "+content.get(content.size()-1)[4]+" "+contemp[4]);															
 									mmstate[2]=1;
 								}
 							}
 							if (mmstate[2]==1)
-							{
+							{System.out.println(buytime);
 								if(conditionAnalyzeMM(content,contemp))							
 								{										
 									mmstate[1]=1;									
@@ -195,6 +195,7 @@ public class bullStrategy2 {
 									fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
 									for (int i=0;i<contemp.length;i++)
 									fillInData(allTimePoint,11+i,""+contemp[i]);	
+
 								}
 								else
 									mmstate[2]=0;
@@ -209,8 +210,7 @@ public class bullStrategy2 {
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
 								fillInData(allTimePoint,2,""+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));						
 								fillInData(allTimePoint,9,""+df.format(100*(mmstate[5]-mmstate[4])/mmstate[5]));
-								
-								
+								fillInData(allTimePoint,4,buytime);
 								//allTimePoint.add(tempdata);
 								
 								mmstate[1]=0;
@@ -346,26 +346,26 @@ public class bullStrategy2 {
 			
 		return false;
 	}
-	private boolean endComputeReturnMM(double[] mmstate,Sheet s,String name,String buytime,int day)
+	private boolean endComputeReturnMM(double[] mmstate,Sheet sday,String name,String buytime,int day)
 	{	
 		int row;									
 		double curtime=0;
-		double[] contemp=new double[5];
+		double[] contemp=new double[6];
 		double enterPoint=mmstate[5];		
 		long sundayTime;
 
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd"); 		
 		Calendar cal = Calendar.getInstance(); 
 		try{
-			Cell c=s.findCell(buytime);
+			Cell c=sday.findCell(buytime);
 			if (c==null)
 				return false;
 			row=c.getRow();		
 
-			cal.setTime(format.parse(s.getCell(0,row).getContents()));  
+			cal.setTime(format.parse(sday.getCell(0,row).getContents()));  
 			int dayOfWeek=cal.get(Calendar.DAY_OF_WEEK);			
 
-			sundayTime=format.parse(s.getCell(0,row).getContents()).getTime()+(8-dayOfWeek)*(24*60*60*1000);
+			sundayTime=format.parse(sday.getCell(0,row).getContents()).getTime()+(8-dayOfWeek)*(24*60*60*1000);
 		}
 		catch(Exception e)
 		{
@@ -374,16 +374,16 @@ public class bullStrategy2 {
 			
 		do
 		{
-			if (row+day>=s.getRows())
+			if (row+day>=sday.getRows())
 				break;
 
 			try{
-				contemp[0]=Double.parseDouble(s.getCell(1,row+day).getContents());
-				contemp[1]=Double.parseDouble(s.getCell(2,row+day).getContents());
-				contemp[2]=Double.parseDouble(s.getCell(3,row+day).getContents());
-				contemp[3]=Double.parseDouble(s.getCell(4,row+day).getContents());
-				contemp[4]=Double.parseDouble(s.getCell(7,row+day).getContents());
-
+				contemp[0]=Double.parseDouble(sday.getCell(1,row+day).getContents());
+				contemp[1]=Double.parseDouble(sday.getCell(2,row+day).getContents());
+				contemp[2]=Double.parseDouble(sday.getCell(3,row+day).getContents());
+				contemp[3]=Double.parseDouble(sday.getCell(4,row+day).getContents());
+				contemp[4]=Double.parseDouble(sday.getCell(7,row+day).getContents());
+				
 				if (contemp[0]>=contemp[3])
 				{
 					updateHigh(contemp[1],mmstate);
@@ -391,7 +391,7 @@ public class bullStrategy2 {
 					if(stopLoss(enterPoint,contemp[2]))
 						return true;
 					
-					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
+					if(stopCompute(contemp[4],Double.parseDouble(sday.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
 						return true;
 					
 					updateLow(contemp[2],mmstate,enterPoint);
@@ -403,15 +403,16 @@ public class bullStrategy2 {
 					if(stopLoss(enterPoint,contemp[2]))
 						return true;
 					
-					if(stopCompute(contemp[4],Double.parseDouble(s.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
+					if(stopCompute(contemp[4],Double.parseDouble(sday.getCell(7,row+day-1).getContents()),mmstate[3],enterPoint))
 						return true;
 
 					updateHigh(contemp[1],mmstate);
+					
 				}								
 				day++;
 
-				if ((row+day)<s.getRows())
-					curtime=format.parse(s.getCell(0,row+day).getContents()).getTime();
+				if ((row+day)<sday.getRows())
+					curtime=format.parse(sday.getCell(0,row+day).getContents()).getTime();
 			}
 			catch(Exception e)
 			{
@@ -421,7 +422,7 @@ public class bullStrategy2 {
 				continue;
 			}
 		}
-		while((row+day)<s.getRows()&&curtime<sundayTime);
+		while((row+day)<sday.getRows()&&curtime<sundayTime);
 		
 		return false;
 	}
@@ -434,11 +435,11 @@ public class bullStrategy2 {
 		
 		return false;
 	}
-	private boolean stopCompute(double curMonthline,double preMonthline,double low,double enterpoint)
+	private boolean stopCompute(double curMonthline,double preMonthline,double high,double enterpoint)
 	{
 		if(curMonthline<preMonthline)//月線向下
 		{
-			if ((low-enterpoint)/enterpoint>=0.13)//高點漲超過10%
+			if ((high-enterpoint)/enterpoint>=0.13)//高點漲超過10%
 			{
 				return true;
 			}							
@@ -453,16 +454,13 @@ public class bullStrategy2 {
 			returnv[3]=high;	
 		}	
 	}
-	private void updateLow(double low,double[] returnv,double enterpoint)
-	{					
+	private void updateLow(double low,double[] returnv,double enterpoint)		
+	{
 		if (low<returnv[4])
-		{
 			if ((returnv[3]-enterpoint)/enterpoint<0.07)//高點不超過7%
 			{
 				returnv[4]=low;		
-			}				
-		}
-		
+			}
 	}
 	public void computeReturnByReturnFile(File f,ArrayList<String[]> allTimePoint)
 	{
@@ -475,6 +473,7 @@ public class bullStrategy2 {
 			{
 				String stocknum=sss.getCell(0,i).getContents();
 				String stockdate=sss.getCell(1,i).getContents();
+				String stockenddate=sss.getCell(4,i).getContents();
 
 				double[] basedata=new double[7];
 				for (int j=0;j<basedata.length;j++)
@@ -494,8 +493,8 @@ public class bullStrategy2 {
 				int row=c.getRow()-1;
 				int nextrow=stocksh.getRows()-1;
 				
-				//if(i!=sss.getRows()-1&&stocknum.equals(sss.getCell(0,i+1).getContents()))
-					//nextrow=stocksh.findCell(sss.getCell(1,i+1).getContents()).getRow()-1;
+				if(i!=sss.getRows()-1&&stocknum.equals(sss.getCell(0,i+1).getContents()))
+					nextrow=stocksh.findCell(stockenddate).getRow()+4;
 				
 				//System.out.println(stocknum+":"+row+":"+nextrow);
 				
@@ -601,10 +600,10 @@ public class bullStrategy2 {
 					}
 				}
 
-				if(stopCompute(returnv[0],compoint,contemp,s,gg10,row,day))					
+				/*if(stopCompute(returnv[0],compoint,contemp,s,gg10,row,day))					
 				{
 					return true;
-				}						
+				}	*/					
 
 				System.arraycopy(contemp, 0, previoustemp, 0, contemp.length);
 				day++;	
@@ -650,29 +649,49 @@ public class bullStrategy2 {
 	}
 	private boolean stopBenefit(int gg10,int now10,double[] contemp,double[] previoustemp,double enterpoint,double[] returnv,double previousreturnv[])
 	{
-		if (gg10==1)//高點漲超過10%		
+		//if (gg10==1)//高點漲超過10%		
+		if (returnv[0]>=enterpoint*1.07)
 		{
-			if (contemp[3]<contemp[5]&&contemp[3]<contemp[2]*1.02)
-			{test=1;
-				returnv[0]=contemp[3];
-				return true;
+			/*if (returnv[0]>=enterpoint*1.2)
+			{
+				if (contemp[3]<contemp[5]&&contemp[3]<contemp[2]*1.02)
+				{test=1;
+					returnv[0]=contemp[3];
+					return true;
+				}
 			}
+			else*/
+			{
+				if (returnv[0]>=enterpoint*1.15)
+				{
+					//if (previoustemp[3]<previoustemp[5]&&previoustemp[3]<previoustemp[2]*1.02)
+					if (previoustemp[3]<previoustemp[0])
+					if (contemp[3]<contemp[5]&&contemp[3]<contemp[2]*1.02)
+					{test=2;
+						returnv[0]=contemp[3];
+						return true;
+					}
+				}
+			}
+			
 			/*if (contemp[2]<=enterpoint)
 			{test=1;
 				returnv[0]=enterpoint;
 				return true;
-			}
+			}*/
 			
-			if (contemp[0]>=previoustemp[3]*1.05)
+			
+			
+			/*if (contemp[0]>=previoustemp[3]*1.05)
 			{
 				if(contemp[2]<contemp[0]*0.95)
 				{
 					returnv[0]=contemp[0]*0.95;
-					test=2;
+					test=3;
 					return true;
 				} 
-			}
-			if (contemp[0]>contemp[3])
+			}*/
+		/*	if (contemp[0]>contemp[3])
 				if (contemp[3]<contemp[1]*0.96)
 				{test=3;
 					returnv[0]=contemp[3];
@@ -724,14 +743,14 @@ public class bullStrategy2 {
 		}
 		else
 		{
-			if (returnv[0]>=enterpoint*1.07)
+			/*if (returnv[0]>=enterpoint*1.07)
 			{
 				if (contemp[2]<=enterpoint)
-				{test=4;
+				{test=5;
 					returnv[0]=enterpoint;
 					return true;
 				}
-			}
+			}*/
 		}
 		return false;
 	}

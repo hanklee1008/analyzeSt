@@ -14,7 +14,7 @@ public class analyzeStrategy {
 	public static void main(String[] s)
 	{
 		analyzeStrategy as=new analyzeStrategy();
-		String filepath=drive+"software/sdata/15foranalyze/";
+		String filepath=drive+"software/sdata/15test/";
 		//filepath=drive+"software/sdata/t.xls";
 		as.analyze2(filepath);
 		//as.analyze3(filepath);
@@ -87,7 +87,7 @@ public class analyzeStrategy {
 			//s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
-			st1.computeReturnByReturnFile(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
+			//st1.computeReturnByReturnFile(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
