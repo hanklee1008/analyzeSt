@@ -8,9 +8,7 @@ public class BearStrategy1 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=0.09;
-	
-	
-	
+		
 	public void analyzeStock(Sheet sweek,ArrayList<String[]> allTimePoint,String stockname)
 	{		
 		int isComputeReturn=0; //0:exit 1:enter
@@ -50,7 +48,8 @@ public class BearStrategy1 {
 								}
 							}
 
-							if (quarterLineRedK>=3&&quarterLineRedK<=8)
+							//if (quarterLineRedK>=3&&quarterLineRedK<=8)
+							if (quarterLineRedK>=1&&quarterLineRedK<=8)
 							{
 								if (contemp[5]<content.get(content.size()-1)[5])
 								{
@@ -77,8 +76,8 @@ public class BearStrategy1 {
 									quarterLineRedK=0;
 								}
 							}
-							//else if(quarterLineRedK>=6||quarterLineRedK==1||quarterLineRedK==2) 
-							else if(quarterLineRedK>=9||quarterLineRedK==1||quarterLineRedK==2) 
+							//else if(quarterLineRedK>=9||quarterLineRedK==1||quarterLineRedK==2) 
+							else if(quarterLineRedK>=9) 
 							{
 								if (contemp[5]<content.get(content.size()-1)[5])
 									quarterLineRedK++;
@@ -119,8 +118,7 @@ public class BearStrategy1 {
 							if (endComputeReturnQB(currentLow,previousData,baseData,contemp,content))
 							{	
 								tempdata[2]=""+df.format(100*(enterPoint-currentLow)/enterPoint);
-								tempdata[9]=""+df.format(100*(currentHigh-enterPoint)/enterPoint);
-								
+								tempdata[9]=""+df.format(100*(currentHigh-enterPoint)/enterPoint);								
 
 								allTimePoint.add(tempdata);							
 								isComputeReturn=0;
