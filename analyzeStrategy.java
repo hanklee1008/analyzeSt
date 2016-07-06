@@ -14,11 +14,10 @@ public class analyzeStrategy {
 	public static void main(String[] s)
 	{
 		analyzeStrategy as=new analyzeStrategy();
-		String filepath=drive+"software/sdata/15test/";
-		//filepath=drive+"software/sdata/t.xls";
-		as.analyze2(filepath);
-		//as.analyze3(filepath);
+		String filepath=drive+"software/sdata/15test999/";
+		//as.analyze4(filepath);
 		//as.conditionFilter(filepath);
+		as.analyzeB1(filepath);
 	}
 	private void analyze1(String filepath)
 	{
@@ -84,7 +83,7 @@ public class analyzeStrategy {
 				
 			}			
 
-			//s1.fillInAllconditionBydaily(allTimePoint);
+			s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			//st1.computeReturnByReturnFile(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
@@ -150,6 +149,38 @@ public class analyzeStrategy {
 			s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
+			
+			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
+		}
+		catch (Exception e)
+		{
+			System.out.println("analyze4\n");
+			e.printStackTrace();
+		}
+	}
+	private void analyzeB1(String filepath)
+	{
+		try{
+			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
+			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
+			
+			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
+			BearStrategy1 st1=new BearStrategy1();
+			Workbook workbook;
+			Sheet shd,shw;			
+			analyzeStock s1=new analyzeStock();	
+			File[] temp=new File(filepath).listFiles();
+			
+			for (File f:temp)
+			{
+				workbook=Workbook.getWorkbook(f);
+				shd=workbook.getSheet(0);
+				shw=workbook.getSheet(1);
+				st1.analyzeStock(shw,allTimePoint,f.getName());
+			}
+			s1.fillInAllconditionBydaily(allTimePoint);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/bq-eow.xls"),20040301,4);
+			s1.computeResult(allTimePoint,20040301,4);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}

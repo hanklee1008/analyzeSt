@@ -17,7 +17,7 @@ public class bullStrategy2 {
 	final double divideWeeklyrate=9;
 	static String drive="c:/";
 	int test=0;
-	double testbackpoint=0;
+	double testbackpoint=0,ishead=0,lowpoint=0,lowkclose=0;
 	
 	public String strategyName()
 	{
@@ -180,7 +180,7 @@ public class bullStrategy2 {
 								}
 							}
 							if (mmstate[2]==1)
-							{System.out.println(buytime);
+							{//System.out.println(buytime);
 								if(conditionAnalyzeMM(content,contemp))							
 								{										
 									mmstate[1]=1;									
@@ -190,11 +190,14 @@ public class bullStrategy2 {
 									double weeklyrate=(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 									double lead=(contemp[1]-contemp[3])/contemp[3]*100;
 									double quantity=contemp[6];
-
+									
+									ishead=isHead(content,contemp);
+									//lowpoint=findlow(content,contemp);
 									//tempdata=new String[]{stockname,buytime,"","","","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
 									fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
+									/*fillInData(allTimePoint,10,""+lowpoint);
 									for (int i=0;i<contemp.length;i++)
-									fillInData(allTimePoint,11+i,""+contemp[i]);	
+									fillInData(allTimePoint,11+i,""+contemp[i]);	*/
 
 								}
 								else
@@ -208,9 +211,19 @@ public class bullStrategy2 {
 							{
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
-								fillInData(allTimePoint,2,""+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));						
-								fillInData(allTimePoint,9,""+df.format(100*(mmstate[5]-mmstate[4])/mmstate[5]));
-								fillInData(allTimePoint,4,buytime);
+									
+								{
+									
+									fillInData(allTimePoint,2,""+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));
+									fillInData(allTimePoint,9,""+df.format(100*(mmstate[5]-mmstate[4])/mmstate[5]));
+									fillInData(allTimePoint,3,""+ishead);
+									/*fillInData(allTimePoint,9,""+df.format(100*(mmstate[4]-lowpoint)/mmstate[5]));
+									fillInData(allTimePoint,8,""+df.format(100*(lowkclose-mmstate[4])/lowkclose));
+									fillInData(allTimePoint,5,""+df.format(100*(mmstate[5]-(lowpoint-mmstate[5]*0.035))/mmstate[5]));*/
+									fillInData(allTimePoint,4,buytime);
+								}
+								
+								
 								//allTimePoint.add(tempdata);
 								
 								mmstate[1]=0;
@@ -919,5 +932,38 @@ public class bullStrategy2 {
 			
 
 		return false;
+	}
+	private int isHead(ArrayList<double[]> base,double[] compare)
+	{
+		if(base.size()>=8)
+			if(base.get(base.size()-4)[1]>=base.get(base.size()-8)[0]*1.6)
+				return 1;
+		
+		for (int i=base.size()-1;i>=base.size()-3;i--)
+		{
+			if(base.get(i)[4]<base.get(i-1)[4])
+			if(base.get(i)[0]<base.get(i)[3]&&base.get(i)[3]>=base.get(i)[0]*1.1&&base.get(i)[3]>compare[3])
+				return 2;
+		}
+		
+		return 0;
+	}
+	private double findlow(ArrayList<double[]> base,double[] compare)
+	{
+		
+		if(compare[3]>=compare[0]*1.07)
+		{
+			lowkclose=compare[3];
+			return compare[2];
+		}
+		
+		/*for (int i=base.size()-1;i>=base.size()-2;i--)
+		{
+			lowkclose=base.get(i)[3];
+			if(base.get(i)[3]>=base.get(i)[0]*1.07)
+				return base.get(i)[2];
+		}*/
+		
+		return 999;
 	}
 }

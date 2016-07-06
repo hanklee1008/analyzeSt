@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=1,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 /*public static void main(String[] s)
 {		
@@ -172,56 +172,6 @@ private void computeReturnByWeeklyExcelByQuarterlineB(String filepath)
 	{
 		try{
 			analyzeStockResultBearByQuarterLine(Workbook.getWorkbook(f).getSheet(1),allTimePoint,f.getName());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	//fillInAllconditionBydaily(allTimePoint);
-	fillInData(allTimePoint,new File(drive+"software/sdata/15AllqlineB.xls"),20040301,4);
-	//computeResult(allTimePoint,20040301,0);
-	
-	System.out.println("\ncompute end:"+sdFormat.format(new Date()));
-}
-private void computeReturnByDailyExcelByQuarterlineB(String filepath)
-{
-	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
-	
-	System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-	
-	ArrayList<String[]> allTimePoint=new ArrayList<String[]>();
-	
-	File[] temp=new File(filepath).listFiles();
-	for (File f:temp)
-	{
-		try{
-			analyzeStockResultBearByDailyKQuarterLine(Workbook.getWorkbook(f).getSheet(0),allTimePoint,f.getName());
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	//fillInAllconditionBydaily(allTimePoint);
-	fillInData(allTimePoint,new File(drive+"software/sdata/15AllDailyKqlineB.xls"),20040301,4);
-	//computeResult(allTimePoint,20040301,0);
-	
-	System.out.println("\ncompute end:"+sdFormat.format(new Date()));
-}
-private void computeReturnByWeeklyExcelByMonthlineB(String filepath)
-{
-	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
-	
-	System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-	
-	ArrayList<String[]> allTimePoint=new ArrayList<String[]>();
-	
-	File[] temp=new File(filepath).listFiles();
-	for (File f:temp)
-	{
-		try{
-			analyzeStockResultBearByTopMonthLine(Workbook.getWorkbook(f).getSheet(1),allTimePoint,f.getName());
 		}
 		catch(Exception e)
 		{
@@ -422,25 +372,20 @@ public ArrayList<String[]> analyzeBull(Workbook workbook,int filetype,ArrayList<
 	}
 	return allTimePoint;
 }
-public ArrayList<String[]> analyzeBear(Workbook workbook,int filetype,ArrayList<String[]> allTimePoint,int isPredict,int analyzeCondition)
+public ArrayList<String[]> analyzeBear(Sheet sweek,ArrayList<String[]> allTimePoint,int analyzeCondition,String stockname)
 {	
-	predict=isPredict;
-	oldOrNew=filetype;
-	
-	for (int i=0;i<workbook.getNumberOfSheets();i++)
-	{
 		switch(analyzeCondition)
 		{
 		case 4:
-			analyzeStockResultBearByQuarterLine(workbook.getSheet(i),allTimePoint,workbook.getSheet(i).getName());
+			analyzeStockResultBearByQuarterLine(sweek,allTimePoint,stockname);
 			break;
 		case 5:
-			analyzeStockResultBearByMonthLine(workbook.getSheet(i),allTimePoint,workbook.getSheet(i).getName());
+			analyzeStockResultBearByMonthLine(sweek,allTimePoint,stockname);
 			break;
 		default:
 			System.out.println("no this condition");
 		}
-	}
+	
 		
 	return allTimePoint;
 }
@@ -1418,176 +1363,6 @@ public void analyzeStockResultBearByQuarterLine(Sheet s,ArrayList<String[]> allT
 		e.printStackTrace();
 	}
 }
-public void analyzeStockResultBearByDailyKQuarterLine(Sheet s,ArrayList<String[]> allTimePoint,String name)
-{
-	
-	int isComputeReturn=0,isMonthLineDown=0; //0:exit 1:enter
-	double[] previousData=new double[7],baseData=new double[7],contemp=new double[7];
-	double currentHigh=0,currentLow=0,testLow=0,returnPoint=0,enterPoint=0;
-	ArrayList<double[]> content=new ArrayList<double[]>();
-	DecimalFormat df=new DecimalFormat("#.##");
-	String buytime="";
-	double weeklyrate,lead,quantity,kRate,testWeeklyrate=0,highWeeklyrate=0;
-	
-	monthLineRedK=1;
-	quarterLineRedK=0;	
-
-	try {			
-			int temp=1;
-			while (temp<s.getRows())
-			{
-				contemp=new double[7];
-
-				for (int j=0;j<4;++j)
-				{
-					String st=s.getCell(j+1,temp).getContents();
-					if (!st.equals(""))
-						contemp[j]=Double.parseDouble(st);
-					else
-						contemp[j]=0;
-					
-					if(j!=3)
-					{
-						st=s.getCell(j+7,temp).getContents();
-						if (!st.equals(""))
-							contemp[j+4]=Double.parseDouble(st);
-						else
-							contemp[j+4]=0;
-					}
-				}
-							
-				if (content.size()>=60)
-				{
-					if (isComputeReturn==0)
-					{
-						if (quarterLineRedK==0)
-						{
-							if (content.get(content.size()-1)[5]>=content.get(content.size()-2)[5]&&contemp[5]<content.get(content.size()-1)[5])
-							{
-								quarterLineRedK=1;
-							}
-						}
-
-						if (quarterLineRedK>=3&&quarterLineRedK<=5)
-						{
-							if (contemp[5]<content.get(content.size()-1)[5])
-							{
-								if (conditionAnalyzeQBDailyK(content,contemp,contemp[3]))
-								{//System.out.print("\n"+s.getCell(0,temp).getContents());
-									isComputeReturn=1;
-									baseData=contemp;
-									previousData=content.get(content.size()-1);										
-									enterPoint=contemp[3];									
-									currentHigh=contemp[3];
-									currentLow=contemp[3];
-									buytime=s.getCell(0,temp).getContents();
-									weeklyrate=-(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
-									lead=-(contemp[2]-contemp[3])/contemp[3]*100;
-									quantity=contemp[6];
-									
-									/*highWeeklyrate=(contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
-									testHigh=0;
-									if(weeklyrate>=6&&(contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100>=divideWeeklyrate)
-									{
-										//System.out.print("\n"+buytime);
-										enterPoint=computeEnterPoint(content,contemp,weeklyrate);
-										//currentHigh=contemp[1];
-										currentLow=enterPoint;
-										testHigh=contemp[1];
-										testLow=enterPoint;
-										testWeeklyrate=(enterPoint-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
-									}*/
-
-									fillStockData(allTimePoint,name,buytime,quantity+"",df.format(weeklyrate),df.format(lead));	
-									
-								}
-								else
-									quarterLineRedK++;
-							}
-							else
-							{
-								quarterLineRedK=0;
-								monthLineRedK=1;
-							}
-						}
-						else if(quarterLineRedK>=6||quarterLineRedK==1||quarterLineRedK==2) 
-						{
-							if (contemp[5]<content.get(content.size()-1)[5])
-								quarterLineRedK++;
-							else
-							{
-								quarterLineRedK=0;
-								monthLineRedK=1;
-							}
-						}															
-					}
-					else
-					{	
-						if (contemp[0]>=contemp[3])
-						{
-							if (contemp[1]>currentHigh)
-							{		
-								if ((currentLow-baseData[3])/baseData[3]>-0.07)
-								{
-									if ((currentLow-enterPoint)/enterPoint>-0.07)
-										currentHigh=contemp[1];									
-								}
-							}
-							if (contemp[2]<currentLow&&isMonthLineDown!=1)
-							{
-								if ((currentHigh-enterPoint)/enterPoint<0.13)
-									currentLow=contemp[2];
-							}							
-						}
-						else
-						{
-							if (contemp[2]<currentLow&&isMonthLineDown!=1)
-							{
-								currentLow=contemp[2];
-							}
-							if (contemp[1]>currentHigh)
-							{
-								if ((currentLow-baseData[3])/baseData[3]>-0.07)
-								{
-									if ((currentLow-enterPoint)/enterPoint>-0.07)
-										currentHigh=contemp[1];	
-									
-								}														
-							}																										
-						}
-											
-						if ((currentLow-baseData[3])/baseData[3]<=-0.1)
-						{
-							if (contemp[4]>content.get(content.size()-1)[4])
-							{
-								isMonthLineDown=1;
-							}
-						}
-						
-						if (endComputeReturnQB(currentLow,previousData,baseData,contemp,content))
-						{									
-							fillInData(allTimePoint,2,""+df.format(100*(enterPoint-currentLow)/enterPoint));
-							fillInData(allTimePoint,9,""+df.format(100*(currentHigh-enterPoint)/enterPoint));
-							
-							isComputeReturn=0;
-							isMonthLineDown=0;
-							quarterLineRedK=0;
-							monthLineRedK=1;
-						}
-					}
-				}
-				
-				temp++;
-				content.add(contemp);			
-			}
-		
-	}
-	catch (Exception e)
-	{
-		System.out.print("\nanalyzeStockResultByQuarterLine"+","+s.getName());
-		e.printStackTrace();
-	}
-}
 public void analyzeStockResultBearByMonthLine(Sheet s,ArrayList<String[]> allTimePoint,String name)
 {	
 	int monthLineRedType=0;//0:black 1,2,3:red
@@ -1661,118 +1436,6 @@ public void analyzeStockResultBearByMonthLine(Sheet s,ArrayList<String[]> allTim
 						if (contemp[2]<currentLow&&isMonthLineDown!=1)
 						{
 							if ((currentHigh-enterPoint)/enterPoint<0.12)
-								currentLow=contemp[2];
-						}							
-					}
-					else
-					{
-						if (contemp[2]<currentLow&&isMonthLineDown!=1)
-						{
-							currentLow=contemp[2];
-						}
-						if (contemp[1]>currentHigh)
-						{
-							if (100*(currentLow-baseData[3])/baseData[3]>-7)
-							{
-								if (100*(currentLow-enterPoint)/enterPoint>-7)
-									currentHigh=contemp[1];	
-								
-							}														
-						}																										
-					}
-
-					if (endComputeReturnMB(currentLow,baseData,contemp,content))
-					{
-						fillInData(allTimePoint,2,""+df.format(100*(enterPoint-currentLow)/enterPoint));
-						fillInData(allTimePoint,9,""+df.format(100*(currentHigh-enterPoint)/enterPoint));
-						
-						isComputeReturn=0;
-					}
-				}
-			}							
-			content.add(contemp);
-			temp++;
-		}
-	}
-	catch (Exception e)
-	{
-		System.out.print("\nanalyzeStockResultByMonthLine");
-		e.printStackTrace();
-	}
-}
-public void analyzeStockResultBearByTopMonthLine(Sheet s,ArrayList<String[]> allTimePoint,String name)
-{	
-	int monthLineRedType=0;//0:black 1,2,3:red
-	int isComputeReturn=0; //0:exit 1:enter
-	int isMonthLineDown=0;
-	double[] baseData=new double[7],contemp=new double[7];
-	double currentHigh=0,currentLow=0,enterPoint=0;
-	ArrayList<double[]> content=new ArrayList<double[]>();
-	DecimalFormat df=new DecimalFormat("#.##");
-	
-	try {					
-		int temp=1;
-		while (temp<s.getRows())
-		{
-			contemp=new double[7];
-			
-			if (oldOrNew==0)
-			{
-				for (int j=0;j<7;++j)
-				{
-					String st=s.getCell(j+1,temp).getContents();
-					if (!st.equals(""))
-						contemp[j]=Double.parseDouble(st);
-					else
-						contemp[j]=0;
-				}
-			}
-			else
-			{
-				for (int j=0;j<6;++j)
-				{
-					contemp[j]=Double.parseDouble(s.getCell(j+1,temp).getContents());
-				}
-				contemp[6]=Double.parseDouble(s.getCell(11,temp).getContents());
-			}
-
-			if (content.size()>=14)
-			{
-				if (isComputeReturn==0)
-				{
-					if (contemp[5]>content.get(content.size()-1)[5])	 
-					{
-						if(conditionAnalyzeTopMB(content,contemp))							
-						{	
-							isComputeReturn=1;
-							String buytime=s.getCell(0,temp).getContents();
-							baseData=contemp;
-							enterPoint=contemp[3];
-							currentHigh=contemp[3];
-							currentLow=contemp[3];
-							double weeklyrate=-(contemp[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
-							double lead=-(contemp[2]-contemp[3])/contemp[3]*100;
-							double quantity=contemp[6];
-							//System.out.println(buytime);
-							fillStockData(allTimePoint,name,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
-						}
-					}					
-				}
-				else 
-				{	
-					if (contemp[0]>=contemp[3])
-					{
-						if (contemp[1]>currentHigh)
-						{		
-							if ((currentLow-baseData[3])/baseData[3]>-0.07)
-							{
-								if (100*(currentLow-enterPoint)/enterPoint>-7)
-									currentHigh=contemp[1];									
-							}
-						}
-						if (contemp[2]<currentLow&&isMonthLineDown!=1)
-						{
-							if ((currentHigh-enterPoint)/enterPoint<0.13)
 								currentLow=contemp[2];
 						}							
 					}
@@ -2520,46 +2183,6 @@ public boolean conditionAnalyzeMB(ArrayList<double[]> base,double[] compare)
 
 					return true;											
 	
-					
-	return false;
-}
-public boolean conditionAnalyzeTopMB(ArrayList<double[]> base,double[] compare)
-{
-	
-	double[] p1,p2,p3,p4;
-	
-	p1=base.get(base.size()-1);
-	p2=base.get(base.size()-2);
-	p3=base.get(base.size()-3);
-	p4=base.get(base.size()-4);
-	
-	double m1,q1,q2,q3,q4;
-	
-	if (p1[4]>p2[4]&&compare[4]<p1[4])
-	{//System.out.println("1");
-		if ((p1[4]-p1[5])/p1[5]>0.1)
-		{//System.out.println("2");
-			if((compare[0]>compare[3]))
-			{//System.out.println("3");
-				for (int i=2;i<12;i++)
-				{
-					if (base.get(base.size()-i-1)[4]<base.get(base.size()-i-2)[4])
-						if (base.get(base.size()-i)[4]>base.get(base.size()-i-1)[4])
-						{//System.out.println("4:"+(base.get(base.size()-i-1)[5]-base.get(base.size()-i-1)[4])/base.get(base.size()-i-1)[5]);
-							if ((base.get(base.size()-i-1)[5]-base.get(base.size()-i-1)[4])/base.get(base.size()-i-1)[5]>0.1)
-							{//System.out.println("5:"+(base.get(base.size()-i-1)[5]-base.get(base.size()-i-1)[4])/base.get(base.size()-i-1)[5]);
-								return true;
-							}
-							else
-								return false;
-						}
-				}
-			}
-		}
-			
-	}
-		
-																
 					
 	return false;
 }

@@ -37,7 +37,7 @@ public class bullStrategy1 {
 	{
 		return "quaterline+inside of the week";
 	}
-	public void analyzeStock(Sheet s,Sheet shfile,ArrayList<String[]> allTimePoint,String filepath,String stockname)
+	public void analyzeStock(Sheet sweek,Sheet shfile,ArrayList<String[]> allTimePoint,String filepath,String stockname)
 	{	
 		int isComputeReturn=0; //0:exit 1:enter
 		double[] contemp=new double[7];
@@ -58,13 +58,13 @@ public class bullStrategy1 {
 
 		try {			
 			int temp=1;
-			while (temp<s.getRows())
+			while (temp<sweek.getRows())
 			{
 				contemp=new double[7];
 				
 				for (int j=0;j<7;++j)
 				{
-					String st=s.getCell(j+1,temp).getContents();
+					String st=sweek.getCell(j+1,temp).getContents();
 					if (!st.equals(""))
 						contemp[j]=Double.parseDouble(st);
 					else
@@ -75,13 +75,13 @@ public class bullStrategy1 {
 				{
 					if (isComputeReturn==0)
 					{
-						if(findEntryPoint(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
+						if(findEntryPoint(sweek,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 						{
 							isComputeReturn=1;									
 							enterPoint=entrypoint[3];									
 							currentHigh=entrypoint[3];
 							currentLow=entrypoint[3];
-							buytime=s.getCell(0,temp).getContents();
+							buytime=sweek.getCell(0,temp).getContents();
 							weeklyrate=(entrypoint[3]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]*100;
 							lead=(entrypoint[1]-entrypoint[3])/entrypoint[3]*100;
 							quantity=entrypoint[6];
@@ -118,7 +118,7 @@ public class bullStrategy1 {
 							
 							if(kstate[2]+1<kstate[3])
 							{	
-								if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),enterPoint,returnV,kstate[2]+1))
+								if (endComputeReturn(shfile,sweek.getName(),sweek.getCell(0,temp).getContents(),enterPoint,returnV,kstate[2]+1))
 								{
 									tempdata[2]=""+df.format(100*(returnV[0]-enterPoint)/enterPoint);
 									tempdata[9]=""+df.format(100*(enterPoint-returnV[1])/enterPoint);
@@ -132,7 +132,7 @@ public class bullStrategy1 {
 					}
 					else
 					{							
-						if (endComputeReturn(shfile,s.getName(),s.getCell(0,temp).getContents(),enterPoint,returnV,0))
+						if (endComputeReturn(shfile,sweek.getName(),sweek.getCell(0,temp).getContents(),enterPoint,returnV,0))
 						{	
 							tempdata[2]=""+df.format(100*(returnV[0]-enterPoint)/enterPoint);
 							tempdata[9]=""+df.format(100*(enterPoint-returnV[1])/enterPoint);
@@ -152,11 +152,11 @@ public class bullStrategy1 {
 		}
 		catch (Exception e)
 		{
-			System.out.print("\nanalyzeStockResult"+","+s.getName());
+			System.out.print("\nanalyzeStockResult"+","+sweek.getName());
 			e.printStackTrace();
 		}
 	}
-	private boolean findEntryPoint(Sheet s,Sheet shfile,ArrayList<double[]> content,double[] contemp,int temp,int[] kstate,double[] entrypoint,String[] buyday)
+	private boolean findEntryPoint(Sheet sweek,Sheet shfile,ArrayList<double[]> content,double[] contemp,int temp,int[] kstate,double[] entrypoint,String[] buyday)
 	{		
 		if (kstate[0]==0)
 		{	
@@ -171,7 +171,7 @@ public class bullStrategy1 {
 					if ((contemp[1]-contemp[3])/13+contemp[5]>=content.get(content.size()-1)[5])
 						if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
 						{							
-							if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
+							if (isfindEntry(sweek,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 								return true;							
 						}
 				}
@@ -184,7 +184,7 @@ public class bullStrategy1 {
 			{		
 				if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
 				{
-					if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
+					if (isfindEntry(sweek,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 						return true;
 				}
 				kstate[0]++;
@@ -195,7 +195,7 @@ public class bullStrategy1 {
 				{
 					if ((contemp[1]-content.get(content.size()-1)[3])/content.get(content.size()-1)[3]>=divideWeeklyrate)
 					{							
-						if (isfindEntry(s,shfile,content,contemp,temp,kstate,entrypoint,buyday))
+						if (isfindEntry(sweek,shfile,content,contemp,temp,kstate,entrypoint,buyday))
 							return true;							
 					}
 				}
@@ -213,13 +213,13 @@ public class bullStrategy1 {
 		
 		return false;
 	}
-	private boolean isfindEntry(Sheet s,Sheet shfile,ArrayList<double[]> content,double[] contemp,int temp,int[] kstate,double[] entrypoint,String[] buyday)
+	private boolean isfindEntry(Sheet sweek,Sheet shfile,ArrayList<double[]> content,double[] contemp,int temp,int[] kstate,double[] entrypoint,String[] buyday)
 	{
 		int day=0;
 		ArrayList<double[]> combineK=new ArrayList<double[]>();
 		ArrayList<double[]> currentK=new ArrayList<double[]>();
 		
-		computeDailyK(shfile,s.getCell(0,temp).getContents(),combineK,contemp,buyday,currentK);
+		computeDailyK(shfile,sweek.getCell(0,temp).getContents(),combineK,contemp,buyday,currentK);
 		
 		/*ArrayList<double[]> ttt=new ArrayList<double[]>();
 		String[] buyday1=new String[7];
@@ -799,13 +799,13 @@ public class bullStrategy1 {
 				day++;
 				combineK.add(ktype);
 				
-				/*for (int i=0;i<9;i++)
+				for (int i=0;i<9;i++)
 				{
 					if (!s.getCell(i+1,row+day).getContents().equals(""))
 						currentk[i]=Double.parseDouble(s.getCell(i+1,row+day).getContents());
 				}
 				
-				currentKlist.add(currentk);*/
+				currentKlist.add(currentk);
 			
 			}
 			while((row+day)<s.getRows()&&format.parse(s.getCell(0,row+day).getContents()).getTime()<sundayTime);
