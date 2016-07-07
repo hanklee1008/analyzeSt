@@ -8,7 +8,11 @@ public class BearStrategy1 {
 	
 	final int quarterKCount=13;
 	final double divideWeeklyrate=0.09;
-		
+	
+	public String strategyName()
+	{
+		return "quaterline+end of the week";
+	}
 	public void analyzeStock(Sheet sweek,ArrayList<String[]> allTimePoint,String stockname)
 	{		
 		int isComputeReturn=0; //0:exit 1:enter
@@ -147,9 +151,9 @@ public class BearStrategy1 {
 		
 		if(isTurnQuarterLineB(base,compare,enterPoint))
 			if(isTurnMonthLineB(base,compare,enterPoint))
-				if(weeklyRateType!=0)
+				//if(weeklyRateType!=0)
 				{				
-					if (highType!=0)
+					//if (highType!=0)
 						return true;
 				}
 								
@@ -239,9 +243,9 @@ public class BearStrategy1 {
 		{
 			return true;
 		}
-		else if(contemp[5]>content.get(content.size()-1)[5])//季線向上
+		else if(contemp[4]>content.get(content.size()-1)[4])//季線向上
 		{
-			if ((currentLow-baseData[3])/baseData[3]<=-0.1)//報酬超過10%
+			if ((currentLow-baseData[3])/baseData[3]<=-0.13)//報酬超過10%
 			{
 				return true;
 			}							

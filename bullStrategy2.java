@@ -192,11 +192,12 @@ public class bullStrategy2 {
 									double quantity=contemp[6];
 									
 									ishead=isHead(content,contemp);
-									//lowpoint=findlow(content,contemp);
+									lowpoint=findlow(content,contemp);
 									//tempdata=new String[]{stockname,buytime,"","","","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
 									fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
-									/*fillInData(allTimePoint,10,""+lowpoint);
-									for (int i=0;i<contemp.length;i++)
+									
+									
+									/*for (int i=0;i<contemp.length;i++)
 									fillInData(allTimePoint,11+i,""+contemp[i]);	*/
 
 								}
@@ -217,6 +218,7 @@ public class bullStrategy2 {
 									fillInData(allTimePoint,2,""+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));
 									fillInData(allTimePoint,9,""+df.format(100*(mmstate[5]-mmstate[4])/mmstate[5]));
 									fillInData(allTimePoint,3,""+ishead);
+									fillInData(allTimePoint,11,""+df.format(100*(mmstate[4]-lowpoint)/mmstate[5]));
 									/*fillInData(allTimePoint,9,""+df.format(100*(mmstate[4]-lowpoint)/mmstate[5]));
 									fillInData(allTimePoint,8,""+df.format(100*(lowkclose-mmstate[4])/lowkclose));
 									fillInData(allTimePoint,5,""+df.format(100*(mmstate[5]-(lowpoint-mmstate[5]*0.035))/mmstate[5]));*/

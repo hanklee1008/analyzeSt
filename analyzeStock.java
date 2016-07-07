@@ -2009,7 +2009,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 		}
 		else if(condition==4)//空,季,週收
 		{
-			
+			//if(Double.parseDouble(data[7])>=0.15)
+				//return false;
 		}
 		else//空,月,週收
 		{
