@@ -316,7 +316,6 @@ private void updateStockDailyKToExcel(ArrayList<String[]> as,String stocknum,Str
 private void updateStockWeeklyKToExcel(File stockf,String stocknum)
 {
 	try{
-		String drive="d:/";
 		ArrayList<double[]> as=new ArrayList<double[]>();
 		
 		//Sheet dailysh=Workbook.getWorkbook(new File(drive+"software/sdata/new/new/"+stocknum+".xls")).getSheet(0);

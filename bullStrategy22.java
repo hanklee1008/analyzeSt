@@ -11,6 +11,7 @@ public class bullStrategy22 {
 	final int quarterKCount=13;
 	final double divideWeeklyrate=9;
 	int test=0;
+	
 	public String strategyName()
 	{
 		return "monthline on quaterline+middle of the week";

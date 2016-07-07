@@ -477,7 +477,7 @@ public class bullStrategy2 {
 				returnv[4]=low;		
 			}
 	}
-	public void computeReturnByReturnFile(File f,ArrayList<String[]> allTimePoint)
+	public void computeReturnByReturnFile_day(File f,ArrayList<String[]> allTimePoint)
 	{
 		try{
 			Workbook workBook=Workbook.getWorkbook(f);
@@ -682,7 +682,7 @@ public class bullStrategy2 {
 					//if (previoustemp[3]<previoustemp[5]&&previoustemp[3]<previoustemp[2]*1.02)
 					if (previoustemp[3]<previoustemp[0])
 					if (contemp[3]<contemp[5]&&contemp[3]<contemp[2]*1.02)
-					{test=2;
+					{
 						returnv[0]=contemp[3];
 						return true;
 					}
@@ -769,7 +769,7 @@ public class bullStrategy2 {
 		}
 		return false;
 	}
-	public void computeReturnByReturnFiles(File f,ArrayList<String[]> allTimePoint)
+	public void computeReturnByReturnFile_week(File f,ArrayList<String[]> allTimePoint)
 	{
 		String stocknum="";
 		try{
@@ -935,6 +935,7 @@ public class bullStrategy2 {
 
 		return false;
 	}
+	//below test
 	private int isHead(ArrayList<double[]> base,double[] compare)
 	{
 		if(base.size()>=8)

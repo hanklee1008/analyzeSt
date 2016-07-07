@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=1,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="c:/";
+ static String drive="d:/";
  
 /*public static void main(String[] s)
 {		
@@ -1940,58 +1940,11 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	try{
 		if(condition==0)//多,季,週中
 		{
-			/*if (Double.parseDouble(data[8])==0&&Double.parseDouble(data[6])<=15000)
-				return true;
-			else if (Double.parseDouble(data[8])<=3.3&&Double.parseDouble(data[6])<=8000)
-				return true;
-			else if (Double.parseDouble(data[8])>3.3&&Double.parseDouble(data[6])<=5000)
-				return true;
-			else
-				return false;*/
 
-			//if(data[13].equals("")||Double.parseDouble(data[13])>14)
-				//return false;
 		}
 		else if(condition==1)//多,季,週收
 		{	
-			if(predict!=1)
-			{
-				if(Double.parseDouble(data[7])>=divideWeeklyrate) //***量過高沒過較好
-				{
-					if(Double.parseDouble(data[8])>3)
-						return false;
-					if (Double.parseDouble(data[7])<=14)
-						if(Double.parseDouble(data[6])>10000)
-							return false;		
-				}
-				else 
-				{
-					if(Double.parseDouble(data[7])>=6)
-					{
-						if(Double.parseDouble(data[8])>2.5)  //*** 2.5較好
-							return false;
-						if(Double.parseDouble(data[6])>8000)//*** 6000較好
-							return false;
-					}
-					else
-					{
-						if(Double.parseDouble(data[7])>=5)
-						{
-							if(Double.parseDouble(data[6])>6000)
-								return false;
-							if(Double.parseDouble(data[8])>0.5)
-								return false;
-						}
-						else
-						{
-							if(Double.parseDouble(data[6])>5000)
-								return false;
-							if(Double.parseDouble(data[8])>0.5)
-								return false;
-						}
-					}	
-				}
-			}		
+		
 		}
 		else if(condition==2)//多,月,週收
 		{
@@ -1999,13 +1952,7 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 		}
 		else if(condition==3)//
 		{
-			if(Double.parseDouble(data[7])>=divideWeeklyrate)
-			{
-				/*if(Double.parseDouble(data[8])>3)
-					return false;*/
-				/*if(Double.parseDouble(data[6])>8000) //*** 5000?
-					return false;*/
-			}
+
 		}
 		else if(condition==4)//空,季,週收
 		{
@@ -2719,9 +2666,9 @@ public boolean endComputeReturnQ(double currentHigh,double[] baseData,double[] c
 	{
 		return true;
 	}
-	else if(contemp[5]<content.get(content.size()-1)[5])//季線向下
+	else if(contemp[4]<content.get(content.size()-1)[4])//季線向下
 	{
-		if ((currentHigh-baseData[3])/baseData[3]>=0.1)//高點漲超過10%
+		if ((currentHigh-baseData[3])/baseData[3]>=0.13)//高點漲超過10%
 		{
 			return true;
 		}							

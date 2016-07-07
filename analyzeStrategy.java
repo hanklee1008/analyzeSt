@@ -9,15 +9,28 @@ import jxl.Workbook;
 
 public class analyzeStrategy {
 	
-	static String drive="c:/";
+	static String drive="d:/";
 	
 	public static void main(String[] s)
-	{
-		analyzeStrategy as=new analyzeStrategy();
-		String filepath=drive+"software/sdata/15test100/";
-		as.analyze2(filepath);
-		//as.conditionFilter(filepath);
-		//as.analyzeB2(filepath);
+	{		
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");			
+		System.out.println("\ncompute start:"+sdFormat.format(new Date()));
+		String filepath=drive+"software/sdata/15now/"+sdFormat.format(new Date())+"/";
+		new File(filepath).mkdirs();	
+		//analyzeStockData asd=new analyzeStockData();
+		//asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);	
+		//analyzeStrategy as=new analyzeStrategy();
+		//as.analyze(filepath);
+	}
+	private void analyze(String filepath)
+	{		
+		analyze1(filepath);
+		analyze2(filepath);
+		analyze3(filepath);
+		analyze4(filepath);	
+		analyzeB1(filepath);
+		analyzeB2(filepath);
+		//conditionFilter(filepath);
 	}
 	private void analyze1(String filepath)
 	{
@@ -45,9 +58,8 @@ public class analyzeStrategy {
 				
 			}			
 			s1.fillInAllconditionBydaily(allTimePoint);
-
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-mow.xls"),20040301,0);
-
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-eow.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
@@ -86,7 +98,7 @@ public class analyzeStrategy {
 			s1.fillInAllconditionBydaily(allTimePoint);
 			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
-			//st1.computeReturnByReturnFile(new File(drive+"software/sdata/m-eow.xls"),allTimePoint);
+
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
@@ -137,24 +149,35 @@ public class analyzeStrategy {
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
 			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-			
-			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();				
+
+			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
+			bullStrategy11 st1=new bullStrategy11();
+			Workbook workbook;
+			Sheet shd,shw;		
 
 			analyzeStock s1=new analyzeStock();	
 			File[] temp=new File(filepath).listFiles();
 			for (File f:temp)
-			{
-				s1.analyzeBullByFile(f,0,allTimePoint,1,1,filepath);
-			}
+			{									
+				workbook=Workbook.getWorkbook(f);
+				shd=workbook.getSheet(0);
+				shw=workbook.getSheet(1);
+				
+				
+				st1.analyzeStock(shw,shd,allTimePoint,filepath,f.getName());
+
+				workbook.close();
+				
+			}			
 			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-eow.xls"),20040301,0);
+			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-mow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
 		catch (Exception e)
 		{
-			System.out.println("analyze4\n");
+			System.out.println("analyze1\n");
 			e.printStackTrace();
 		}
 	}
