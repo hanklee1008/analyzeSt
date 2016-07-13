@@ -9,30 +9,48 @@ import jxl.Workbook;
 
 public class analyzeStrategy {
 	
-	static String drive="d:/";
+	static String drive="c:/";
 	
 	public static void main(String[] s)
-	{		
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");			
-		System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-		String filepath=drive+"software/sdata/15now/"+sdFormat.format(new Date())+"/";
-		new File(filepath).mkdirs();	
-		//analyzeStockData asd=new analyzeStockData();
-		//asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath);	
-		//analyzeStrategy as=new analyzeStrategy();
-		//as.analyze(filepath);
+	{				
+		System.out.println("\nanalyze start:"+new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(new Date()));
+		
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");	
+		
+		String filepath=drive+"software/sdata/15now/"+sdFormat.format(new Date());
+		String resultfilepath=filepath+"result/";
+			
+		analyzeStrategy as=new analyzeStrategy();
+		//as.collectStock(filepath,resultfilepath);
+		as.analyze();
+		
+		System.out.println("\nanalyze end:"+new SimpleDateFormat("yyyy/MM/dd hh:mm:ss").format(new Date()));
 	}
-	private void analyze(String filepath)
-	{		
-		analyze1(filepath);
-		analyze2(filepath);
-		analyze3(filepath);
-		analyze4(filepath);	
-		analyzeB1(filepath);
-		analyzeB2(filepath);
-		//conditionFilter(filepath);
+	public void collectStock(String filepath,String resultfilepath)
+	{
+		new File(filepath).mkdirs();			
+		new File(resultfilepath).mkdirs();	
+		analyzeStockData asd=new analyzeStockData();
+		asd.findstock(new File(drive+"software/sdata/low15.xls"),filepath+"/","2015/03/02");
+		analyze1(filepath,resultfilepath);
+		analyze2(filepath,resultfilepath);
+		analyze3(filepath,resultfilepath);
+		analyze4(filepath,resultfilepath);	
+		analyzeB1(filepath,resultfilepath);
+		analyzeB2(filepath,resultfilepath);
 	}
-	private void analyze1(String filepath)
+	private void analyze()
+	{		
+		String filepath=drive+"software/sdata/15test100/";
+		String resultfilepath=drive+"software/sdata/";
+		//analyze1(filepath,resultfilepath);
+		//analyze2(filepath,resultfilepath);
+		analyze3(filepath,resultfilepath);
+		//analyze4(filepath,resultfilepath);	
+		//analyzeB1(filepath,resultfilepath);
+		//analyzeB2(filepath,resultfilepath);
+	}
+	private void analyze1(String filepath,String resultfilepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
@@ -57,8 +75,8 @@ public class analyzeStrategy {
 				workbook.close();
 				
 			}			
-			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-eow.xls"),20040301,0);
+			s1.fillInAllcondition(allTimePoint);
+			s1.fillInData(allTimePoint,new File(resultfilepath+"q-eow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
@@ -69,82 +87,7 @@ public class analyzeStrategy {
 			e.printStackTrace();
 		}
 	}
-	private void analyze2(String filepath)
-	{
-		try{
-			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
-			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-			
-			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
-			bullStrategy2 st1=new bullStrategy2();
-			Workbook workbook;
-			Sheet shd,shw;		
-			
-			analyzeStock s1=new analyzeStock();	
-			File[] temp=new File(filepath).listFiles();
-			for (File f:temp)
-			{									
-				workbook=Workbook.getWorkbook(f);
-				shd=workbook.getSheet(0);
-				shw=workbook.getSheet(1);
-				
-				
-				st1.analyzeStock(shw,shd,allTimePoint,filepath,f.getName());
-
-				workbook.close();
-				
-			}			
-
-			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-eow.xls"),20040301,0);
-			s1.computeResult(allTimePoint,20040301,0);
-
-			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
-		}
-		catch (Exception e)
-		{
-			System.out.println("analyze2\n");
-			e.printStackTrace();
-		}
-	}
-	private void analyze3(String filepath)
-	{
-		try{
-			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
-			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
-			
-			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
-			bullStrategy22 st1=new bullStrategy22();
-			Workbook workbook;
-			Sheet shd,shw;		
-
-			analyzeStock s1=new analyzeStock();	
-			File[] temp=new File(filepath).listFiles();
-			for (File f:temp)
-			{									
-				workbook=Workbook.getWorkbook(f);
-				shd=workbook.getSheet(0);
-				shw=workbook.getSheet(1);
-				
-				
-				st1.analyzeStock(shw,shd,allTimePoint,filepath,f.getName());
-
-				workbook.close();
-				
-			}			
-			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/m-mow.xls"),20040301,0);
-			s1.computeResult(allTimePoint,20040301,0);
-			
-			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
-		}
-		catch (Exception e)
-		{
-			System.out.println("analyze3\n");
-			e.printStackTrace();
-		}
-	}
-	private void analyze4(String filepath)
+	private void analyze2(String filepath,String resultfilepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
@@ -169,8 +112,8 @@ public class analyzeStrategy {
 				workbook.close();
 				
 			}			
-			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/q-mow.xls"),20040301,0);
+			s1.fillInAllcondition(allTimePoint);
+			s1.fillInData(allTimePoint,new File(resultfilepath+"q-mow.xls"),20040301,0);
 			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
@@ -181,7 +124,82 @@ public class analyzeStrategy {
 			e.printStackTrace();
 		}
 	}
-	private void analyzeB1(String filepath)
+	private void analyze3(String filepath,String resultfilepath)
+	{
+		try{
+			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
+			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
+			
+			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
+			bullStrategy2 st1=new bullStrategy2();
+			Workbook workbook;
+			Sheet shd,shw;					
+			
+			File[] temp=new File(filepath).listFiles();
+			for (File f:temp)
+			{									
+				workbook=Workbook.getWorkbook(f);
+				shd=workbook.getSheet(0);
+				shw=workbook.getSheet(1);
+				
+				
+				st1.analyzeStock(shw,shd,allTimePoint,filepath,f.getName());
+
+				workbook.close();
+				
+			}			
+			
+			analyzeStock s1=new analyzeStock();	
+			s1.fillInAllcondition(allTimePoint);
+			s1.fillInData(allTimePoint,new File(resultfilepath+"m-eow.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
+			
+			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
+		}
+		catch (Exception e)
+		{
+			System.out.println("analyze2\n");
+			e.printStackTrace();
+		}
+	}
+	private void analyze4(String filepath,String resultfilepath)
+	{
+		try{
+			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
+			System.out.println("\ncompute start:"+sdFormat.format(new Date()));
+			
+			ArrayList<String[]> allTimePoint=new ArrayList<String[]>();		
+			bullStrategy22 st1=new bullStrategy22();
+			Workbook workbook;
+			Sheet shd,shw;		
+
+			analyzeStock s1=new analyzeStock();	
+			File[] temp=new File(filepath).listFiles();
+			for (File f:temp)
+			{									
+				workbook=Workbook.getWorkbook(f);
+				shd=workbook.getSheet(0);
+				shw=workbook.getSheet(1);
+				
+				
+				st1.analyzeStock(shw,shd,allTimePoint,filepath,f.getName());
+
+				workbook.close();
+				
+			}			
+			s1.fillInAllcondition(allTimePoint);
+			s1.fillInData(allTimePoint,new File(resultfilepath+"m-mow.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
+			
+			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
+		}
+		catch (Exception e)
+		{
+			System.out.println("analyze3\n");
+			e.printStackTrace();
+		}
+	}
+	private void analyzeB1(String filepath,String resultfilepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
@@ -201,9 +219,9 @@ public class analyzeStrategy {
 				shw=workbook.getSheet(1);
 				st1.analyzeStock(shw,allTimePoint,f.getName());
 			}
-			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/bq-eow.xls"),20040301,4);
-			s1.computeResult(allTimePoint,20040301,4);
+			s1.fillInAllcondition(allTimePoint);
+			s1.fillInData(allTimePoint,new File(resultfilepath+"bq-eow.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}
@@ -213,7 +231,7 @@ public class analyzeStrategy {
 			e.printStackTrace();
 		}
 	}
-	private void analyzeB2(String filepath)
+	private void analyzeB2(String filepath,String resultfilepath)
 	{
 		try{
 			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");			
@@ -233,9 +251,9 @@ public class analyzeStrategy {
 				shw=workbook.getSheet(1);
 				st1.analyzeStock(shw,allTimePoint,f.getName());
 			}
-			s1.fillInAllconditionBydaily(allTimePoint);
-			s1.fillInData(allTimePoint,new File(drive+"software/sdata/bm-eow.xls"),20040301,4);
-			s1.computeResult(allTimePoint,20040301,4);
+			s1.fillInAllcondition(allTimePoint);
+			s1.fillInData(allTimePoint,new File(resultfilepath+"bm-eow.xls"),20040301,0);
+			s1.computeResult(allTimePoint,20040301,0);
 			
 			System.out.println("\ncompute end:"+sdFormat.format(new Date()));
 		}

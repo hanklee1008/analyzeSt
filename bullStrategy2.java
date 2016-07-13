@@ -180,9 +180,9 @@ public class bullStrategy2 {
 								}
 							}
 							if (mmstate[2]==1)
-							{//System.out.println(buytime);
+							{
 								if(conditionAnalyzeMM(content,contemp))							
-								{										
+								{			//System.out.println("start "+buytime);							
 									mmstate[1]=1;									
 									mmstate[3]=contemp[3];
 									mmstate[4]=contemp[3];
@@ -197,8 +197,8 @@ public class bullStrategy2 {
 									fillStockData(allTimePoint,stockname,buytime,""+quantity,""+df.format(weeklyrate),""+df.format(lead));	
 									
 									
-									/*for (int i=0;i<contemp.length;i++)
-									fillInData(allTimePoint,11+i,""+contemp[i]);	*/
+									//for (int i=0;i<contemp.length;i++)
+									//fillInData(allTimePoint,11+i,""+contemp[i]);	
 
 								}
 								else
@@ -206,10 +206,11 @@ public class bullStrategy2 {
 							}														
 						}
 						else
-						{							
+						{	
+							//System.out.println(buytime+" "+mmstate[3]+" "+df.format(100*(mmstate[3]-mmstate[5])/mmstate[5]));
 							//if (endComputeReturnMM(mmstate,sday,stockname,buytime,0))
 							if (endComputeReturnM(mmstate,contemp,content,mmstate[5]))
-							{
+							{//System.out.println("end "+buytime);
 								//tempdata[2]=""+df.format(100*(currentHighM-enterPointM)/enterPointM);
 								//tempdata[9]=""+df.format(100*(enterPointM-currentLowM)/enterPointM);
 									
@@ -501,7 +502,7 @@ public class bullStrategy2 {
 				String[] tempdata={"","","","","","","","","","","","","","","","","",""};
 				DecimalFormat df=new DecimalFormat("#.##");
 
-				Workbook stockbook=Workbook.getWorkbook(new File(drive+"software/sdata/15foranalyze/"+stocknum));
+				Workbook stockbook=Workbook.getWorkbook(new File(drive+"software/sdata/15test999/"+stocknum));
 				Sheet stocksh=stockbook.getSheet(0);
 
 				Cell c=stocksh.findCell(stockdate);
@@ -677,7 +678,7 @@ public class bullStrategy2 {
 			}
 			else*/
 			{
-				if (returnv[0]>=enterpoint*1.15)
+				if (returnv[0]>=enterpoint*1.13)
 				{
 					//if (previoustemp[3]<previoustemp[5]&&previoustemp[3]<previoustemp[2]*1.02)
 					if (previoustemp[3]<previoustemp[0])
@@ -793,7 +794,7 @@ public class bullStrategy2 {
 
 				DecimalFormat df=new DecimalFormat("#.##");
 
-				Workbook stockbook=Workbook.getWorkbook(new File(drive+"software/sdata/15foranalyze/"+stocknum));
+				Workbook stockbook=Workbook.getWorkbook(new File(drive+"software/sdata/15test999/"+stocknum));
 				Sheet stockweek=stockbook.getSheet(1);
 
 				Cell c=stockweek.findCell(stockdate);
@@ -870,7 +871,7 @@ public class bullStrategy2 {
 					}
 
 					//if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
-					if (stopBenefit(gg10,contemp,basedata[3],returnv))
+					if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv))
 					{
 						return true;
 					}
@@ -899,7 +900,7 @@ public class bullStrategy2 {
 					}
 
 					//if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv,previousreturnv))
-					if (stopBenefit(gg10,contemp,basedata[3],returnv))
+					if (stopBenefit(gg10,contemp,previoustemp,basedata[3],returnv))
 					{
 						return true;
 					}
@@ -921,13 +922,13 @@ public class bullStrategy2 {
 		}
 		return false;
 	}
-	private boolean stopBenefit(int gg10,double[] contemp,double enterPoint,double[] returnv)
+	private boolean stopBenefit(int gg10,double[] contemp,double[] previoustemp,double enterpoint,double[] returnv)
 	{
-		if (gg10==1)
+		if (returnv[0]>=enterpoint*1.13)
 		{
-			if(contemp[0]>contemp[3])
+			if (contemp[2]<previoustemp[2])
 			{
-				returnv[0]=contemp[3];
+				returnv[0]=previoustemp[2];
 				return true;
 			}
 		}

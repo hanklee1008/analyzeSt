@@ -33,7 +33,7 @@ public class analyzeStock {
  final int quarterKCount=14,findstock=0;
  final double divideWeeklyrate=9;
  static int oldOrNew=0,predict=1,qpredict=0; //0:old 1:new 0:no predict 1:predict
- static String drive="d:/";
+ static String drive="c:/";
  
 /*public static void main(String[] s)
 {		
@@ -1565,9 +1565,9 @@ public void fillInAllcondition(ArrayList<String[]> allTimePoint)
 	{
 		String[] tt=allTimePoint.get(i);
 		String[] temp=allStockCondition(tt[0],tt[1],s,tt[11]);
-		tt[10]=temp[3];
-		tt[11]=temp[1];
-		tt[12]=temp[2];
+		tt[10]=temp[1];
+		tt[11]=temp[2];
+		tt[12]=temp[3];
 		tt[13]=temp[4];
 	}
 	}
@@ -1588,9 +1588,9 @@ public void fillInAllconditionBydaily(ArrayList<String[]> allTimePoint)
 		String[] tt=allTimePoint.get(i);
 		String[] temp=allStockConditionBydaily(tt[0],tt[1],s);
 		
-		tt[10]=temp[3];
-		//tt[11]=temp[1];
-		//tt[12]=temp[2];
+		tt[10]=temp[1];
+		//tt[11]=temp[2];
+		//tt[12]=temp[3];
 		//tt[13]=temp[4];
 	}
 	}
@@ -1627,7 +1627,7 @@ public String[] allStockConditionBydaily(String Num,String buyTime,Sheet ss)
 		previousDiff=previousdata[5]-previousdata[6];
 		previousTwoDiff=previoustwodata[5]-previoustwodata[6];
 		
-		temp[3]=currentdata[4]+"";
+		temp[1]=currentdata[4]+"";
 		
 		if (currentdata[6]<previousdata[6])
 		{
@@ -1727,58 +1727,44 @@ public String[] allStockCondition(String Num,String buyTime,Sheet ss,String cur)
 		previousDiff=previousdata[5]-previousdata[6];
 		previousTwoDiff=previoustwodata[5]-previoustwodata[6];
 		
-		temp[3]=currentdata[4]+"";
+		temp[1]=currentdata[4]+"";
 		
 		if (currentdata[6]<previousdata[6])
 		{
-			if (previousdata[6]<previoustwodata[6]&&previoustwodata[6]<previousthreedata[6])
+			if (previousdata[6]<previoustwodata[6])
 			{					
-				if(currentdata[5]<previousdata[5])//月向下
+				if(currentdata[5]>previousdata[5])//月向上
 				{	
-					if(currentdata[1]>currentdata[4])
-					{
-						if ((currentdata[4]-currentdata[3])/currentdata[3]<0.01)
-							temp[1]="1";
-					}
-					else
-					{
-						if ((currentdata[4]-currentdata[3])/currentdata[3]<0.01)
-							temp[1]="2";
-					}
+					temp[2]="1";
 				}
 				else
 				{
-					if ((currentdata[4]-currentdata[1])/currentdata[1]>0.025)
-						temp[1]="3";
+					temp[2]="2";
 				}			
 			}
 			else
 			{	
-				if(currentdata[1]>currentdata[4])//黑k
-					if(currentdata[5]<previousdata[5])//月向下
-						temp[2]="1";
-					else
-						temp[2]="2";
+				if(currentdata[5]>previousdata[5])//月向上
+				{	
+					temp[3]="1";
+				}
+				else
+				{
+					temp[3]="2";
+				}
 					
 			}	
-			if(currentdata[5]<previousdata[5])//月向下
-				temp[2]="3";
-			else
-				temp[2]="4";
 		}
 		else
 		{
-			if(currentdata[5]<previousdata[5])	
-			{
-				if(previoustwodata[5]>previousdata[5])
-					temp[4]="2";
-				else
-					temp[4]="1";
+			if(currentdata[5]>previousdata[5])//月向上
+			{	
+				temp[4]="1";
 			}
 			else
 			{
-				temp[4]="3";
-			}
+				temp[4]="2";
+			}	
 		}
 		/*if(currentdata[6]>=previousdata[6])	
 		{					
@@ -1924,8 +1910,20 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 	if (Integer.parseInt(data[1].replaceAll("/", ""))<baseDate)
 			return false;
 	
-	//if (data[2].equals(""))
-		//return false;
+	try{
+	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");	
+	
+	if (data[2].equals(""))
+	if((new Date().getTime()-sdFormat.parse(data[1]).getTime())>=259200000d)
+	{
+		return false;
+	}
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+	
 	if (findstock==1&&!data[2].equals(""))
 		return false;
 	if (findstock==0&&data[2].equals(""))
@@ -1956,8 +1954,8 @@ public boolean setDataCondition(String[] data,int baseDate,int condition)
 		}
 		else if(condition==4)//空,季,週收
 		{
-			//if(Double.parseDouble(data[7])>=0.15)
-				//return false;
+			if(Double.parseDouble(data[7])>=15)
+				return false;
 		}
 		else//空,月,週收
 		{

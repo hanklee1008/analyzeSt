@@ -245,7 +245,7 @@ public class BearStrategy1 {
 		}
 		else if(contemp[4]>content.get(content.size()-1)[4])//季線向上
 		{
-			if ((currentLow-baseData[3])/baseData[3]<=-0.13)//報酬超過10%
+			if ((currentLow-baseData[3])/baseData[3]<=-0.1)//報酬超過10%
 			{
 				return true;
 			}							

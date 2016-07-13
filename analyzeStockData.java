@@ -28,7 +28,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 ///test git push hanklee1008
 public class analyzeStockData {
-	final static String drive="d:/";
+	final static String drive="c:/";
 public String getStockCapital(String stocknum)
 {
 	String url="http://www.cnyes.com/twstock/intro/"+stocknum+".htm";
@@ -117,16 +117,7 @@ public ArrayList<String[]> getStockHistoryValue(String stocknum,String startdate
     }
 	return value;
 }
-public static void main(String[] s)
-{
-	analyzeStockData asd=new analyzeStockData();
-	//asd.getStockCapital("1333");
-	//asd.findstock(new File(drive+"software/sdata/low15.xls"),drive+"software/sdata/15base/");
-	//asd.updateStockDailyKToExcel(new File("c:/ttt.txt"),"2004/03/01");
-	
-	//asd.copySheet(drive+"software/sdata/new/",drive+"software/sdata/weeklyKStock.xls");
-}
-public void findstock(File allstock,String filepath)
+public void findstock(File allstock,String filepath,String startdate)
 {
 	try{
 		Workbook wb=Workbook.getWorkbook(allstock);
@@ -139,7 +130,7 @@ public void findstock(File allstock,String filepath)
 			{
 				try{
 					System.out.println(str);
-				ArrayList<String[]> as=getStockHistoryValue(str,"2015/08/31");
+				ArrayList<String[]> as=getStockHistoryValue(str,startdate);
 				updateStockDailyKToExcel(as,str,filepath);
 				updateStockWeeklyKToExcel(new File(filepath+str+".xls"),str);
 				count=0;

@@ -6,6 +6,8 @@ import jxl.Sheet;
 
 public class BearStrategy2 {
 
+	int test=0;
+	
 	public String strategyName()
 	{
 		return "monthline on quaterline+end of the week";
@@ -53,7 +55,7 @@ public class BearStrategy2 {
 								double lead=-(contemp[2]-contemp[3])/contemp[3]*100;
 								double quantity=contemp[6];
 
-								tempdata=new String[]{stockname,buytime,"","","","",quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
+								tempdata=new String[]{stockname,buytime,"","","",""+test,quantity+"",df.format(weeklyrate),df.format(lead),"","","","","","","","","","1"};
 							}
 						}					
 					}
@@ -126,11 +128,15 @@ public class BearStrategy2 {
 		q4=base.get(base.size()-3)[5]-base.get(base.size()-2)[5];//翻轉幅度
 		
 		if((compare[3]<=compare[4]))
-			//if(compare[4]<compare[5])//***
-				//if((base.get(base.size()-1)[3]-compare[3])/base.get(base.size()-1)[3]>=0.06)
-					if (base.get(base.size()-1)[4]>=base.get(base.size()-2)[4]&&compare[4]<base.get(base.size()-1)[4])//月線紅翻黑
-
-						return true;											
+				if (base.get(base.size()-1)[4]>=base.get(base.size()-2)[4]&&compare[4]<base.get(base.size()-1)[4])//月線紅翻黑
+					{test=1;
+						return true;
+					}
+		//if((compare[3]<=compare[0]))
+			if(compare[1]>compare[5]&&compare[3]<compare[5])
+					{test=2;
+				return true;											
+					}
 		
 						
 		return false;
@@ -143,7 +149,7 @@ public class BearStrategy2 {
 		}
 		else if(contemp[4]>content.get(content.size()-1)[4])//月線向上
 		{
-			if ((currentLow-baseData[3])/baseData[3]<=-0.13)//低點超過10%
+			if ((currentLow-baseData[3])/baseData[3]<=-0.1)//低點超過10%
 			{
 				return true;
 			}
